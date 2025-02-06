@@ -2,7 +2,7 @@ package cu.lt.joe.jcalc.algorithms;
 
 import java.math.BigDecimal;
 import java.util.ArrayDeque;
-import cu.lt.joe.jcalc.exceptions.InfinityResultException;
+import cu.lt.joe.jcalc.exceptions.InfiniteResultException;
 import cu.lt.joe.jcalc.exceptions.NotNumericResultException;
 import cu.lt.joe.jcalc.exceptions.UnregisteredOperationException;
 
@@ -24,7 +24,7 @@ public class ReversePolishNotationAlgImpl extends AlgorithmImplementation
      * @param rearrangedExpressionArray the <code>ArrayDeque</code> obtained with the Shunting Yard algorithm
      * @return a String with the result of the given Math expression
      * @throws NotNumericResultException when a not numeric (NaN) value is obtained
-     * @throws InfinityResultException   when an Infinite result is obtained
+     * @throws InfiniteResultException   when an Infinite result is obtained
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
      * @since 1.0.0
      */
@@ -45,7 +45,7 @@ public class ReversePolishNotationAlgImpl extends AlgorithmImplementation
                 if (number2.isEmpty() || number2.equalsIgnoreCase("nan") || number1.isEmpty() || number1.equalsIgnoreCase("nan"))
                     throw new NotNumericResultException();
                 else if (number2.equalsIgnoreCase("infinity") || number1.equalsIgnoreCase("infinity") || number2.equalsIgnoreCase("-infinity") || number1.equalsIgnoreCase("-infinity"))
-                    throw new InfinityResultException();
+                    throw new InfiniteResultException();
                 else
                     solution.push(makeOperation(new BigDecimal(number2), popped, new BigDecimal(number1)));
             }
