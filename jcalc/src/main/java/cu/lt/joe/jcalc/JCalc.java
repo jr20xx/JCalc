@@ -2,7 +2,7 @@ package cu.lt.joe.jcalc;
 
 import cu.lt.joe.jcalc.algorithms.ReversePolishNotationAlgImpl;
 import cu.lt.joe.jcalc.algorithms.ShuntingYardAlgImpl;
-import cu.lt.joe.jcalc.exceptions.InfinityResultException;
+import cu.lt.joe.jcalc.exceptions.InfiniteResultException;
 import cu.lt.joe.jcalc.exceptions.NotNumericResultException;
 import cu.lt.joe.jcalc.exceptions.UnbalancedParenthesesException;
 import cu.lt.joe.jcalc.exceptions.UnregisteredOperationException;
@@ -37,7 +37,7 @@ public class JCalc
      * @return the result of the given Math expression when is not empty or invalid
      * @throws UnbalancedParenthesesException when parentheses are not placed correctly
      * @throws NotNumericResultException      when a not numeric (NaN) value is obtained
-     * @throws InfinityResultException        when an Infinite result is obtained
+     * @throws InfiniteResultException        when an Infinite result is obtained
      * @throws UnregisteredOperationException when trying to perform an undefined operation
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
      * @since 1.0.0
@@ -51,7 +51,7 @@ public class JCalc
         if (result.isEmpty() || result.equalsIgnoreCase("nan"))
             throw new NotNumericResultException();
         else if (result.equalsIgnoreCase("infinity") || result.equalsIgnoreCase("-infinity"))
-            throw new InfinityResultException();
+            throw new InfiniteResultException();
         return result;
     }
 }
