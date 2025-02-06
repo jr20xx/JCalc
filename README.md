@@ -42,7 +42,7 @@ To build the library locally, the first thing you must do is to make sure that y
 java --version
 ```
 
-> [!INFO]
+> [!TIP]
 >
 > The minimum Java version required to build this library is [Java 8](https://en.m.wikipedia.org/wiki/Java_version_history#Java_8).
 
