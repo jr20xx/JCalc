@@ -92,7 +92,7 @@ System.out.print(result); // Prints "3.0001220703125"
 ```
 > [!WARNING]
 >
-> Besides parentheses, the only valid Math symbols that can be used in the expression are *+*, *-*, *\**, *×*, */*, *÷* and *^*. Using any other symbol, will cause an error.
+> Besides parentheses, the only valid Math symbols that can be used in the expression are **+**, **-**, **\***, **×**, **/**, **÷** and **^**. Using any other symbol, will cause an error.
 
 ### Exceptions handling
 
