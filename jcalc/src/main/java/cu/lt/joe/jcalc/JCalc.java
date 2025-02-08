@@ -44,7 +44,7 @@ public class JCalc
      */
     public static String performMathOperation(String mathExpression)
     {
-        mathExpression = mathExpression.replaceAll("\\s+", "");
+        mathExpression = mathExpression.replaceAll("\\s+", "").replace(")(", ")*(").replace("()", "(1)");
         if (mathExpression.isEmpty())
             return null;
         String result = ReversePolishNotationAlgImpl.applyReversePolishNotationAlgorithm(ShuntingYardAlgImpl.applyShuntingYardAlgorithm(mathExpression));
