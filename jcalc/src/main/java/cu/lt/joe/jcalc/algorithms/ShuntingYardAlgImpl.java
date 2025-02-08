@@ -29,39 +29,6 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
     }
 
     /**
-     * Checks when a given Math expression has the parentheses correctly balanced.
-     *
-     * @param expression Math expression to check
-     * @return <code>true</code> or <code>false</code> when the parentheses are correctly balanced or not
-     * @author <a href="https://github.com/jr20xx">jr20xx</a>
-     * @since 1.0.0
-     */
-    private static boolean areParenthesesBalanced(String expression)
-    {
-        if (expression.contains("(") || expression.contains(")"))
-        {
-            Stack<Character> parentheses_stack = new Stack<>();
-            for (char c : expression.toCharArray())
-            {
-                if (c == '(')
-                    parentheses_stack.push(c);
-                else if (c == ')')
-                    if (!parentheses_stack.isEmpty() && parentheses_stack.peek() == '(')
-                        parentheses_stack.pop();
-                    else
-                        return false;
-            }
-            while (!parentheses_stack.isEmpty())
-            {
-                char element = parentheses_stack.pop();
-                if (element == '(' || element == ')')
-                    return false;
-            }
-        }
-        return true;
-    }
-
-    /**
      * Takes a Math expression and returns an array containing all of its items separated.
      *
      * @param mathExpression Math expression to split
@@ -72,28 +39,20 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
      */
     private static String[] getItemsArray(String mathExpression)
     {
-        if (areParenthesesBalanced(mathExpression))
+        StringBuilder tmp = new StringBuilder();
+        int start = 0;
+        if ((mathExpression.charAt(start) == '-'))
         {
-            StringBuilder tmp = new StringBuilder();
-            int start = 0;
-            if ((mathExpression.charAt(start) == '-'))
-            {
-                tmp.append("n");
-                start += 1;
-            }
-
-            for (int i = start; i < mathExpression.length(); i++)
-            {
-                if ((mathExpression.charAt(i) == '-') && !isNumber(mathExpression.charAt(i - 1) + "") && (!(mathExpression.charAt(i - 1) + "").equals(")")))
-                    tmp.append("n");
-                else
-                    tmp.append(mathExpression.charAt(i));
-            }
-
-            return tmp.toString().replace("(", "( ").replace("+", " + ").replace("-", " - ").replace("×", " × ").replace("*", " * ").replace("÷", " ÷ ").replace("/", " / ").replace("^", " ^ ").replace(")", " )").replace("n", "-").trim().split(" ");
+            tmp.append("n");
+            start += 1;
         }
-        else
-            throw new UnbalancedParenthesesException("Parentheses are not well placed");
+
+        for (int i = start; i < mathExpression.length(); i++)
+            if ((mathExpression.charAt(i) == '-') && !isNumber(mathExpression.charAt(i - 1) + "") && (!(mathExpression.charAt(i - 1) + "").equals(")")))
+                tmp.append("n");
+            else
+                tmp.append(mathExpression.charAt(i));
+        return tmp.toString().replace("(", "( ").replace("+", " + ").replace("-", " - ").replace("×", " × ").replace("*", " * ").replace("÷", " ÷ ").replace("/", " / ").replace("^", " ^ ").replace(")", " )").replace("n", "-").trim().split(" ");
     }
 
     /**
@@ -156,12 +115,18 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             {
                 while (!operators.isEmpty() && !operators.peek().equals("("))
                     output.add(operators.pop());
+                if (operators.isEmpty())
+                    throw new UnbalancedParenthesesException("Parentheses are not well placed");
                 operators.pop();
             }
         }
 
         while (!operators.isEmpty())
+        {
+            if (operators.peek().equals("("))
+                throw new UnbalancedParenthesesException("Parentheses are not well placed");
             output.add(operators.pop());
+        }
         return output;
     }
 }
