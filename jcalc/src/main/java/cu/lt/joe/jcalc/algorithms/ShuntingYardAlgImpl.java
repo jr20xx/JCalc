@@ -10,7 +10,7 @@ import cu.lt.joe.jcalc.exceptions.UnregisteredOperationException;
  * needed to perform all the tasks required by it.
  *
  * @author <a href="https://github.com/jr20xx">jr20xx</a>
- * @see #applyShuntingYardAlgorithm(String)
+ * @see #applyShuntingYardAlgorithm(String, boolean)
  * @since 1.0.0
  */
 public class ShuntingYardAlgImpl extends AlgorithmImplementation
@@ -31,16 +31,16 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
     /**
      * Takes a Math expression and returns an array containing all of its items separated.
      *
-     * @param mathExpression Math expression to split
-     * @return an array containing all the items of the expression separated
-     * @throws UnbalancedParenthesesException when parentheses are not placed correctly
+     * @param mathExpression     Math expression to split
+     * @param balanceParentheses a boolean parameter to specify whether to automatically attempt to balance parentheses
+     * @return An array containing all the items of the expression separated
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
      * @since 1.0.0
      */
-    private static String[] getItemsArray(String mathExpression)
+    private static String[] getItemsArray(String mathExpression, boolean balanceParentheses)
     {
         StringBuilder tmp = new StringBuilder();
-        int start = 0;
+        int start = 0, openParenthesesCount = 0;
         if ((mathExpression.charAt(start) == '-'))
         {
             tmp.append("n");
@@ -48,10 +48,29 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
         }
 
         for (int i = start; i < mathExpression.length(); i++)
-            if ((mathExpression.charAt(i) == '-') && !isNumber(mathExpression.charAt(i - 1) + "") && (!(mathExpression.charAt(i - 1) + "").equals(")")))
+        {
+            char currentChar = mathExpression.charAt(i);
+            if ((currentChar == '-') && !isNumber(mathExpression.charAt(i - 1) + "") && (!(mathExpression.charAt(i - 1) + "").equals(")")))
                 tmp.append("n");
             else
-                tmp.append(mathExpression.charAt(i));
+                tmp.append(currentChar);
+            if (balanceParentheses)
+                if (currentChar == '(') openParenthesesCount++;
+                else if (currentChar == ')') openParenthesesCount--;
+        }
+        if (balanceParentheses)
+        {
+            while (openParenthesesCount > 0)
+            {
+                tmp.append(')');
+                openParenthesesCount--;
+            }
+            while (openParenthesesCount < 0)
+            {
+                tmp.insert(0, '(');
+                openParenthesesCount++;
+            }
+        }
         return tmp.toString().replace("(", "( ").replace("+", " + ").replace("-", " - ").replace("×", " × ").replace("*", " * ").replace("÷", " ÷ ").replace("/", " / ").replace("^", " ^ ").replace(")", " )").replace("n", "-").trim().split(" ");
     }
 
@@ -88,14 +107,16 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
      * <code>ArrayDeque</code> object that contains the items ready to be processed
      * with the Reverse Polish Notation algorithm.
      *
-     * @param mathExpression the Math expression to process with the Shunting Yard algorithm
-     * @return an <code>ArrayDeque</code> with the elements rearranged with the Shunting Yard algorithm
+     * @param mathExpression     the Math expression to process with the Shunting Yard algorithm
+     * @param balanceParentheses a boolean parameter to specify whether to automatically attempt to balance parentheses in the given Math expression
+     * @return An <code>ArrayDeque</code> with the elements rearranged with the Shunting Yard algorithm
+     * @throws UnbalancedParenthesesException when parentheses are not placed correctly and <code>balanceParentheses</code> parameter is set to false
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
      * @since 1.0.0
      */
-    public static ArrayDeque<String> applyShuntingYardAlgorithm(String mathExpression)
+    public static ArrayDeque<String> applyShuntingYardAlgorithm(String mathExpression, boolean balanceParentheses)
     {
-        String elements[] = getItemsArray(mathExpression);
+        String elements[] = getItemsArray(mathExpression, balanceParentheses);
         ArrayDeque<String> output = new ArrayDeque<>();
         Stack<String> operators = new Stack<>();
 
