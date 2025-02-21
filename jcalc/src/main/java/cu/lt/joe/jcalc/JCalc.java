@@ -36,8 +36,8 @@ public class JCalc
      *
      * @param mathExpression     a String containing the Math expression to solve
      * @param balanceParentheses a boolean parameter to specify whether to automatically attempt to balance parentheses in the given Math expression
-     * @return the result of the given Math expression when is not empty or invalid
-     * @throws UnbalancedParenthesesException when parentheses are not placed correctly and <code>balanceParentheses</code> parameter is set to false
+     * @return A String containing the result of the given Math expression when is not empty or invalid
+     * @throws UnbalancedParenthesesException when parentheses are not placed correctly and <code>balanceParentheses</code> parameter is set to <code>false</code>
      * @throws NotNumericResultException      when a not numeric (NaN) value is obtained
      * @throws InfiniteResultException        when an Infinite result is obtained
      * @throws UnregisteredOperationException when trying to perform an undefined operation
