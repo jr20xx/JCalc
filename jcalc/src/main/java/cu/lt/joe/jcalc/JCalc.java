@@ -46,7 +46,7 @@ public class JCalc
      */
     public static String performMathOperation(String mathExpression, boolean balanceParentheses)
     {
-        mathExpression = mathExpression.replaceAll("\\s+", "").replace(")(", ")*(").replace("()", "(1)");
+        mathExpression = mathExpression.replaceAll("\\s+", "").replace(",", ".").replace(")(", ")*(").replace("()", "(1)");
         if (mathExpression.isEmpty())
             return null;
         String result = ReversePolishNotationAlgImpl.applyReversePolishNotationAlgorithm(ShuntingYardAlgImpl.applyShuntingYardAlgorithm(mathExpression, balanceParentheses));
