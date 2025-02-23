@@ -19,6 +19,6 @@ public class AlgorithmImplementation
      */
     static boolean isOperator(String character)
     {
-        return (character.equals("+")) || (character.equals("-")) || (character.equals("×") || character.equals("*")) || (character.equals("÷") || character.equals("/")) || (character.equals("^"));
+        return (character.equals("+")) || (character.equals("-")) || character.equals("*") || character.equals("/") || (character.equals("^"));
     }
 }

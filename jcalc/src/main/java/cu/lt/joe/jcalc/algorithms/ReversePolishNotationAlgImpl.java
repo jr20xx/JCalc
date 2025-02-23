@@ -75,10 +75,8 @@ public class ReversePolishNotationAlgImpl extends AlgorithmImplementation
                 return (firstNumber.add(secondNumber)).toString();
             case ("-"):
                 return (firstNumber.subtract(secondNumber)).toString();
-            case ("×"):
             case ("*"):
                 return (firstNumber.multiply(secondNumber)).toString();
-            case ("÷"):
             case ("/"):
             {
                 try
