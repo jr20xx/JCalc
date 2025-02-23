@@ -71,7 +71,18 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                 openParenthesesCount++;
             }
         }
-        return tmp.toString().replace("(", "( ").replace("+", " + ").replace("-", " - ").replace("×", " × ").replace("*", " * ").replace("÷", " ÷ ").replace("/", " / ").replace("^", " ^ ").replace(")", " )").replace("n", "-").trim().split(" ");
+        String result = tmp.toString();
+        if(result.contains("(")) result = result.replace("(", "( ");
+        if(result.contains("+")) result = result.replace("+", " + ");
+        if(result.contains("-")) result = result.replace("-", " - ");
+        if(result.contains("×")) result = result.replace("×", " * ");
+        if(result.contains("*")) result = result.replace("*", " * ");
+        if(result.contains("÷")) result = result.replace("÷", " / ");
+        if(result.contains("/")) result = result.replace("/", " / ");
+        if(result.contains("^")) result = result.replace("^", " ^ ");
+        if(result.contains(")")) result = result.replace(")", " )");
+        if(result.contains("n")) result = result.replace("n", "-");
+        return result.trim().split(" ");
     }
 
     /**
