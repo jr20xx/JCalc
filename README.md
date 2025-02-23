@@ -82,12 +82,12 @@ To ease the process of getting a compiled version of the library that you can us
 
 ### Basic usage
 
-To make use of this library, there's a single method you need to call. When calling that method, you must pass a String containing the Math expression that you want to get solved and that method will return another String with the result of solving the given Math expression. Any whitespace in the Math expression will be automatically removed and if the expression is empty, `null` will be returned instead of any result.
+To make use of this library, there's a single method you need to call. That method expects two mandatory parameters. The first parameter you must pass is a String containing the Math expression that you want to get solved. The second parameter is a boolean value used to specify when to automatically attempt to balance the parentheses in the given Math expression. When called, that method will return another String with the result of solving the given Math expression. Any whitespace in the Math expression will be automatically removed and if the expression is empty, `null` will be returned instead of any result.
 
 Here's a clear code example for you to get an idea of how to work with the library and to allow you to know which one is the method that must be called to get the work done:
 ```java
 String expression = "3 + 4 * 2 / (1 - 5)^2^3";
-String result = JCalc.performMathOperation(expression);
+String result = JCalc.performMathOperation(expression, false);
 System.out.print(result); // Prints "3.0001220703125"
 ```
 > [!WARNING]
@@ -99,17 +99,22 @@ System.out.print(result); // Prints "3.0001220703125"
 This library contains a small set of custom exceptions that should be controlled to guarantee that the execution of the program doesn't get interupted or glitched. Here's a Java snippet showing all of them with added comments explaining when they are expected to happen:
 ```java
 try {
-    String expression = "2 * 3 + 5 * 2^3";
-    String result = JCalc.performMathOperation(expression);
-} catch (UnbalancedParenthesesException exception) {
-    // This exception occurs when parentheses are not placed correctly
-} catch (NotNumericResultException exception) {
+    String expression = "2 * 3 + 5 * 2^3)";
+    String result = JCalc.performMathOperation(expression, true);
+}
+catch (UnbalancedParenthesesException exception) {
+    // This exception occurs when parentheses are not placed correctly and `false` is provided as second parameter
+}
+catch (NotNumericResultException exception) {
     // This exception occurs when a not numeric (NaN) value is obtained
-} catch (InfiniteResultException exception) {
+}
+catch (InfiniteResultException exception) {
     // This exception occurs when an Infinite result is obtained
-} catch (UnregisteredOperationException exception) {
+}
+catch (UnregisteredOperationException exception) {
     // This exception occurs when trying to perform an undefined operation
-} catch (Exception exception) {
+}
+catch (Exception exception) {
     // This is recommended in case that an unexpected exception arises
 }
 ```
