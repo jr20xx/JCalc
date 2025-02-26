@@ -88,7 +88,7 @@ Here's a clear code example for you to get an idea of how to work with the libra
 ```java
 String expression = "3 + 4 * 2 / (1 - 5)^2^3";
 String result = JCalc.performMathOperation(expression, false);
-System.out.print(result); // Prints "3.0001220703125"
+System.out.print(result); // Prints "3.000122070313"
 ```
 > [!WARNING]
 >
