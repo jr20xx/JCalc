@@ -73,17 +73,17 @@ public class ReversePolishNotationAlgImpl extends AlgorithmImplementation
     {
         switch (operator)
         {
-            case ("+"):
-                return (firstNumber.add(secondNumber)).toString();
-            case ("-"):
-                return (firstNumber.subtract(secondNumber)).toString();
-            case ("*"):
-                return (firstNumber.multiply(secondNumber)).toString();
-            case ("/"):
+            case "+":
+                return firstNumber.add(secondNumber).toString();
+            case "-":
+                return firstNumber.subtract(secondNumber).toString();
+            case "*":
+                return firstNumber.multiply(secondNumber).toString();
+            case "/":
             {
                 return firstNumber.divide(secondNumber, 12, RoundingMode.HALF_UP).stripTrailingZeros().toString();
             }
-            case ("^"):
+            case "^":
             {
                 if (secondNumber.remainder(BigDecimal.ONE).equals(BigDecimal.ZERO))
                     return firstNumber.pow(secondNumber.intValue()).toString();
