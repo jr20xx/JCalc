@@ -1,5 +1,6 @@
 package cu.lt.joe.jcalc.algorithms;
 
+import org.apache.commons.math3.util.FastMath;
 import java.math.BigDecimal;
 import java.util.ArrayDeque;
 import cu.lt.joe.jcalc.exceptions.InfiniteResultException;
@@ -90,7 +91,9 @@ public class ReversePolishNotationAlgImpl extends AlgorithmImplementation
             }
             case ("^"):
             {
-                return Math.pow(firstNumber.doubleValue(), secondNumber.doubleValue()) + "";
+                if (secondNumber.remainder(BigDecimal.ONE).equals(BigDecimal.ZERO))
+                    return firstNumber.pow(secondNumber.intValue()).toString();
+                return BigDecimal.valueOf(FastMath.pow(firstNumber.doubleValue(), secondNumber.doubleValue())).stripTrailingZeros().toString();
             }
             default:
                 throw new UnregisteredOperationException("Not declared operation: " + operator);
