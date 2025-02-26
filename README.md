@@ -58,7 +58,7 @@ After checking the JDK installation, then you must create a local copy of this r
 git clone https://github.com/jr20xx/JCalc
 ```
 
-Once the execution of that command is finished, a new directory containing a copy of the files of this project will be created. You can open that folder with a Java IDE with [Gradle](https://gradle.org/) support like [IntelliJ IDEA](https://www.jetbrains.com/idea/), [Android Studio](https://developer.android.com/studio) or [VSCode](https://code.visualstudio.com/) (with the [Extension Pack for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack) installed) and then build the library making use of their integrated tools. If you need help doing that, you can check [this website](https://docs.gradle.org/current/userguide/gradle_ides.html) to get references of how to do that in your prefered IDE.
+Once the execution of that command is finished, a new directory containing a copy of the files of this project will be created. You can open that folder with a Java IDE with [Gradle](https://gradle.org/) support like [IntelliJ IDEA](https://www.jetbrains.com/idea/), [Android Studio](https://developer.android.com/studio) or [VSCode](https://code.visualstudio.com/) (with the [Extension Pack for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack) installed) and then build the library making use of their integrated tools. If you need help doing that, you can check [this website](https://docs.gradle.org/current/userguide/gradle_ides.html) to get references of how to do that in your preferred IDE.
 
 If you decide to build the library without using any IDE, then open the newly created directory containing the files from this repo and start a terminal session from there. Once you've opened a terminal, run any of the following commands:
 
@@ -96,7 +96,7 @@ System.out.print(result); // Prints "3.0001220703125"
 
 ### Exceptions handling
 
-This library contains a small set of custom exceptions that should be controlled to guarantee that the execution of the program doesn't get interupted or glitched. Here's a Java snippet showing all of them with added comments explaining when they are expected to happen:
+This library contains a small set of custom exceptions that should be controlled to guarantee that the execution of the program doesn't get interrupted or glitched. Here's a Java snippet showing all of them with added comments explaining when they are expected to happen:
 ```java
 try {
     String expression = "2 * 3 + 5 * 2^3)";
