@@ -41,7 +41,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
     {
         StringBuilder tmp = new StringBuilder();
         int start = 0, openParenthesesCount = 0;
-        if ((mathExpression.charAt(start) == '-'))
+        if (mathExpression.charAt(start) == '-')
         {
             tmp.append("n");
             start += 1;
@@ -50,7 +50,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
         for (int i = start; i < mathExpression.length(); i++)
         {
             char currentChar = mathExpression.charAt(i);
-            if ((currentChar == '-') && !isNumber(mathExpression.charAt(i - 1) + "") && (!(mathExpression.charAt(i - 1) + "").equals(")")))
+            if (currentChar == '-' && !isNumber(mathExpression.charAt(i - 1) + "") && !(mathExpression.charAt(i - 1) + "").equals(")"))
                 tmp.append("n");
             else
                 tmp.append(currentChar);
@@ -137,7 +137,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                 output.add(element);
             else if (isOperator(element))
             {
-                while (!operators.isEmpty() && !operators.peek().equals("(") && getOperatorPrecedence(operators.peek()) >= getOperatorPrecedence(element) && (!element.equals("^")))
+                while (!operators.isEmpty() && !operators.peek().equals("(") && getOperatorPrecedence(operators.peek()) >= getOperatorPrecedence(element) && !element.equals("^"))
                     output.add(operators.pop());
                 operators.push(element);
             }
