@@ -2,6 +2,7 @@ package cu.lt.joe.jcalc.algorithms;
 
 import org.apache.commons.math3.util.FastMath;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayDeque;
 import cu.lt.joe.jcalc.exceptions.InfiniteResultException;
 import cu.lt.joe.jcalc.exceptions.NotNumericResultException;
@@ -80,14 +81,7 @@ public class ReversePolishNotationAlgImpl extends AlgorithmImplementation
                 return (firstNumber.multiply(secondNumber)).toString();
             case ("/"):
             {
-                try
-                {
-                    return (firstNumber.divide(secondNumber)).toString();
-                }
-                catch (Exception e)
-                {
-                    return firstNumber.doubleValue() / secondNumber.doubleValue() + "";
-                }
+                return firstNumber.divide(secondNumber, 12, RoundingMode.HALF_UP).stripTrailingZeros().toString();
             }
             case ("^"):
             {
