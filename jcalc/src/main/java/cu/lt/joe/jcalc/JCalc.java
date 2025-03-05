@@ -52,6 +52,10 @@ public class JCalc
             if (mathExpression.contains(",")) mathExpression = mathExpression.replace(",", ".");
             if (mathExpression.contains(")(")) mathExpression = mathExpression.replace(")(", ")*(");
             if (mathExpression.contains("()")) mathExpression = mathExpression.replace("()", "(1)");
+            if (mathExpression.matches(".*\\.\\s*[(+\\-×/÷^].*"))
+                mathExpression = mathExpression.replaceAll("\\.(?=[(+\\-×/÷^])", ".0");
+            if (mathExpression.matches(".*\\d\\(.*"))
+                mathExpression = mathExpression.replaceAll("(\\d)\\(", "$1*(");
             String result = ReversePolishNotationAlgImpl.applyReversePolishNotationAlgorithm(ShuntingYardAlgImpl.applyShuntingYardAlgorithm(mathExpression, balanceParentheses));
             if (result.isEmpty() || result.equalsIgnoreCase("nan"))
                 throw new NotNumericResultException();
