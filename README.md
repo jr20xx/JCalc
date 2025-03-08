@@ -24,6 +24,7 @@
 - [Usage](#usage)
     - [Basic usage](#basic-usage)
     - [Exceptions handling](#exceptions-handling)
+- [Related project (W.I.P.)](#related-project-wip)
 - [About the docs](#about-the-docs)
 - [Contribution](#contribution)
 
@@ -118,6 +119,10 @@ catch (Exception exception) {
     // This is recommended in case that an unexpected exception arises
 }
 ```
+
+## Related project (W.I.P.)
+
+- [Android Calculator](https://github.com/jr20xx/android-calculator)
 
 ## About the docs
 
