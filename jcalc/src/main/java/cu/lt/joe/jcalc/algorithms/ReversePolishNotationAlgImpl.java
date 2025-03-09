@@ -3,6 +3,7 @@ package cu.lt.joe.jcalc.algorithms;
 import org.apache.commons.math3.util.FastMath;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayDeque;
 import cu.lt.joe.jcalc.exceptions.InfiniteResultException;
 import cu.lt.joe.jcalc.exceptions.NotNumericResultException;
@@ -57,6 +58,16 @@ public class ReversePolishNotationAlgImpl extends AlgorithmImplementation
         return solution.pop();
     }
 
+    private static String formatResult(BigDecimal result)
+    {
+        if (result.scale() != 12)
+            result = result.setScale(12, RoundingMode.HALF_UP);
+        result = result.stripTrailingZeros();
+        if (result.abs().compareTo(BigDecimal.valueOf(1e12)) >= 0)
+            return new DecimalFormat("0.############E0").format(result);
+        return result.toPlainString();
+    }
+
     /**
      * Takes a number, an operator and another number to perform the required operation with those
      * numbers given the specified operator.
@@ -74,18 +85,18 @@ public class ReversePolishNotationAlgImpl extends AlgorithmImplementation
         switch (operator)
         {
             case "+":
-                return firstNumber.add(secondNumber).setScale(12, RoundingMode.HALF_UP).toPlainString();
+                return formatResult(firstNumber.add(secondNumber));
             case "-":
-                return firstNumber.subtract(secondNumber).setScale(12, RoundingMode.HALF_UP).toPlainString();
+                return formatResult(firstNumber.subtract(secondNumber));
             case "*":
-                return firstNumber.multiply(secondNumber).setScale(12, RoundingMode.HALF_UP).toPlainString();
+                return formatResult(firstNumber.multiply(secondNumber));
             case "/":
-                return firstNumber.divide(secondNumber, 12, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
+                return formatResult(firstNumber.divide(secondNumber, 12, RoundingMode.HALF_UP));
             case "^":
             {
                 if (secondNumber.remainder(BigDecimal.ONE).equals(BigDecimal.ZERO))
-                    return firstNumber.pow(secondNumber.intValue()).toPlainString();
-                return BigDecimal.valueOf(FastMath.pow(firstNumber.doubleValue(), secondNumber.doubleValue())).setScale(12, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
+                    return formatResult(firstNumber.pow(secondNumber.intValue()));
+                return formatResult(BigDecimal.valueOf(FastMath.pow(firstNumber.doubleValue(), secondNumber.doubleValue())));
             }
             default:
                 throw new UnregisteredOperationException("Not declared operation: " + operator);
