@@ -71,17 +71,21 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                 openParenthesesCount++;
             }
         }
-        String result = tmp.toString();
-        if(result.contains("(")) result = result.replace("(", "( ");
-        if(result.contains("+")) result = result.replace("+", " + ");
-        if(result.contains("-")) result = result.replace("-", " - ");
-        if(result.contains("×")) result = result.replace("×", " * ");
-        if(result.contains("*")) result = result.replace("*", " * ");
-        if(result.contains("÷")) result = result.replace("÷", " / ");
-        if(result.contains("/")) result = result.replace("/", " / ");
-        if(result.contains("^")) result = result.replace("^", " ^ ");
-        if(result.contains(")")) result = result.replace(")", " )");
-        if(result.contains("n")) result = result.replace("n", "-");
+        String result = tmp.toString().toLowerCase();
+        if (result.contains("e+")) result = result.replace("e+", "a");
+        if (result.contains("e-")) result = result.replace("e-", "s");
+        if (result.contains("(")) result = result.replace("(", "( ");
+        if (result.contains("+")) result = result.replace("+", " + ");
+        if (result.contains("-")) result = result.replace("-", " - ");
+        if (result.contains("×")) result = result.replace("×", " * ");
+        if (result.contains("*")) result = result.replace("*", " * ");
+        if (result.contains("÷")) result = result.replace("÷", " / ");
+        if (result.contains("/")) result = result.replace("/", " / ");
+        if (result.contains("^")) result = result.replace("^", " ^ ");
+        if (result.contains(")")) result = result.replace(")", " )");
+        if (result.contains("n")) result = result.replace("n", "-");
+        if (result.contains("a")) result = result.replace("a", "e+");
+        if (result.contains("s")) result = result.replace("s", "e-");
         return result.trim().split(" ");
     }
 
