@@ -74,18 +74,18 @@ public class ReversePolishNotationAlgImpl extends AlgorithmImplementation
         switch (operator)
         {
             case "+":
-                return firstNumber.add(secondNumber).toPlainString();
+                return firstNumber.add(secondNumber).setScale(12, RoundingMode.HALF_UP).toPlainString();
             case "-":
-                return firstNumber.subtract(secondNumber).toPlainString();
+                return firstNumber.subtract(secondNumber).setScale(12, RoundingMode.HALF_UP).toPlainString();
             case "*":
-                return firstNumber.multiply(secondNumber).toPlainString();
+                return firstNumber.multiply(secondNumber).setScale(12, RoundingMode.HALF_UP).toPlainString();
             case "/":
                 return firstNumber.divide(secondNumber, 12, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
             case "^":
             {
                 if (secondNumber.remainder(BigDecimal.ONE).equals(BigDecimal.ZERO))
                     return firstNumber.pow(secondNumber.intValue()).toPlainString();
-                return BigDecimal.valueOf(FastMath.pow(firstNumber.doubleValue(), secondNumber.doubleValue())).stripTrailingZeros().toPlainString();
+                return BigDecimal.valueOf(FastMath.pow(firstNumber.doubleValue(), secondNumber.doubleValue())).setScale(12, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
             }
             default:
                 throw new UnregisteredOperationException("Not declared operation: " + operator);
