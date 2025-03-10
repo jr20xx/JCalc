@@ -25,7 +25,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
      */
     private static boolean isNumber(String number)
     {
-        return number.matches("^[+-]?\\d+(?:\\.\\d*(?:[eE][+-]?\\d+)?)?$");
+        return number.matches("^[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][+-]?\\d+)?$");
     }
 
     /**
@@ -40,53 +40,62 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
     private static String[] getItemsArray(String mathExpression, boolean balanceParentheses)
     {
         StringBuilder tmp = new StringBuilder();
-        int start = 0, openParenthesesCount = 0;
-        if (mathExpression.charAt(start) == '-')
-        {
-            tmp.append("n");
-            start += 1;
-        }
+        int openParenthesesCount = 0;
         boolean containsParentheses = mathExpression.contains("(") || mathExpression.contains(")");
-        for (int i = start; i < mathExpression.length(); i++)
+        for (int i = 0; i < mathExpression.length(); i++)
         {
-            char currentChar = mathExpression.charAt(i);
-            if (currentChar == '-' && !isNumber(mathExpression.charAt(i - 1) + "") && !(mathExpression.charAt(i - 1) + "").equals(")"))
-                tmp.append("n");
-            else
-                tmp.append(currentChar);
-            if (balanceParentheses && containsParentheses)
-                if (currentChar == '(') openParenthesesCount++;
-                else if (currentChar == ')') openParenthesesCount--;
+            char currentChar = mathExpression.charAt(i), previousChar = i > 0 ? mathExpression.charAt(i - 1) : '\u0000';
+            switch (currentChar)
+            {
+                case '+':
+                    if (previousChar == 'e')
+                        tmp.append('+');
+                    else tmp.append(" + ");
+                    break;
+                case '-':
+                    if (i == 0)
+                        tmp.append("0 - ");
+                    else if (previousChar == 'e' || (!isNumber(previousChar + "") && previousChar != ')'))
+                        tmp.append('-');
+                    else tmp.append(" - ");
+                    break;
+                case '(':
+                    tmp.append("( ");
+                    if (balanceParentheses && containsParentheses) openParenthesesCount++;
+                    break;
+                case ')':
+                    tmp.append(" )");
+                    if (balanceParentheses && containsParentheses) openParenthesesCount--;
+                    break;
+                case '×':
+                case '*':
+                    tmp.append(" * ");
+                    break;
+                case '÷':
+                case '/':
+                    tmp.append(" / ");
+                    break;
+                case '^':
+                    tmp.append(" ^ ");
+                    break;
+                default:
+                    tmp.append(currentChar);
+            }
         }
         if (balanceParentheses && containsParentheses)
         {
             while (openParenthesesCount > 0)
             {
-                tmp.append(')');
+                tmp.append(" )");
                 openParenthesesCount--;
             }
             while (openParenthesesCount < 0)
             {
-                tmp.insert(0, '(');
+                tmp.insert(0, "( ");
                 openParenthesesCount++;
             }
         }
-        String result = tmp.toString().toLowerCase();
-        if (result.contains("e+")) result = result.replace("e+", "a");
-        if (result.contains("e-")) result = result.replace("e-", "s");
-        if (result.contains("(")) result = result.replace("(", "( ");
-        if (result.contains("+")) result = result.replace("+", " + ");
-        if (result.contains("-")) result = result.replace("-", " - ");
-        if (result.contains("×")) result = result.replace("×", " * ");
-        if (result.contains("*")) result = result.replace("*", " * ");
-        if (result.contains("÷")) result = result.replace("÷", " / ");
-        if (result.contains("/")) result = result.replace("/", " / ");
-        if (result.contains("^")) result = result.replace("^", " ^ ");
-        if (result.contains(")")) result = result.replace(")", " )");
-        if (result.contains("n")) result = result.replace("n", "-");
-        if (result.contains("a")) result = result.replace("a", "e+");
-        if (result.contains("s")) result = result.replace("s", "e-");
-        return result.trim().split(" ");
+        return tmp.toString().trim().split(" ");
     }
 
     /**
