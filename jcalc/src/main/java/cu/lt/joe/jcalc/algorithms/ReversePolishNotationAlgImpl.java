@@ -94,7 +94,7 @@ public class ReversePolishNotationAlgImpl extends AlgorithmImplementation
                 return formatResult(firstNumber.divide(secondNumber, 12, RoundingMode.HALF_UP));
             case "^":
             {
-                if (secondNumber.remainder(BigDecimal.ONE).equals(BigDecimal.ZERO))
+                if (secondNumber.compareTo(BigDecimal.ZERO) > 0 && secondNumber.remainder(BigDecimal.ONE).equals(BigDecimal.ZERO))
                     return formatResult(firstNumber.pow(secondNumber.intValue()));
                 return formatResult(BigDecimal.valueOf(FastMath.pow(firstNumber.doubleValue(), secondNumber.doubleValue())));
             }
