@@ -45,9 +45,9 @@ public class ReversePolishNotationAlgImpl extends AlgorithmImplementation
                     break;
                 number2 = solution.remove();
 
-                if (number2.isEmpty() || number2.equalsIgnoreCase("nan") || number1.isEmpty() || number1.equalsIgnoreCase("nan"))
+                if (number2.isEmpty() || number2.equals("nan") || number1.isEmpty() || number1.equals("nan"))
                     throw new NotNumericResultException();
-                else if (number2.equalsIgnoreCase("infinity") || number1.equalsIgnoreCase("infinity") || number2.equalsIgnoreCase("-infinity") || number1.equalsIgnoreCase("-infinity"))
+                else if (number2.equals("infinity") || number1.equals("infinity") || number2.equals("-infinity") || number1.equals("-infinity"))
                     throw new InfiniteResultException();
                 else
                     solution.push(makeOperation(new BigDecimal(number2), popped, new BigDecimal(number1)));
