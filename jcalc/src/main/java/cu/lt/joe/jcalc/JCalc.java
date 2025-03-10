@@ -46,22 +46,27 @@ public class JCalc
      */
     public static String performMathOperation(String mathExpression, boolean balanceParentheses)
     {
-        mathExpression = mathExpression.replaceAll("\\s+", "");
-        if (!mathExpression.isEmpty())
+        if (mathExpression != null)
         {
-            if (mathExpression.contains(",")) mathExpression = mathExpression.replace(",", ".");
-            if (mathExpression.contains(")(")) mathExpression = mathExpression.replace(")(", ")*(");
-            if (mathExpression.contains("()")) mathExpression = mathExpression.replace("()", "(1)");
-            if (mathExpression.matches(".*\\.\\s*[(+\\-×/÷^].*"))
-                mathExpression = mathExpression.replaceAll("\\.(?=[(+\\-×/÷^])", ".0");
-            if (mathExpression.matches(".*\\d\\(.*"))
-                mathExpression = mathExpression.replaceAll("(\\d)\\(", "$1*(");
-            String result = ReversePolishNotationAlgImpl.applyReversePolishNotationAlgorithm(ShuntingYardAlgImpl.applyShuntingYardAlgorithm(mathExpression, balanceParentheses));
-            if (result.isEmpty() || result.equalsIgnoreCase("nan"))
-                throw new NotNumericResultException();
-            else if (result.equalsIgnoreCase("infinity") || result.equalsIgnoreCase("-infinity"))
-                throw new InfiniteResultException();
-            return result;
+            mathExpression = mathExpression.replaceAll("\\s+", "").toLowerCase();
+            if (!mathExpression.isEmpty())
+            {
+                if (mathExpression.contains(",")) mathExpression = mathExpression.replace(",", ".");
+                if (mathExpression.contains(")("))
+                    mathExpression = mathExpression.replace(")(", ")*(");
+                if (mathExpression.contains("()"))
+                    mathExpression = mathExpression.replace("()", "(1)");
+                if (mathExpression.matches(".*\\.\\s*[(+\\-×/÷^].*"))
+                    mathExpression = mathExpression.replaceAll("\\.(?=[(+\\-×/÷^])", ".0");
+                if (mathExpression.matches(".*\\d\\(.*"))
+                    mathExpression = mathExpression.replaceAll("(\\d)\\(", "$1*(");
+                String result = ReversePolishNotationAlgImpl.applyReversePolishNotationAlgorithm(ShuntingYardAlgImpl.applyShuntingYardAlgorithm(mathExpression, balanceParentheses));
+                if (result.isEmpty() || result.equalsIgnoreCase("nan"))
+                    throw new NotNumericResultException();
+                else if (result.equalsIgnoreCase("infinity") || result.equalsIgnoreCase("-infinity"))
+                    throw new InfiniteResultException();
+                return result;
+            }
         }
         return null;
     }
