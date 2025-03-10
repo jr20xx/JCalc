@@ -46,7 +46,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             tmp.append("n");
             start += 1;
         }
-
+        boolean containsParentheses = mathExpression.contains("(") || mathExpression.contains(")");
         for (int i = start; i < mathExpression.length(); i++)
         {
             char currentChar = mathExpression.charAt(i);
@@ -54,11 +54,11 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                 tmp.append("n");
             else
                 tmp.append(currentChar);
-            if (balanceParentheses)
+            if (balanceParentheses && containsParentheses)
                 if (currentChar == '(') openParenthesesCount++;
                 else if (currentChar == ')') openParenthesesCount--;
         }
-        if (balanceParentheses)
+        if (balanceParentheses && containsParentheses)
         {
             while (openParenthesesCount > 0)
             {
