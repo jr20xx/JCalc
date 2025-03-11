@@ -33,29 +33,21 @@ public class ReversePolishNotationAlgImpl extends AlgorithmImplementation
      */
     public static String applyReversePolishNotationAlgorithm(ArrayDeque<String> rearrangedExpressionArray)
     {
-        String number1, number2;
-        ArrayDeque<String> solution = new ArrayDeque<>();
+        ArrayDeque<BigDecimal> solution = new ArrayDeque<>();
         while (!rearrangedExpressionArray.isEmpty())
         {
             String popped = rearrangedExpressionArray.remove();
             if (isOperator(popped))
             {
-                number1 = solution.remove();
+                BigDecimal number1 = solution.remove();
                 if (solution.isEmpty())
                     break;
-                number2 = solution.remove();
-
-                if (number2.isEmpty() || number2.equals("nan") || number1.isEmpty() || number1.equals("nan"))
-                    throw new NotNumericResultException();
-                else if (number2.equals("infinity") || number1.equals("infinity") || number2.equals("-infinity") || number1.equals("-infinity"))
-                    throw new InfiniteResultException();
-                else
-                    solution.push(makeOperation(new BigDecimal(number2), popped, new BigDecimal(number1)));
+                solution.push(makeOperation(solution.remove(), popped, number1));
             }
             else
-                solution.push(popped);
+                solution.push(new BigDecimal(popped));
         }
-        return solution.pop();
+        return formatResult(solution.pop());
     }
 
     private static String formatResult(BigDecimal result)
@@ -80,24 +72,25 @@ public class ReversePolishNotationAlgImpl extends AlgorithmImplementation
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
      * @since 1.0.0
      */
-    private static String makeOperation(BigDecimal firstNumber, String operator, BigDecimal secondNumber)
+    private static BigDecimal makeOperation(BigDecimal firstNumber, String operator, BigDecimal secondNumber)
     {
         switch (operator)
         {
             case "+":
-                return formatResult(firstNumber.add(secondNumber));
+                return firstNumber.add(secondNumber);
             case "-":
-                return formatResult(firstNumber.subtract(secondNumber));
+                return firstNumber.subtract(secondNumber);
             case "*":
-                return formatResult(firstNumber.multiply(secondNumber));
+                return firstNumber.multiply(secondNumber);
             case "/":
-                return formatResult(firstNumber.divide(secondNumber, 12, RoundingMode.HALF_UP));
+                return firstNumber.divide(secondNumber, 12, RoundingMode.HALF_UP);
             case "^":
-            {
-                if (secondNumber.compareTo(BigDecimal.ZERO) > 0 && secondNumber.remainder(BigDecimal.ONE).equals(BigDecimal.ZERO))
-                    return formatResult(firstNumber.pow(secondNumber.intValue()));
-                return formatResult(BigDecimal.valueOf(FastMath.pow(firstNumber.doubleValue(), secondNumber.doubleValue())));
-            }
+                double result = FastMath.pow(firstNumber.doubleValue(), secondNumber.doubleValue());
+                if (Double.isNaN(result))
+                    throw new NotNumericResultException();
+                else if (Double.isInfinite(result))
+                    throw new InfiniteResultException();
+                return BigDecimal.valueOf(result);
             default:
                 throw new UnregisteredOperationException("Not declared operation: " + operator);
         }
