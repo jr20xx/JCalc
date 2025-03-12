@@ -3,16 +3,18 @@ package cu.lt.joe.jcalc.algorithms;
 import java.math.BigDecimal;
 import java.util.ArrayDeque;
 import java.util.Stack;
+import cu.lt.joe.jcalc.JCalc;
 import cu.lt.joe.jcalc.exceptions.UnbalancedParenthesesException;
 import cu.lt.joe.jcalc.exceptions.UnregisteredOperationException;
 
 /**
- * This class contains the implementation of the Shunting Yard algorithm, alongside all the methods
- * needed to perform all the tasks required by it.
+ * This class contains a custom implementation of the Shunting Yard algorithm. Any method found
+ * here should not be called directly because they are made to be called only through the
+ * {@link JCalc} class. If you do call any of the methods declared here on their own, unexpected
+ * behaviors might arise.
  *
  * @author <a href="https://github.com/jr20xx">jr20xx</a>
- * @see #applyShuntingYardAlgorithm(String, boolean)
- * @since 1.0.0
+ * @since 1.2.1
  */
 public class ShuntingYardAlgImpl extends AlgorithmImplementation
 {
@@ -115,17 +117,17 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
     }
 
     /**
-     * Takes a Math expression and applies the Shunting Yard algorithm to it, returning a
-     * {@code String} that contains the result of solving the given Math expression.
+     * Takes a {@link String} containing a Math expression and applies the Shunting Yard algorithm
+     * to it, returning a {@link String} that contains the result of solving that given expression.
      *
-     * @param mathExpression     the Math expression to process with the Shunting Yard algorithm
+     * @param mathExpression     a {@link String} with the Math expression to process with the Shunting Yard algorithm
      * @param balanceParentheses a boolean parameter to specify whether to automatically attempt to balance the parentheses in the given Math expression
-     * @return A {@code String} that contains the result of solving the given Math expression
+     * @return A {@link String} that contains the result of solving the given Math expression
      * @throws UnbalancedParenthesesException when parentheses are not placed correctly and {@code balanceParentheses} parameter is set to false
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
-     * @since 1.0.0
+     * @since 1.2.1
      */
-    public static String applyShuntingYardAlgorithm(String mathExpression, boolean balanceParentheses)
+    public static String solveMathExpression(String mathExpression, boolean balanceParentheses)
     {
         String elements[] = getItemsArray(mathExpression, balanceParentheses);
         ArrayDeque<BigDecimal> output = new ArrayDeque<>();

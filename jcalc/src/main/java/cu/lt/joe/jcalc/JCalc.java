@@ -1,71 +1,110 @@
 package cu.lt.joe.jcalc;
 
+import cu.lt.joe.jcalc.algorithms.ReversePolishNotationAlgImpl;
 import cu.lt.joe.jcalc.algorithms.ShuntingYardAlgImpl;
 import cu.lt.joe.jcalc.exceptions.InfiniteResultException;
 import cu.lt.joe.jcalc.exceptions.NotNumericResultException;
-import cu.lt.joe.jcalc.exceptions.UnbalancedParenthesesException;
-import cu.lt.joe.jcalc.exceptions.UnregisteredOperationException;
 
 /**
  * This class is the entry point of this library. It includes the method to solve Math operations
  * and is the recommended portal to solve Math expressions using this library.
  *
  * @author <a href="https://github.com/jr20xx">jr20xx</a>
- * @see #performMathOperation(String, boolean)
- * @since 1.0.0
+ * @see #with(SolvingMethod)
+ * @since 1.2.1
  */
 public class JCalc
 {
+    private final SolvingMethod solvingMethod;
+
+    private JCalc(SolvingMethod solvingMethod)
+    {
+        this.solvingMethod = solvingMethod;
+    }
+
     /**
-     * Performs a Math operation and returns its result. If the expression contains any whitespaces,
-     * they'll be automatically removed. If the expression is empty, {@code null} will be
-     * returned.
-     * <p>
-     * Besides parentheses, valid Math symbols that can be used in the expression are <b>+</b>, <b>-</b>, <b>*</b>, <b>×</b>, <b>/</b>, <b>÷</b> and <b>^</b>.
-     * <p>
-     * If you want to automatically attempt to balance the parentheses contained in the Math expression, set the {@code balanceParentheses} parameter to {@code true}.
-     * <p>
-     * Some valid Math expressions and their expected results are:
-     * <ul>
-     *     <li><b>((25*3-9)/(4+2)+5^3)-(48/8)*(7+2)+14, <i>96</i></b></li>
-     *     <li><b>2 * 3 + 5 * 2^3, <i>46</i></b></li>
-     *     <li><b>3 + 4 * 2 / (1 - 5)^2^3, <i>3.000122070313</i></b></li>
-     *     <li><b>(8^2 + 15 * 4 - 7) / (3 + 5)*(12 - 9) + 6^2 - (18 /3) + 11, <i>84.875</i></b></li>
-     * </ul>
+     * Sets the method to solve the Math expression that will be provided. Available solving
+     * methods are {@link SolvingMethod#ShuntingYardAlgorithm} and {@link SolvingMethod#ReversePolishNotationAlgorithm};
+     * declared in the {@link SolvingMethod} class.
      *
-     * @param mathExpression     a {@code String} containing the Math expression to solve
-     * @param balanceParentheses a {@code boolean} parameter to specify whether to automatically attempt to balance parentheses in the given Math expression
-     * @return A {@code String} containing the result of the given Math expression when is not empty or invalid
-     * @throws UnbalancedParenthesesException when parentheses are not placed correctly and {@code balanceParentheses} parameter is set to {@code false}
-     * @throws NotNumericResultException      when a not numeric (NaN) value is obtained
-     * @throws InfiniteResultException        when an Infinite result is obtained
-     * @throws UnregisteredOperationException when trying to perform an undefined operation
+     * @param solvingMethod The desired solving method to parse and solve any given Math expression
+     * @return A new instance of the JCalc class with the selected solving method
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
-     * @since 1.0.0
+     * @see SolvingMethod
+     * @since 1.2.1
      */
-    public static String performMathOperation(String mathExpression, boolean balanceParentheses)
+    public static JCalc with(SolvingMethod solvingMethod)
+    {
+        return new JCalc(solvingMethod);
+    }
+
+    /**
+     * Takes a Math expression and returns its result after applying the selected solving method to it.
+     * No matter which method you select, {@code null} will be returned if the expression is empty. Valid
+     * Math symbols that can be used in the expression are <b>+</b>, <b>-</b>, <b>*</b>, <b>×</b>, <b>/</b>, <b>÷</b> and <b>^</b>.
+     *
+     * <p>
+     * Please, notice that <b>parentheses are only valid with the Shunting Yard algorithm</b> as the
+     * selected method to solve the given expression and so it'll be the {@code balanceParentheses}
+     * parameter. Any parenthesis and the {@code balanceParentheses} parameter will be ignored if
+     * the Shunting Yard algorithm is not in use.
+     *
+     * @param mathExpression     a {@link String} containing the Math expression to solve
+     * @param balanceParentheses a {@code boolean} parameter to specify whether to automatically attempt
+     *                           to balance the parentheses in the given Math expression when the Shunting
+     *                           Yard algorithm is selected
+     * @return A {@link String} containing the result of solving the given Math expression
+     * @throws NotNumericResultException when a not numeric (NaN) value is obtained
+     * @throws InfiniteResultException   when an Infinite result is obtained
+     * @author <a href="https://github.com/jr20xx">jr20xx</a>
+     * @see #with(SolvingMethod)
+     * @since 1.2.1
+     */
+    public String solve(String mathExpression, boolean balanceParentheses)
     {
         if (mathExpression != null)
         {
-            mathExpression = mathExpression.replaceAll("\\s+", "").toLowerCase();
-            if (!mathExpression.isEmpty())
+            String result = "";
+            switch (solvingMethod)
             {
-                if (mathExpression.contains(",")) mathExpression = mathExpression.replace(",", ".");
-                if (mathExpression.contains(")("))
-                    mathExpression = mathExpression.replace(")(", ")*(");
-                if (mathExpression.contains("()"))
-                    mathExpression = mathExpression.replace("()", "(1)");
-                if (mathExpression.matches(".*\\.\\s*[(+\\-×/÷^].*"))
-                    mathExpression = mathExpression.replaceAll("\\.(?=[(+\\-×/÷^])", ".0");
-                if (mathExpression.matches(".*\\d\\(.*"))
-                    mathExpression = mathExpression.replaceAll("(\\d)\\(", "$1*(");
-                String result = ShuntingYardAlgImpl.applyShuntingYardAlgorithm(mathExpression, balanceParentheses);
-                if (result.isEmpty() || result.equalsIgnoreCase("nan"))
-                    throw new NotNumericResultException();
-                else if (result.equalsIgnoreCase("infinity") || result.equalsIgnoreCase("-infinity"))
-                    throw new InfiniteResultException();
-                return result;
+                case ShuntingYardAlgorithm:
+                    if (mathExpression.matches(".*\\s+.*"))
+                        mathExpression = mathExpression.replaceAll("\\s+", "");
+                    if (!mathExpression.isEmpty())
+                    {
+                        if (mathExpression.contains(","))
+                            mathExpression = mathExpression.replace(",", ".");
+                        if (mathExpression.contains(")("))
+                            mathExpression = mathExpression.replace(")(", ")*(");
+                        if (mathExpression.contains("()"))
+                            mathExpression = mathExpression.replace("()", "(1)");
+                        if (mathExpression.matches(".*\\.\\s*[(+\\-×/÷^].*"))
+                            mathExpression = mathExpression.replaceAll("\\.(?=[(+\\-×/÷^])", ".0");
+                        if (mathExpression.matches(".*\\d\\(.*"))
+                            mathExpression = mathExpression.replaceAll("(\\d)\\(", "$1*(");
+                        result = ShuntingYardAlgImpl.solveMathExpression(mathExpression, balanceParentheses);
+                    }
+                    break;
+                case ReversePolishNotationAlgorithm:
+                    if (mathExpression.contains(";"))
+                        mathExpression = mathExpression.replace(";", " ");
+                    if (mathExpression.matches(".*\\s+.*"))
+                        mathExpression = mathExpression.replaceAll("\\s+", " ").trim();
+                    if (!mathExpression.isEmpty())
+                    {
+                        if (mathExpression.contains(","))
+                            mathExpression = mathExpression.replace(",", ".");
+                        result = ReversePolishNotationAlgImpl.solveMathExpression(mathExpression);
+                    }
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid solving method set");
             }
+            if (result.isEmpty() || result.equalsIgnoreCase("nan"))
+                throw new NotNumericResultException();
+            else if (result.toLowerCase().contains("infinity"))
+                throw new InfiniteResultException();
+            return result;
         }
         return null;
     }

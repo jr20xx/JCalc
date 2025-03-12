@@ -18,16 +18,16 @@ import cu.lt.joe.jcalc.exceptions.UnregisteredOperationException;
 public class AlgorithmImplementation
 {
     /**
-     * Checks when a given String with a single character is a valid Math operator
+     * Checks when a given {@link String} is a valid Math operator
      *
-     * @param character String with a single character to check
-     * @return <code>true</code> or <code>false</code> when the character is an operator or not
+     * @param possibleOperator the {@link String} to check
+     * @return {@code true} or {@code false} when the {@link String} is an operator or not
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
      * @since 1.0.0
      */
-    protected static boolean isOperator(String character)
+    protected static boolean isOperator(String possibleOperator)
     {
-        return character.equals("+") || character.equals("-") || character.equals("*") || character.equals("/") || character.equals("^");
+        return possibleOperator.equals("+") || possibleOperator.equals("-") || possibleOperator.equals("*") || possibleOperator.equals("/") || possibleOperator.equals("^");
     }
 
     /**
@@ -50,7 +50,7 @@ public class AlgorithmImplementation
      * @param secondOperand the second operand to perform the operation
      * @param operator      the operator to define the operation that will be performed
      * @param firstOperand  the first operand to perform the operation
-     * @return A {@code String} with the result of performing the specified operation with the given operands
+     * @return A {@link String} with the result of performing the specified operation with the given operands
      * @throws UnregisteredOperationException when the operator is not registered
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
      * @since 1.2.0
@@ -80,12 +80,12 @@ public class AlgorithmImplementation
     }
 
     /**
-     * Takes a {@code BigDecimal} object, sets its maximum scale to 12, removes any trailing zeros
+     * Takes a {@link BigDecimal} object, sets its maximum scale to 12, removes any trailing zeros
      * from it, converts it to Scientific Notation if its bigger than 1e12 and outputs it as
-     * a plain {@code String}.
+     * a plain {@link String}.
      *
-     * @param bigDecimal the {@code BigDecimal} value to format
-     * @return A {@code String} containing the provided {@code BigDecimal} number formatted
+     * @param bigDecimal the {@link BigDecimal} value to format
+     * @return A {@link String} containing the provided {@link BigDecimal} number formatted
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
      * @since 1.2.0
      */
