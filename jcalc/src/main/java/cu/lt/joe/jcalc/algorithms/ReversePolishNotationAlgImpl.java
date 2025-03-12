@@ -1,13 +1,11 @@
 package cu.lt.joe.jcalc.algorithms;
 
-import org.apache.commons.math3.util.FastMath;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayDeque;
 import cu.lt.joe.jcalc.exceptions.InfiniteResultException;
 import cu.lt.joe.jcalc.exceptions.NotNumericResultException;
-import cu.lt.joe.jcalc.exceptions.UnregisteredOperationException;
 
 /**
  * This class contains the implementation of the Reverse Polish Notation algorithm, alongside all
@@ -42,7 +40,7 @@ public class ReversePolishNotationAlgImpl extends AlgorithmImplementation
                 BigDecimal number1 = solution.remove();
                 if (solution.isEmpty())
                     break;
-                solution.push(makeOperation(solution.remove(), popped, number1));
+                solution.push(makeOperation(number1, popped, solution.remove()));
             }
             else
                 solution.push(new BigDecimal(popped));
@@ -58,41 +56,5 @@ public class ReversePolishNotationAlgImpl extends AlgorithmImplementation
         if (result.abs().compareTo(BigDecimal.valueOf(1e12)) >= 0)
             return new DecimalFormat("0.############E0").format(result);
         return result.toPlainString();
-    }
-
-    /**
-     * Takes a number, an operator and another number to perform the required operation with those
-     * numbers given the specified operator.
-     *
-     * @param firstNumber  the first number to operate with
-     * @param operator     the operator to define the operation that will be performed
-     * @param secondNumber the second number to operate with
-     * @return an String with the result of performing the specified operation with those numbers
-     * @throws UnregisteredOperationException when the operator is not registered
-     * @author <a href="https://github.com/jr20xx">jr20xx</a>
-     * @since 1.0.0
-     */
-    private static BigDecimal makeOperation(BigDecimal firstNumber, String operator, BigDecimal secondNumber)
-    {
-        switch (operator)
-        {
-            case "+":
-                return firstNumber.add(secondNumber);
-            case "-":
-                return firstNumber.subtract(secondNumber);
-            case "*":
-                return firstNumber.multiply(secondNumber);
-            case "/":
-                return firstNumber.divide(secondNumber, 12, RoundingMode.HALF_UP);
-            case "^":
-                double result = FastMath.pow(firstNumber.doubleValue(), secondNumber.doubleValue());
-                if (Double.isNaN(result))
-                    throw new NotNumericResultException();
-                else if (Double.isInfinite(result))
-                    throw new InfiniteResultException();
-                return BigDecimal.valueOf(result);
-            default:
-                throw new UnregisteredOperationException("Not declared operation: " + operator);
-        }
     }
 }
