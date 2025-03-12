@@ -1,13 +1,10 @@
 package cu.lt.joe.jcalc.algorithms;
 
-import org.apache.commons.math3.util.FastMath;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayDeque;
 import java.util.Stack;
-import cu.lt.joe.jcalc.exceptions.InfiniteResultException;
-import cu.lt.joe.jcalc.exceptions.NotNumericResultException;
 import cu.lt.joe.jcalc.exceptions.UnbalancedParenthesesException;
 import cu.lt.joe.jcalc.exceptions.UnregisteredOperationException;
 
@@ -114,42 +111,6 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             case "+":
             case "-":
                 return 1;
-            default:
-                throw new UnregisteredOperationException("Not declared operation: " + operator);
-        }
-    }
-
-    /**
-     * Takes a number, an operator and another number to perform the required operation with those
-     * numbers given the specified operator.
-     *
-     * @param secondOperand the second operand to perform the operation
-     * @param operator      the operator to define the operation that will be performed
-     * @param firstOperand  the first operand to perform the operation
-     * @return A {@code String} with the result of performing the specified operation with the given operands
-     * @throws UnregisteredOperationException when the operator is not registered
-     * @author <a href="https://github.com/jr20xx">jr20xx</a>
-     * @since 1.2.0
-     */
-    private static BigDecimal makeOperation(BigDecimal secondOperand, String operator, BigDecimal firstOperand)
-    {
-        switch (operator)
-        {
-            case "+":
-                return firstOperand.add(secondOperand);
-            case "-":
-                return firstOperand.subtract(secondOperand);
-            case "*":
-                return firstOperand.multiply(secondOperand);
-            case "/":
-                return firstOperand.divide(secondOperand, 12, RoundingMode.HALF_UP);
-            case "^":
-                double result = FastMath.pow(firstOperand.doubleValue(), secondOperand.doubleValue());
-                if (Double.isNaN(result))
-                    throw new NotNumericResultException();
-                else if (Double.isInfinite(result))
-                    throw new InfiniteResultException();
-                return BigDecimal.valueOf(result);
             default:
                 throw new UnregisteredOperationException("Not declared operation: " + operator);
         }
