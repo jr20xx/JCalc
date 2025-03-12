@@ -22,19 +22,6 @@ import cu.lt.joe.jcalc.exceptions.UnregisteredOperationException;
 public class ShuntingYardAlgImpl extends AlgorithmImplementation
 {
     /**
-     * Checks when a given String is a valid number using a regular expression.
-     *
-     * @param number String containing a number
-     * @return {@code true} or {@code false} when the character is a number or not
-     * @author <a href="https://github.com/jr20xx">jr20xx</a>
-     * @since 1.0.0
-     */
-    private static boolean isNumber(String number)
-    {
-        return number.matches("^[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][+-]?\\d+)?$");
-    }
-
-    /**
      * Takes a Math expression and returns an array containing all of its items separated.
      *
      * @param mathExpression     Math expression to split
