@@ -1,8 +1,6 @@
 package cu.lt.joe.jcalc.algorithms;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.ArrayDeque;
 import cu.lt.joe.jcalc.exceptions.InfiniteResultException;
 import cu.lt.joe.jcalc.exceptions.NotNumericResultException;
@@ -46,15 +44,5 @@ public class ReversePolishNotationAlgImpl extends AlgorithmImplementation
                 solution.push(new BigDecimal(popped));
         }
         return formatResult(solution.pop());
-    }
-
-    private static String formatResult(BigDecimal result)
-    {
-        if (result.scale() != 12)
-            result = result.setScale(12, RoundingMode.HALF_UP);
-        result = result.stripTrailingZeros();
-        if (result.abs().compareTo(BigDecimal.valueOf(1e12)) >= 0)
-            return new DecimalFormat("0.############E0").format(result);
-        return result.toPlainString();
     }
 }
