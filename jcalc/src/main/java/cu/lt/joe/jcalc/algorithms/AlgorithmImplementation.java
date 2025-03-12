@@ -3,6 +3,7 @@ package cu.lt.joe.jcalc.algorithms;
 import org.apache.commons.math3.util.FastMath;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import cu.lt.joe.jcalc.exceptions.InfiniteResultException;
 import cu.lt.joe.jcalc.exceptions.NotNumericResultException;
 import cu.lt.joe.jcalc.exceptions.UnregisteredOperationException;
@@ -76,5 +77,25 @@ public class AlgorithmImplementation
             default:
                 throw new UnregisteredOperationException("Not declared operation: " + operator);
         }
+    }
+
+    /**
+     * Takes a {@code BigDecimal} object, sets its maximum scale to 12, removes any trailing zeros
+     * from it, converts it to Scientific Notation if its bigger than 1e12 and outputs it as
+     * a plain {@code String}.
+     *
+     * @param bigDecimal the {@code BigDecimal} value to format
+     * @return A {@code String} containing the provided {@code BigDecimal} number formatted
+     * @author <a href="https://github.com/jr20xx">jr20xx</a>
+     * @since 1.2.0
+     */
+    protected static String formatResult(BigDecimal bigDecimal)
+    {
+        if (bigDecimal.scale() != 12)
+            bigDecimal = bigDecimal.setScale(12, RoundingMode.HALF_UP);
+        bigDecimal = bigDecimal.stripTrailingZeros();
+        if (bigDecimal.abs().compareTo(BigDecimal.valueOf(1e12)) >= 0)
+            return new DecimalFormat("0.############E0").format(bigDecimal);
+        return bigDecimal.toPlainString();
     }
 }
