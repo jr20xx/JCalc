@@ -17,7 +17,7 @@ public class AlgorithmImplementation
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
      * @since 1.0.0
      */
-    static boolean isOperator(String character)
+    protected static boolean isOperator(String character)
     {
         return character.equals("+") || character.equals("-") || character.equals("*") || character.equals("/") || character.equals("^");
     }
