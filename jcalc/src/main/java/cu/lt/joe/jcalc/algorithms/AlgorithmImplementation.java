@@ -21,4 +21,17 @@ public class AlgorithmImplementation
     {
         return character.equals("+") || character.equals("-") || character.equals("*") || character.equals("/") || character.equals("^");
     }
+
+    /**
+     * Checks when a given String is a valid number using a regular expression.
+     *
+     * @param number String containing a number
+     * @return {@code true} or {@code false} when the character is a number or not
+     * @author <a href="https://github.com/jr20xx">jr20xx</a>
+     * @since 1.0.0
+     */
+    protected static boolean isNumber(String number)
+    {
+        return number.matches("^[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][+-]?\\d+)?$");
+    }
 }
