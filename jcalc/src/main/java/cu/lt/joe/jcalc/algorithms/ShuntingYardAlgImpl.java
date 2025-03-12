@@ -1,7 +1,13 @@
 package cu.lt.joe.jcalc.algorithms;
 
+import org.apache.commons.math3.util.FastMath;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayDeque;
 import java.util.Stack;
+import cu.lt.joe.jcalc.exceptions.InfiniteResultException;
+import cu.lt.joe.jcalc.exceptions.NotNumericResultException;
 import cu.lt.joe.jcalc.exceptions.UnbalancedParenthesesException;
 import cu.lt.joe.jcalc.exceptions.UnregisteredOperationException;
 
@@ -19,7 +25,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
      * Checks when a given String is a valid number using a regular expression.
      *
      * @param number String containing a number
-     * @return <code>true</code> or <code>false</code> when the character is a number or not
+     * @return {@code true} or {@code false} when the character is a number or not
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
      * @since 1.0.0
      */
@@ -127,31 +133,86 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
     }
 
     /**
-     * Takes a Math expression and applies the Shunting Yard algorithm to it, returning an
-     * <code>ArrayDeque</code> object that contains the items ready to be processed
-     * with the Reverse Polish Notation algorithm.
+     * Takes a number, an operator and another number to perform the required operation with those
+     * numbers given the specified operator.
+     *
+     * @param secondOperand the second operand to perform the operation
+     * @param operator      the operator to define the operation that will be performed
+     * @param firstOperand  the first operand to perform the operation
+     * @return A {@code String} with the result of performing the specified operation with the given operands
+     * @throws UnregisteredOperationException when the operator is not registered
+     * @author <a href="https://github.com/jr20xx">jr20xx</a>
+     * @since 1.2.0
+     */
+    private static BigDecimal makeOperation(BigDecimal secondOperand, String operator, BigDecimal firstOperand)
+    {
+        switch (operator)
+        {
+            case "+":
+                return firstOperand.add(secondOperand);
+            case "-":
+                return firstOperand.subtract(secondOperand);
+            case "*":
+                return firstOperand.multiply(secondOperand);
+            case "/":
+                return firstOperand.divide(secondOperand, 12, RoundingMode.HALF_UP);
+            case "^":
+                double result = FastMath.pow(firstOperand.doubleValue(), secondOperand.doubleValue());
+                if (Double.isNaN(result))
+                    throw new NotNumericResultException();
+                else if (Double.isInfinite(result))
+                    throw new InfiniteResultException();
+                return BigDecimal.valueOf(result);
+            default:
+                throw new UnregisteredOperationException("Not declared operation: " + operator);
+        }
+    }
+
+    /**
+     * Takes a {@code BigDecimal} object, sets its maximum scale to 12, removes any trailing zeros
+     * from it, converts it to Scientific Notation if its bigger than 1e12 and outputs it as
+     * a plain {@code String}.
+     *
+     * @param bigDecimal the {@code BigDecimal} value to format
+     * @return A {@code String} containing the provided {@code BigDecimal} number formatted
+     * @author <a href="https://github.com/jr20xx">jr20xx</a>
+     * @since 1.2.0
+     */
+    private static String formatResult(BigDecimal bigDecimal)
+    {
+        if (bigDecimal.scale() != 12)
+            bigDecimal = bigDecimal.setScale(12, RoundingMode.HALF_UP);
+        bigDecimal = bigDecimal.stripTrailingZeros();
+        if (bigDecimal.abs().compareTo(BigDecimal.valueOf(1e12)) >= 0)
+            return new DecimalFormat("0.############E0").format(bigDecimal);
+        return bigDecimal.toPlainString();
+    }
+
+    /**
+     * Takes a Math expression and applies the Shunting Yard algorithm to it, returning a
+     * {@code String} that contains the result of solving the given Math expression.
      *
      * @param mathExpression     the Math expression to process with the Shunting Yard algorithm
-     * @param balanceParentheses a boolean parameter to specify whether to automatically attempt to balance parentheses in the given Math expression
-     * @return An <code>ArrayDeque</code> with the elements rearranged with the Shunting Yard algorithm
-     * @throws UnbalancedParenthesesException when parentheses are not placed correctly and <code>balanceParentheses</code> parameter is set to false
+     * @param balanceParentheses a boolean parameter to specify whether to automatically attempt to balance the parentheses in the given Math expression
+     * @return A {@code String} that contains the result of solving the given Math expression
+     * @throws UnbalancedParenthesesException when parentheses are not placed correctly and {@code balanceParentheses} parameter is set to false
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
      * @since 1.0.0
      */
-    public static ArrayDeque<String> applyShuntingYardAlgorithm(String mathExpression, boolean balanceParentheses)
+    public static String applyShuntingYardAlgorithm(String mathExpression, boolean balanceParentheses)
     {
         String elements[] = getItemsArray(mathExpression, balanceParentheses);
-        ArrayDeque<String> output = new ArrayDeque<>();
+        ArrayDeque<BigDecimal> output = new ArrayDeque<>();
         Stack<String> operators = new Stack<>();
 
         for (String element : elements)
         {
             if (isNumber(element))
-                output.add(element);
+                output.push(new BigDecimal(element));
             else if (isOperator(element))
             {
                 while (!operators.isEmpty() && !operators.peek().equals("(") && getOperatorPrecedence(operators.peek()) >= getOperatorPrecedence(element) && !element.equals("^"))
-                    output.add(operators.pop());
+                    output.push(makeOperation(output.pop(), operators.pop(), output.pop()));
                 operators.push(element);
             }
             else if (element.equals("("))
@@ -159,7 +220,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             else if (element.equals(")"))
             {
                 while (!operators.isEmpty() && !operators.peek().equals("("))
-                    output.add(operators.pop());
+                    output.push(makeOperation(output.pop(), operators.pop(), output.pop()));
                 if (operators.isEmpty())
                     throw new UnbalancedParenthesesException("Parentheses are not well placed");
                 operators.pop();
@@ -170,8 +231,8 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
         {
             if (operators.peek().equals("("))
                 throw new UnbalancedParenthesesException("Parentheses are not well placed");
-            output.add(operators.pop());
+            output.push(makeOperation(output.pop(), operators.pop(), output.pop()));
         }
-        return output;
+        return formatResult(output.pop());
     }
 }
