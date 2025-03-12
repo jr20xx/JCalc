@@ -2,37 +2,36 @@ package cu.lt.joe.jcalc.algorithms;
 
 import java.math.BigDecimal;
 import java.util.ArrayDeque;
-import cu.lt.joe.jcalc.exceptions.InfiniteResultException;
-import cu.lt.joe.jcalc.exceptions.NotNumericResultException;
+import cu.lt.joe.jcalc.JCalc;
 
 /**
- * This class contains the implementation of the Reverse Polish Notation algorithm, alongside all
- * the methods needed to perform all the tasks required by it.
+ * This class contains a custom implementation of the Reverse Polish Notation algorithm. Any method
+ * found here should not be called directly because they are made to be called only through the
+ * {@link JCalc} class. If you do call any of the methods declared here on their own, unexpected
+ * behaviors might arise.
  *
  * @author <a href="https://github.com/jr20xx">jr20xx</a>
- * @see #applyReversePolishNotationAlgorithm(ArrayDeque)
- * @since 1.0.0
+ * @since 1.2.1
  */
 public class ReversePolishNotationAlgImpl extends AlgorithmImplementation
 {
     /**
-     * Takes an <code>ArrayDeque</code> object that contains the items from the Math expression
-     * processed with the Shunting Yard algorithm and runs the Reverse Polish Notation algorithm
-     * over it, returning its result.
+     * Takes a {@link String} object that contains the Math expression in Reverse Polish Notation, splits
+     * it using whitespaces as separators, solves the expression and returns its result, as a {@link String}.
      *
-     * @param rearrangedExpressionArray the <code>ArrayDeque</code> obtained with the Shunting Yard algorithm
+     * @param mathExpression a {@link String} containing a Math expression in Reverse Polish Notation
      * @return a String with the result of the given Math expression
-     * @throws NotNumericResultException when a not numeric (NaN) value is obtained
-     * @throws InfiniteResultException   when an Infinite result is obtained
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
-     * @since 1.0.0
+     * @since 1.2.1
      */
-    public static String applyReversePolishNotationAlgorithm(ArrayDeque<String> rearrangedExpressionArray)
+    public static String solveMathExpression(String mathExpression)
     {
         ArrayDeque<BigDecimal> solution = new ArrayDeque<>();
-        while (!rearrangedExpressionArray.isEmpty())
+        for (String popped : mathExpression.split(" "))
         {
-            String popped = rearrangedExpressionArray.remove();
+            if (popped.equals("×")) popped = "*";
+            else if (popped.equals("÷")) popped = "/";
+
             if (isOperator(popped))
             {
                 BigDecimal number1 = solution.remove();
