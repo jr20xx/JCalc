@@ -139,9 +139,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
 
         for (String element : elements)
         {
-            if (isNumber(element))
-                output.push(new BigDecimal(element));
-            else if (isOperator(element))
+            if (isOperator(element))
             {
                 while (!operators.isEmpty() && !operators.peek().equals("(") && getOperatorPrecedence(operators.peek()) >= getOperatorPrecedence(element) && !element.equals("^"))
                     output.push(makeOperation(output.pop(), operators.pop(), output.pop()));
@@ -157,6 +155,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                     throw new UnbalancedParenthesesException("Parentheses are not well placed");
                 operators.pop();
             }
+            else output.push(new BigDecimal(element));
         }
 
         while (!operators.isEmpty())
