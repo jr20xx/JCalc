@@ -72,6 +72,7 @@ public class JCalc
                         mathExpression = mathExpression.replaceAll("\\s+", "");
                     if (!mathExpression.isEmpty())
                     {
+                        mathExpression = mathExpression.toLowerCase();
                         if (mathExpression.contains(","))
                             mathExpression = mathExpression.replace(",", ".");
                         if (mathExpression.contains(")("))
