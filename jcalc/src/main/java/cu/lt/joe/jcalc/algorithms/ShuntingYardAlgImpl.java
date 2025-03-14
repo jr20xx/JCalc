@@ -2,8 +2,9 @@ package cu.lt.joe.jcalc.algorithms;
 
 import java.math.BigDecimal;
 import java.util.ArrayDeque;
-import java.util.Stack;
+import java.util.ArrayList;
 import cu.lt.joe.jcalc.JCalc;
+import cu.lt.joe.jcalc.exceptions.SyntaxErrorException;
 import cu.lt.joe.jcalc.exceptions.UnbalancedParenthesesException;
 import cu.lt.joe.jcalc.exceptions.UnregisteredOperationException;
 
@@ -23,69 +24,72 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
      *
      * @param mathExpression     Math expression to split
      * @param balanceParentheses a boolean parameter to specify whether to automatically attempt to balance parentheses
-     * @return An array containing all the items of the expression separated
+     * @return An {@link ArrayList} containing all the items of the expression separated
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
-     * @since 1.0.0
+     * @since 1.2.2
      */
-    private static String[] getItemsArray(String mathExpression, boolean balanceParentheses)
+    private static ArrayList<String> getItemsArray(String mathExpression, boolean balanceParentheses)
     {
-        StringBuilder tmp = new StringBuilder();
+        ArrayList<String> output = new ArrayList<>();
+        StringBuilder numberBuilder = new StringBuilder();
         int openParenthesesCount = 0;
         boolean containsParentheses = mathExpression.contains("(") || mathExpression.contains(")");
+
         for (int i = 0; i < mathExpression.length(); i++)
         {
-            char currentChar = mathExpression.charAt(i), previousChar = i > 0 ? mathExpression.charAt(i - 1) : '\u0000';
-            switch (currentChar)
+            char currentChar = mathExpression.charAt(i);
+            char previousChar = i > 0 ? mathExpression.charAt(i - 1) : '\u0000';
+
+            if (isNumber(currentChar + "") || currentChar == '.' || currentChar == 'e')
+                numberBuilder.append(currentChar);
+            else if ((currentChar == '+' || currentChar == '-') && previousChar == 'e')
+                numberBuilder.append(currentChar);
+            else if (isOperator(currentChar + "") || currentChar == '(' || currentChar == ')')
             {
-                case '+':
-                    if (previousChar == 'e')
-                        tmp.append('+');
-                    else tmp.append(" + ");
-                    break;
-                case '-':
-                    if (i == 0)
-                        tmp.append("0 - ");
-                    else if (previousChar == 'e' || (!isNumber(previousChar + "") && previousChar != ')'))
-                        tmp.append('-');
-                    else tmp.append(" - ");
-                    break;
-                case '(':
-                    tmp.append("( ");
+                if (numberBuilder.length() > 0)
+                {
+                    output.add(numberBuilder.toString());
+                    numberBuilder.setLength(0);
+                }
+
+                if (currentChar == '-' && (i == 0 || previousChar == '(' || isOperator(previousChar + "")))
+                {
+                    output.add("0");
+                    output.add("-");
+                }
+                else if (currentChar == '(')
+                {
+                    output.add(currentChar + "");
                     if (balanceParentheses && containsParentheses) openParenthesesCount++;
-                    break;
-                case ')':
-                    tmp.append(" )");
+                }
+                else if (currentChar == ')')
+                {
+                    output.add(currentChar + "");
                     if (balanceParentheses && containsParentheses) openParenthesesCount--;
-                    break;
-                case '×':
-                case '*':
-                    tmp.append(" * ");
-                    break;
-                case '÷':
-                case '/':
-                    tmp.append(" / ");
-                    break;
-                case '^':
-                    tmp.append(" ^ ");
-                    break;
-                default:
-                    tmp.append(currentChar);
+                }
+                else
+                    output.add(currentChar + "");
             }
+            else
+                throw new SyntaxErrorException("Illegal character found: " + currentChar);
         }
+
+        if (numberBuilder.length() > 0)
+            output.add(numberBuilder.toString());
         if (balanceParentheses && containsParentheses)
         {
             while (openParenthesesCount > 0)
             {
-                tmp.append(" )");
+                output.add(")");
                 openParenthesesCount--;
             }
             while (openParenthesesCount < 0)
             {
-                tmp.insert(0, "( ");
+                output.add(0, "(");
                 openParenthesesCount++;
             }
         }
-        return tmp.toString().trim().split(" ");
+        return output;
     }
 
     /**
@@ -129,9 +133,9 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
      */
     public static String solveMathExpression(String mathExpression, boolean balanceParentheses)
     {
-        String elements[] = getItemsArray(mathExpression, balanceParentheses);
+        ArrayList<String> elements = getItemsArray(mathExpression, balanceParentheses);
         ArrayDeque<BigDecimal> output = new ArrayDeque<>();
-        Stack<String> operators = new Stack<>();
+        ArrayDeque<String> operators = new ArrayDeque<>();
 
         for (String element : elements)
         {
