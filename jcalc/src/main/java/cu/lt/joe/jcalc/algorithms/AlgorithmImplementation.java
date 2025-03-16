@@ -6,7 +6,6 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import cu.lt.joe.jcalc.exceptions.InfiniteResultException;
 import cu.lt.joe.jcalc.exceptions.NotNumericResultException;
-import cu.lt.joe.jcalc.exceptions.UnregisteredOperationException;
 
 /**
  * This class contains the footprint for implementing the algorithms used in this library. Any method
@@ -27,7 +26,7 @@ public class AlgorithmImplementation
      */
     protected static boolean isOperator(String possibleOperator)
     {
-        return possibleOperator.equals("+") || possibleOperator.equals("-") || possibleOperator.equals("*") || possibleOperator.equals("/") || possibleOperator.equals("^");
+        return possibleOperator.equals("+") || possibleOperator.equals("-") || possibleOperator.equals("*") || possibleOperator.equals("/") || possibleOperator.equals("^") || possibleOperator.equals("×") || possibleOperator.equals("÷");
     }
 
     /**
@@ -51,7 +50,6 @@ public class AlgorithmImplementation
      * @param operator      the operator to define the operation that will be performed
      * @param firstOperand  the first operand to perform the operation
      * @return A {@link String} with the result of performing the specified operation with the given operands
-     * @throws UnregisteredOperationException when the operator is not registered
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
      * @since 1.2.0
      */
@@ -75,7 +73,7 @@ public class AlgorithmImplementation
                     throw new InfiniteResultException();
                 return BigDecimal.valueOf(result);
             default:
-                throw new UnregisteredOperationException("Not declared operation: " + operator);
+                return BigDecimal.ZERO;
         }
     }
 
