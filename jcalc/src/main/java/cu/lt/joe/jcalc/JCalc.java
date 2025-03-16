@@ -62,51 +62,14 @@ public class JCalc
      */
     public String solve(String mathExpression, boolean balanceParentheses)
     {
-        if (mathExpression != null)
+        switch (solvingMethod)
         {
-            String result = "";
-            switch (solvingMethod)
-            {
-                case ShuntingYardAlgorithm:
-                    if (mathExpression.matches(".*\\s+.*"))
-                        mathExpression = mathExpression.replaceAll("\\s+", "");
-                    if (!mathExpression.isEmpty())
-                    {
-                        mathExpression = mathExpression.toLowerCase();
-                        if (mathExpression.contains(","))
-                            mathExpression = mathExpression.replace(",", ".");
-                        if (mathExpression.contains(")("))
-                            mathExpression = mathExpression.replace(")(", ")*(");
-                        if (mathExpression.contains("()"))
-                            mathExpression = mathExpression.replace("()", "(1)");
-                        if (mathExpression.matches(".*\\.\\s*[(+\\-×/÷^].*"))
-                            mathExpression = mathExpression.replaceAll("\\.(?=[(+\\-×/÷^])", ".0");
-                        if (mathExpression.matches(".*\\d\\(.*"))
-                            mathExpression = mathExpression.replaceAll("(\\d)\\(", "$1*(");
-                        result = ShuntingYardAlgImpl.solveMathExpression(mathExpression, balanceParentheses);
-                    }
-                    break;
-                case ReversePolishNotationAlgorithm:
-                    if (mathExpression.contains(";"))
-                        mathExpression = mathExpression.replace(";", " ");
-                    if (mathExpression.matches(".*\\s+.*"))
-                        mathExpression = mathExpression.replaceAll("\\s+", " ").trim();
-                    if (!mathExpression.isEmpty())
-                    {
-                        if (mathExpression.contains(","))
-                            mathExpression = mathExpression.replace(",", ".");
-                        result = ReversePolishNotationAlgImpl.solveMathExpression(mathExpression);
-                    }
-                    break;
-                default:
-                    throw new IllegalArgumentException("Invalid solving method set");
-            }
-            if (result.isEmpty() || result.equalsIgnoreCase("nan"))
-                throw new NotNumericResultException();
-            else if (result.toLowerCase().contains("infinity"))
-                throw new InfiniteResultException();
-            return result;
+            case ShuntingYardAlgorithm:
+                return ShuntingYardAlgImpl.solveMathExpression(mathExpression, balanceParentheses);
+            case ReversePolishNotationAlgorithm:
+                return ReversePolishNotationAlgImpl.solveMathExpression(mathExpression);
+            default:
+                throw new IllegalArgumentException("Invalid solving method set");
         }
-        return null;
     }
 }
