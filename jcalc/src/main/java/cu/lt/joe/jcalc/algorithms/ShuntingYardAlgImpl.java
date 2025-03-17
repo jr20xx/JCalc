@@ -39,8 +39,6 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
         cleanedMathExpression = cleanedMathExpression.toLowerCase();
         if (cleanedMathExpression.startsWith("-"))
             cleanedMathExpression = "0" + cleanedMathExpression;
-        if (cleanedMathExpression.contains(","))
-            cleanedMathExpression = cleanedMathExpression.replace(",", ".");
         if (cleanedMathExpression.matches(".*\\.\\s*[(+\\-×/÷^].*"))
             cleanedMathExpression = cleanedMathExpression.replaceAll("\\.(?=[(+\\-×/÷^])", ".0");
         return cleanedMathExpression;
@@ -67,6 +65,8 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                     previousChar = i > 0 ? mathExpression.charAt(i - 1) : '\u0000';
             if (Character.isDigit(currentChar) || currentChar == '.' || currentChar == 'e')
                 numberBuilder.append(currentChar);
+            else if (currentChar == ',')
+                numberBuilder.append('.');
             else if ((currentChar == '+' || currentChar == '-') && (previousChar == 'e' || previousChar == '(' || isOperator(previousChar + "")))
             {
                 if (i + 1 < mathExpression.length() - 1 && Character.isDigit(mathExpression.charAt(i + 1)))
