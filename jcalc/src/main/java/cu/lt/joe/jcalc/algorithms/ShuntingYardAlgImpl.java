@@ -3,6 +3,7 @@ package cu.lt.joe.jcalc.algorithms;
 import java.math.BigDecimal;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import cu.lt.joe.jcalc.JCalc;
 import cu.lt.joe.jcalc.exceptions.SyntaxErrorException;
 import cu.lt.joe.jcalc.exceptions.UnbalancedParenthesesException;
@@ -36,10 +37,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                 mathExpression.replaceAll("\\s+", "") : mathExpression;
         if (cleanedMathExpression.isEmpty())
             return null;
-        cleanedMathExpression = cleanedMathExpression.toLowerCase();
-        if (cleanedMathExpression.startsWith("-"))
-            cleanedMathExpression = "0" + cleanedMathExpression;
-        return cleanedMathExpression;
+        return cleanedMathExpression.toLowerCase();
     }
 
     /**
@@ -61,7 +59,9 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
         {
             char currentChar = mathExpression.charAt(i),
                     previousChar = i > 0 ? mathExpression.charAt(i - 1) : '\u0000';
-            if (Character.isDigit(currentChar) || currentChar == '.' || currentChar == 'e')
+            if (currentChar == '-' && i == 0)
+                Collections.addAll(output, "0", "-");
+            else if (Character.isDigit(currentChar) || currentChar == '.' || currentChar == 'e')
                 numberBuilder.append(currentChar);
             else if (currentChar == ',')
                 numberBuilder.append('.');
