@@ -65,11 +65,11 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
         {
             char currentChar = mathExpression.charAt(i),
                     previousChar = i > 0 ? mathExpression.charAt(i - 1) : '\u0000';
-            if (isNumber(currentChar + "") || currentChar == '.' || currentChar == 'e')
+            if (Character.isDigit(currentChar) || currentChar == '.' || currentChar == 'e')
                 numberBuilder.append(currentChar);
             else if ((currentChar == '+' || currentChar == '-') && (previousChar == 'e' || previousChar == '(' || isOperator(previousChar + "")))
             {
-                if (i + 1 < mathExpression.length() - 1 && isNumber(mathExpression.charAt(i + 1) + ""))
+                if (i + 1 < mathExpression.length() - 1 && Character.isDigit(mathExpression.charAt(i + 1)))
                     numberBuilder.append(currentChar);
                 else
                     throw new SyntaxErrorException("Identified '" + currentChar + "' as part of a number but there was no number after it");
@@ -83,7 +83,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                 }
                 if (currentChar == '(')
                 {
-                    if (isNumber(previousChar + "") || previousChar == ')')
+                    if (Character.isDigit(previousChar) || previousChar == ')')
                         output.add("*");
                     output.add(currentChar + "");
                     if (balanceParentheses && containsParentheses) openParenthesesCount++;
