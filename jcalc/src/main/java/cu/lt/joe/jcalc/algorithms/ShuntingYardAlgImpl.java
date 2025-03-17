@@ -39,8 +39,6 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
         cleanedMathExpression = cleanedMathExpression.toLowerCase();
         if (cleanedMathExpression.startsWith("-"))
             cleanedMathExpression = "0" + cleanedMathExpression;
-        if (cleanedMathExpression.matches(".*\\.\\s*[(+\\-×/÷^].*"))
-            cleanedMathExpression = cleanedMathExpression.replaceAll("\\.(?=[(+\\-×/÷^])", ".0");
         return cleanedMathExpression;
     }
 
@@ -78,6 +76,11 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             {
                 if (numberBuilder.length() > 0)
                 {
+                    if (previousChar == '.')
+                    {
+                        previousChar = '0';
+                        numberBuilder.append(previousChar);
+                    }
                     output.add(numberBuilder.toString());
                     numberBuilder.setLength(0);
                 }
