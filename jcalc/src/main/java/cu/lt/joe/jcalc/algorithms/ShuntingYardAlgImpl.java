@@ -41,14 +41,8 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             cleanedMathExpression = "0" + cleanedMathExpression;
         if (cleanedMathExpression.contains(","))
             cleanedMathExpression = cleanedMathExpression.replace(",", ".");
-        if (cleanedMathExpression.contains(")("))
-            cleanedMathExpression = cleanedMathExpression.replace(")(", ")*(");
-        if (cleanedMathExpression.contains("()"))
-            cleanedMathExpression = cleanedMathExpression.replace("()", "(1)");
         if (cleanedMathExpression.matches(".*\\.\\s*[(+\\-×/÷^].*"))
             cleanedMathExpression = cleanedMathExpression.replaceAll("\\.(?=[(+\\-×/÷^])", ".0");
-        if (cleanedMathExpression.matches(".*\\d\\(.*"))
-            cleanedMathExpression = cleanedMathExpression.replaceAll("(\\d)\\(", "$1*(");
         return cleanedMathExpression;
     }
 
@@ -74,7 +68,12 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             if (isNumber(currentChar + "") || currentChar == '.' || currentChar == 'e')
                 numberBuilder.append(currentChar);
             else if ((currentChar == '+' || currentChar == '-') && (previousChar == 'e' || previousChar == '(' || isOperator(previousChar + "")))
-                numberBuilder.append(currentChar);
+            {
+                if (i + 1 < mathExpression.length() - 1 && isNumber(mathExpression.charAt(i + 1) + ""))
+                    numberBuilder.append(currentChar);
+                else
+                    throw new SyntaxErrorException("Identified '" + currentChar + "' as part of a number but there was no number after it");
+            }
             else if (isOperator(currentChar + "") || currentChar == '(' || currentChar == ')')
             {
                 if (numberBuilder.length() > 0)
@@ -84,20 +83,31 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                 }
                 if (currentChar == '(')
                 {
+                    if (isNumber(previousChar + "") || previousChar == ')')
+                        output.add("*");
                     output.add(currentChar + "");
                     if (balanceParentheses && containsParentheses) openParenthesesCount++;
                 }
                 else if (currentChar == ')')
                 {
+                    if (isOperator(previousChar + ""))
+                        throw new SyntaxErrorException("Unexpected character ')' found after an operator");
+                    else if (previousChar == '(')
+                        output.add("1");
                     output.add(currentChar + "");
                     if (balanceParentheses && containsParentheses) openParenthesesCount--;
                 }
-                else if (currentChar == '×')
-                    output.add("*");
-                else if (currentChar == '÷')
-                    output.add("/");
                 else
-                    output.add(currentChar + "");
+                {
+                    if (isOperator(previousChar + "") || previousChar == '(')
+                        throw new SyntaxErrorException("Unexpected character '" + currentChar + "' found after '" + previousChar + "'");
+                    if (currentChar == '×')
+                        output.add("*");
+                    else if (currentChar == '÷')
+                        output.add("/");
+                    else
+                        output.add(currentChar + "");
+                }
             }
             else
                 throw new SyntaxErrorException("Illegal character `" + currentChar + "` found while parsing the expression");
