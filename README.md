@@ -49,10 +49,10 @@ The second algorithm available when using this library is the [Reverse Polish No
 
 Any of the described methods include support for numbers written using a variant of the [Scientific notation](https://en.wikipedia.org/wiki/Scientific_notation) named [E notation](https://en.wikipedia.org/wiki/Scientific_notation#E_notation); and to help you see which operators are supported by each of the previously described methods, here's a table including them.
 
-| Algorithm | ( | ) | + | - | * or × | / or ÷ | ^ |
-|----------|----------|----------|----------|----------|----------|----------|----------|
-| Shunting Yard | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
-| Reverse Polish Notation | No | No | Yes | Yes | Yes | Yes | Yes |
+| Algorithm               | (   | )   | +   | -   | * or × | / or ÷ | ^   |
+|-------------------------|-----|-----|-----|-----|--------|--------|-----|
+| Shunting Yard           | Yes | Yes | Yes | Yes | Yes    | Yes    | Yes |
+| Reverse Polish Notation | No  | No  | Yes | Yes | Yes    | Yes    | Yes |
 
 > [!TIP]
 >
