@@ -38,7 +38,7 @@ The first algorithm available is the [Shunting Yard algorithm](https://en.wikipe
 - ((25\*3-9)/(4+2)+5^3)-(48/8)\*(7+2)+14 (which is equals to 96)
 - 2 \* 3 + 5 \* 2^3 (which is equals to 46)
 - 3 + 4 * 2 / (1 - 5)^2^3 (which is equals to 3.000122070313)
-- (8^2 + 15 *4 - 7) / (3 + 5)*(12 - 9) + 6^2 - (18 /3) + 11 (which is equals to 84.875)
+- (8^2 + 15 \* 4 - 7) / (3 + 5)\*(12 - 9) + 6^2 - (18 /3) + 11 (which is equals to 84.875)
 
 The second algorithm available when using this library is the [Reverse Polish Notation algorithm](https://en.wikipedia.org/wiki/Reverse_Polish_notation); which can be used to parse and solve expressions written using the [postfix or Reverse Polish notation](https://en.wikipedia.org/wiki/Reverse_Polish_notation). This makes possible to obtain the result of solving statements like:
 
