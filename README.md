@@ -17,28 +17,53 @@
 > This repo is under active development yet. Changes can occur without warning, so use it at your own risk
 
 ### Table of Contents
+
 - [Description of the project](#description-of-the-project)
 - [Getting the library](#getting-the-library)
-    - [Building the library locally](#building-the-library-locally)
-    - [Getting the library from JitPack](#getting-the-library-from-jitpack)
+  - [Building the library locally](#building-the-library-locally)
+  - [Getting the library from JitPack](#getting-the-library-from-jitpack)
 - [Usage](#usage)
-    - [Basic usage](#basic-usage)
-    - [Exceptions handling](#exceptions-handling)
+  - [Basic usage](#basic-usage)
+  - [Exceptions handling](#exceptions-handling)
 - [Related project (W.I.P.)](#related-project-wip)
 - [About the docs](#about-the-docs)
 - [Contribution](#contribution)
 
 ## Description of the project
 
-This repo is especially made for those who, for any reason, want to allow users to input basic Math expressions in Java apps and quickly solve them during runtime (like, for example, when building a basic calculator). To make all that possible, a powerful and simple combination of algorithms were used. 
+This repo is especially made for those who, for any reason, want to allow users to input basic Math expressions in Java apps and quickly solve them during runtime (like, for example, when building a basic calculator). For that, there are two powerful and simple algorithms available to quickly solve Math expressions and you simply have to pick one of them based on your use case.
 
-The first algorithm that comes into action is the [Shunting Yard algorithm](https://en.wikipedia.org/wiki/Shunting_yard_algorithm), used to quickly parse the given Math expressions and later process them with the second algorithm used in this library: the [Reverse Polish Notation algorithm](https://en.wikipedia.org/wiki/Reverse_Polish_notation); which is in charge of evaluating the parsed expressions and return their results.
+The first algorithm available is the [Shunting Yard algorithm](https://en.wikipedia.org/wiki/Shunting_yard_algorithm), used to quickly parse and solve Math expressions written in the notation we commonly use to write Math expressions; also known as [infix notation](https://en.wikipedia.org/wiki/Infix_notation). This means that you can use this library to solve statements like, for example:
+
+- ((25\*3-9)/(4+2)+5^3)-(48/8)\*(7+2)+14 (which is equals to 96)
+- 2 \* 3 + 5 \* 2^3 (which is equals to 46)
+- 3 + 4 * 2 / (1 - 5)^2^3 (which is equals to 3.000122070313)
+- (8^2 + 15 *4 - 7) / (3 + 5)*(12 - 9) + 6^2 - (18 /3) + 11 (which is equals to 84.875)
+
+The second algorithm available when using this library is the [Reverse Polish Notation algorithm](https://en.wikipedia.org/wiki/Reverse_Polish_notation); which can be used to parse and solve expressions written using the [postfix or Reverse Polish notation](https://en.wikipedia.org/wiki/Reverse_Polish_notation). This makes possible to obtain the result of solving statements like:
+
+- 3 4 2 * 1 5 - 2 3 ^ / + + (which is equals to 10.5)
+- 10 2 ^ 3 4 * + 6 2 / 1 - ^ (which is equals to 12544)
+- 29 3 / 2 4 * + 1 45 - 26 ^ + (which is equals to 5.367469541424E42)
+- 78 200 3 * + 47 5 ^ 2 / - 6 + (which is equals to -114671819.5)
+
+Any of the described methods include support for numbers written using a variant of the [Scientific notation](https://en.wikipedia.org/wiki/Scientific_notation) named [E notation](https://en.wikipedia.org/wiki/Scientific_notation#E_notation); and to help you see which operators are supported by each of the previously described methods, here's a table including them.
+
+| Algorithm | ( | ) | + | - | * or × | / or ÷ | ^ |
+|----------|----------|----------|----------|----------|----------|----------|----------|
+| Shunting Yard | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
+| Reverse Polish Notation | No | No | Yes | Yes | Yes | Yes | Yes |
+
+> [!TIP]
+>
+> Any other operator not included in the previous table is currently not supported and using any operator not included there will cause an exception.
 
 ## Getting the library
 
 ### Building the library locally
 
 To build the library locally, the first thing you must do is to make sure that you have a valid installation of the [Java Development Kit (JDK)](https://en.wikipedia.org/wiki/Java_Development_Kit). That can be easily checked by executing the following command in a terminal:
+
 ```bash
 java --version
 ```
@@ -47,14 +72,8 @@ java --version
 >
 > The minimum Java version required to build this library is [Java 8](https://en.m.wikipedia.org/wiki/Java_version_history#Java_8).
 
-If the output of that command is similar to the following, then your installation of the JDK should be correct:
-```
-openjdk 21.0.5 2024-10-15
-OpenJDK Runtime Environment (build 21.0.5+11)
-OpenJDK 64-Bit Server VM (build 21.0.5+11, mixed mode, sharing)
-```
+If the execution of that command generates any output instead of an error message, then your installation of the JDK should be correct; and after effectively checking the JDK installation, you must create a local copy of this repo in your device. In order to do that, launch a terminal and execute the following command:
 
-After checking the JDK installation, then you must create a local copy of this repo in your device. In order to do that, launch a terminal and execute the following command:
 ```bash
 git clone https://github.com/jr20xx/JCalc
 ```
@@ -63,12 +82,14 @@ Once the execution of that command is finished, a new directory containing a cop
 
 If you decide to build the library without using any IDE, then open the newly created directory containing the files from this repo and start a terminal session from there. Once you've opened a terminal, run any of the following commands:
 
-_From Linux terminal:_
+*From Linux terminal:*
+
 ```bash
 ./gradlew build
 ```
 
-_From Windows command line:_
+*From Windows command line:*
+
 ```bash
 gradlew.bat build
 ```
@@ -83,28 +104,27 @@ To ease the process of getting a compiled version of the library that you can us
 
 ### Basic usage
 
-To make use of this library, there's a single method you need to call. That method expects two mandatory parameters. The first parameter you must pass is a String containing the Math expression that you want to get solved. The second parameter is a boolean value used to specify when to automatically attempt to balance the parentheses in the given Math expression. When called, that method will return another String with the result of solving the given Math expression. Any whitespace in the Math expression will be automatically removed and if the expression is empty, `null` will be returned instead of any result.
+To make use of this library, the first thing you need to decide is which is going to be the solving method that you've planned to use when solving Math expressions. After that, you have to set that method making use of the `JCalc.with(...)` function and, immediately after that, you have to invoke the `.solve(...)` method passing two parameters to it. The first parameter you must pass is a String containing the Math expression that you want to get solved while the second parameter is a boolean value used to specify when to automatically attempt to balance the parentheses in the given Math expression. When called, that method will return another String with the result of solving the given Math expression. If the given expression is empty or contains only whitespaces, `null` will be returned instead of any result. Besides that, when using the Reverse Polish Notation algorithm as the solving method, the value of the second parameter will be completely ignored.
 
 Here's a clear code example for you to get an idea of how to work with the library and to allow you to know which one is the method that must be called to get the work done:
+
 ```java
 String expression = "3 + 4 * 2 / (1 - 5)^2^3";
-String result = JCalc.performMathOperation(expression, false);
+String result = JCalc.with(SolvingMethod.ShuntingYardAlgorithm).solve(expression, true);
 System.out.print(result); // Prints "3.000122070313"
 ```
-> [!WARNING]
->
-> Besides parentheses, the only valid Math symbols that can be used in the expression are **+**, **-**, **\***, **×**, **/**, **÷** and **^**. Using any other symbol, will cause an error.
 
 ### Exceptions handling
 
 This library contains a small set of custom exceptions that should be controlled to guarantee that the execution of the program doesn't get interrupted or glitched. Here's a Java snippet showing all of them with added comments explaining when they are expected to happen:
+
 ```java
 try {
     String expression = "2 * 3 + 5 * 2^3)";
-    String result = JCalc.performMathOperation(expression, true);
+    String result = JCalc.with(SolvingMethod.ShuntingYardAlgorithm).solve(expression, true);
 }
 catch (UnbalancedParenthesesException exception) {
-    // This exception occurs when parentheses are not placed correctly and `false` is provided as second parameter
+    // This exception occurs when the Shunting Yard algorithm was selected as the solving method, parentheses were not placed correctly and `false` is provided as second parameter
 }
 catch (NotNumericResultException exception) {
     // This exception occurs when a not numeric (NaN) value is obtained
@@ -112,8 +132,8 @@ catch (NotNumericResultException exception) {
 catch (InfiniteResultException exception) {
     // This exception occurs when an Infinite result is obtained
 }
-catch (UnregisteredOperationException exception) {
-    // This exception occurs when trying to perform an undefined operation
+catch (SyntaxErrorException exception) {
+    // This exception occurs when an error is detected in the writing of the Math expression
 }
 catch (Exception exception) {
     // This is recommended in case that an unexpected exception arises
@@ -130,6 +150,6 @@ The code included in this library includes [Javadocs](https://en.wikipedia.org/w
 
 ## Contribution
 
-We value a lot any kind of contribution and we encourage you to submit pull requests and to provide tutorials or other relevant content that might help to improve this library or extend its functionalities. 
+We value a lot any kind of contribution and we encourage you to submit pull requests and to provide tutorials or other relevant content that might help to improve this library or extend its functionalities.
 
 You can also contribute to this repo by adding a star to it and/or sharing the link if you find it helpful in some way. Any form of help will be highly appreciated.
