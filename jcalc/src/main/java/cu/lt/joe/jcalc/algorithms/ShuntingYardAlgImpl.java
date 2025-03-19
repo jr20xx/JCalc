@@ -61,6 +61,17 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                     previousChar = i > 0 ? mathExpression.charAt(i - 1) : '\u0000';
             if (currentChar == '-' && i == 0)
                 Collections.addAll(output, "0", "-");
+            else if (isFactorialOperator(currentChar + ""))
+            {
+                if (numberBuilder.length() > 0)
+                {
+                    output.add(numberBuilder.toString());
+                    numberBuilder.setLength(0);
+                }
+                else if (previousChar != ')' && previousChar != '!')
+                    throw new SyntaxErrorException("Found '!' preceded by the invalid character '" + previousChar + "'");
+                output.add(currentChar + "");
+            }
             else if (Character.isDigit(currentChar) || currentChar == '.' || currentChar == 'e')
                 numberBuilder.append(currentChar);
             else if (currentChar == ',')
@@ -86,7 +97,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                 }
                 if (currentChar == '(')
                 {
-                    if (Character.isDigit(previousChar) || previousChar == ')')
+                    if (Character.isDigit(previousChar) || isFactorialOperator(previousChar + "") || previousChar == ')')
                         output.add("*");
                     output.add(currentChar + "");
                     if (balanceParentheses && containsParentheses) openParenthesesCount++;
@@ -191,22 +202,38 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             else if (element.equals(")"))
             {
                 while (!operators.isEmpty() && !operators.peek().equals("("))
-                    output.push(makeOperation(output.pop(), operators.pop(), output.pop()));
+                {
+                    String operatorOnTop = operators.pop();
+                    if (isFactorialOperator(operatorOnTop))
+                        output.push(makeUnaryOperation(output.pop(), operatorOnTop));
+                    else
+                        output.push(makeOperation(output.pop(), operatorOnTop, output.pop()));
+                }
                 if (operators.isEmpty())
                     throw new UnbalancedParenthesesException("Parentheses are not well placed");
                 operators.pop();
             }
+            else if (isFactorialOperator(element))
+            {
+                if (output.isEmpty())
+                    throw new SyntaxErrorException("Factorial operator '!' has no preceding number");
+                output.push(makeUnaryOperation(output.pop(), element));
+            }
             else if (isNumber(element))
                 output.push(new BigDecimal(element));
             else
-                throw new SyntaxErrorException("Unexpected item `" + element + "` received while solving the expression");
+                throw new SyntaxErrorException("Unexpected item '" + element + "' received while solving the expression");
         }
 
         while (!operators.isEmpty())
         {
             if (operators.peek().equals("("))
                 throw new UnbalancedParenthesesException("Parentheses are not well placed");
-            output.push(makeOperation(output.pop(), operators.pop(), output.pop()));
+            String operatorOnTop = operators.pop();
+            if (isFactorialOperator(operatorOnTop))
+                output.push(makeUnaryOperation(output.pop(), operatorOnTop));
+            else
+                output.push(makeOperation(output.pop(), operatorOnTop, output.pop()));
         }
         return formatResult(output.pop());
     }
