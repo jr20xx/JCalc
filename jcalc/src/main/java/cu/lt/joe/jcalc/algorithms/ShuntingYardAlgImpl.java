@@ -239,6 +239,18 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
         return formatResult(output.pop());
     }
 
+    /**
+     * Helper method to perform common stacking operations when an operator is found. It takes an
+     * {@link ArrayDeque} that represents the output stack and an operator to perform any required
+     * operation over the stack. It automatically pops all the needed elements, pushes back the
+     * results and it doesn't return any value as it performs all the operations directly on the
+     * given {@link ArrayDeque}.
+     *
+     * @param stack    the {@link ArrayDeque} with the stacked items
+     * @param operator a {@link String} with the found operator
+     * @author <a href="https://github.com/jr20xx">jr20xx</a>
+     * @since 2.0.0
+     */
     private static void performStacking(ArrayDeque<BigDecimal> stack, String operator)
     {
         if (operator.equals("u-"))
