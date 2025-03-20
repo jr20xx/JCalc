@@ -2,9 +2,9 @@ package cu.lt.joe.jcalc.exceptions;
 
 public class NumericalDomainErrorException extends RuntimeException
 {
-    public NumericalDomainErrorException(String text)
+    public NumericalDomainErrorException(String message)
     {
-        super(text);
+        super(message);
     }
 
     public NumericalDomainErrorException()

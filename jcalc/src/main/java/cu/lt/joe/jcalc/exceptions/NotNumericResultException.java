@@ -2,9 +2,9 @@ package cu.lt.joe.jcalc.exceptions;
 
 public class NotNumericResultException extends RuntimeException
 {
-    public NotNumericResultException(String text)
+    public NotNumericResultException(String message)
     {
-        super(text);
+        super(message);
     }
 
     public NotNumericResultException()
