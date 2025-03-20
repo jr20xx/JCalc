@@ -3,7 +3,6 @@ package cu.lt.joe.jcalc.algorithms;
 import java.math.BigDecimal;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collections;
 import cu.lt.joe.jcalc.JCalc;
 import cu.lt.joe.jcalc.exceptions.SyntaxErrorException;
 import cu.lt.joe.jcalc.exceptions.UnbalancedParenthesesException;
@@ -58,10 +57,9 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
         for (int i = 0; i < mathExpression.length(); i++)
         {
             char currentChar = mathExpression.charAt(i),
-                    previousChar = i > 0 ? mathExpression.charAt(i - 1) : '\u0000';
-            if (currentChar == '-' && i == 0)
-                Collections.addAll(output, "0", "-");
-            else if (isFactorialOperator(currentChar + ""))
+                    previousChar = i > 0 ? mathExpression.charAt(i - 1) : '\u0000',
+                    nextChar = i + 1 < mathExpression.length() ? mathExpression.charAt(i + 1) : '\u0000';
+            if (isFactorialOperator(currentChar + ""))
             {
                 if (numberBuilder.length() > 0)
                 {
@@ -76,9 +74,20 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                 numberBuilder.append(currentChar);
             else if (currentChar == ',')
                 numberBuilder.append('.');
-            else if ((currentChar == '+' || currentChar == '-') && (previousChar == 'e' || previousChar == '(' || isOperator(previousChar + "")))
+            else if ((currentChar == '-' || currentChar == '+') && (i == 0 || previousChar == '(' || isOperator(previousChar + "")))
             {
-                if (i + 1 < mathExpression.length() - 1 && Character.isDigit(mathExpression.charAt(i + 1)))
+                if (Character.isDigit(nextChar) || nextChar == '(')
+                {
+                    if (currentChar == '+')
+                        continue;
+                    output.add("u-");
+                }
+                else
+                    throw new SyntaxErrorException("Identified unary operator '" + currentChar + "' with an invalid character after it: '" + nextChar + "'");
+            }
+            else if ((currentChar == '+' || currentChar == '-') && previousChar == 'e')
+            {
+                if (Character.isDigit(nextChar))
                     numberBuilder.append(currentChar);
                 else
                     throw new SyntaxErrorException("Identified '" + currentChar + "' as part of a number but there was no number after it");
@@ -157,6 +166,8 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
     {
         switch (operator)
         {
+            case "u-":
+                return 4;
             case "^":
                 return 3;
             case "*":
@@ -194,7 +205,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             if (isOperator(element))
             {
                 while (!operators.isEmpty() && !operators.peek().equals("(") && getOperatorPrecedence(operators.peek()) >= getOperatorPrecedence(element) && !element.equals("^"))
-                    output.push(makeOperation(output.pop(), operators.pop(), output.pop()));
+                    performStacking(output, operators.pop());
                 operators.push(element);
             }
             else if (element.equals("("))
@@ -202,13 +213,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             else if (element.equals(")"))
             {
                 while (!operators.isEmpty() && !operators.peek().equals("("))
-                {
-                    String operatorOnTop = operators.pop();
-                    if (isFactorialOperator(operatorOnTop))
-                        output.push(makeUnaryOperation(output.pop(), operatorOnTop));
-                    else
-                        output.push(makeOperation(output.pop(), operatorOnTop, output.pop()));
-                }
+                    performStacking(output, operators.pop());
                 if (operators.isEmpty())
                     throw new UnbalancedParenthesesException("Parentheses are not well placed");
                 operators.pop();
@@ -217,7 +222,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             {
                 if (output.isEmpty())
                     throw new SyntaxErrorException("Factorial operator '!' has no preceding number");
-                output.push(makeUnaryOperation(output.pop(), element));
+                performStacking(output, element);
             }
             else if (isNumber(element))
                 output.push(new BigDecimal(element));
@@ -229,12 +234,18 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
         {
             if (operators.peek().equals("("))
                 throw new UnbalancedParenthesesException("Parentheses are not well placed");
-            String operatorOnTop = operators.pop();
-            if (isFactorialOperator(operatorOnTop))
-                output.push(makeUnaryOperation(output.pop(), operatorOnTop));
-            else
-                output.push(makeOperation(output.pop(), operatorOnTop, output.pop()));
+            performStacking(output, operators.pop());
         }
         return formatResult(output.pop());
+    }
+
+    private static void performStacking(ArrayDeque<BigDecimal> stack, String operator)
+    {
+        if (operator.equals("u-"))
+            stack.push(makeUnaryOperation(stack.pop(), operator));
+        else if (isFactorialOperator(operator))
+            stack.push(makeUnaryOperation(stack.pop(), operator));
+        else
+            stack.push(makeOperation(stack.pop(), operator, stack.pop()));
     }
 }
