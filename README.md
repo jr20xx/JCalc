@@ -31,32 +31,28 @@
 
 ## Description of the project
 
-This repo is especially made for those who, for any reason, want to allow users to input basic Math expressions in Java apps and quickly solve them during runtime (like, for example, when building a basic calculator). For that, there are two powerful and simple algorithms available to quickly solve Math expressions and you simply have to pick one of them based on your use case.
+This repo holds the code of a [Java library](https://en.wikipedia.org/wiki/Java_Class_Library) named JCalc that is especially made for those who, for any reason, want to allow users to input basic Math expressions in Java apps and quickly solve them during runtime (like, for example, when building a basic calculator). In order to make that possible, this library makes use of a custom implementation of the [Shunting Yard algorithm](https://en.wikipedia.org/wiki/Shunting_yard_algorithm) that allows it to quickly parse and solve Math expressions written in the notation commonly used to write Math expressions; also known as [infix notation](https://en.wikipedia.org/wiki/Infix_notation).
 
-The first algorithm available is the [Shunting Yard algorithm](https://en.wikipedia.org/wiki/Shunting_yard_algorithm), used to quickly parse and solve Math expressions written in the notation we commonly use to write Math expressions; also known as [infix notation](https://en.wikipedia.org/wiki/Infix_notation). This means that you can use this library to solve statements like, for example:
+JCalc comes with support for numbers written using a variant of the [Scientific notation](https://en.wikipedia.org/wiki/Scientific_notation) named [E notation](https://en.wikipedia.org/wiki/Scientific_notation#E_notation) and, when writing the Math expressions, you can make use of parentheses ("(" and ")"), the plus symbol ("+"), the subtraction symbol ("-"), the multiplication symbol ("*" or "×"), the division symbol ("/" or "÷"), the exponentiation symbol ("^") and the factorial symbol ("!").
+
+> [!WARNING]
+>
+> Any other operator or value not previously mentioned is currently not supported and using any of them will cause an exception.
+
+All of the above means that you can use this library to solve statements like, for example:
 
 - ((25\*3-9)/(4+2)+5^3)-(48/8)\*(7+2)+14 (which is equals to 96)
 - 2 \* 3 + 5 \* 2^3 (which is equals to 46)
+- 2 * -(3 + 4! / 2) + 5^2 (which is equals to -5)
 - 3 + 4 * 2 / (1 - 5)^2^3 (which is equals to 3.000122070313)
+- 1000 / (2^5) + (3!)^4 - 500 * (2 + 3) (which is equals to -1172.75)
 - (8^2 + 15 \* 4 - 7) / (3 + 5)\*(12 - 9) + 6^2 - (18 /3) + 11 (which is equals to 84.875)
+- (2^10)! / (2^(5!)) (which is equals to 4.076447993302E2603)
+- ((100 + 200) * (300 - 150)) / (2^(3!)) + (7!)^25 (which is equals to 3.637168415833E92)
+- (-2^3) * (-(3! + 4) / 2) + 5 (which is equals to 45)
+- 2 + -3! * (-4^2) / (5 - 3) (which is equals to 50)
 
-The second algorithm available when using this library is the [Reverse Polish Notation algorithm](https://en.wikipedia.org/wiki/Reverse_Polish_notation); which can be used to parse and solve expressions written using the [postfix or Reverse Polish notation](https://en.wikipedia.org/wiki/Reverse_Polish_notation). This makes possible to obtain the result of solving statements like:
-
-- 3 4 2 * 1 5 - 2 3 ^ / + + (which is equals to 10.5)
-- 10 2 ^ 3 4 * + 6 2 / 1 - ^ (which is equals to 12544)
-- 29 3 / 2 4 * + 1 45 - 26 ^ + (which is equals to 5.367469541424E42)
-- 78 200 3 * + 47 5 ^ 2 / - 6 + (which is equals to -114671819.5)
-
-Any of the described methods include support for numbers written using a variant of the [Scientific notation](https://en.wikipedia.org/wiki/Scientific_notation) named [E notation](https://en.wikipedia.org/wiki/Scientific_notation#E_notation); and to help you see which operators are supported by each of the previously described methods, here's a table including them.
-
-| Algorithm               | (   | )   | +   | -   | * or × | / or ÷ | ^   |
-|-------------------------|-----|-----|-----|-----|--------|--------|-----|
-| Shunting Yard           | Yes | Yes | Yes | Yes | Yes    | Yes    | Yes |
-| Reverse Polish Notation | No  | No  | Yes | Yes | Yes    | Yes    | Yes |
-
-> [!TIP]
->
-> Any other operator not included in the previous table is currently not supported and using any operator not included there will cause an exception.
+All the results previously shown were obtained with JCalc and checked using an online calculator app provided by [Desmos](https://www.desmos.com/about) in [this website](https://www.desmos.com/scientific).
 
 ## Getting the library
 
@@ -104,13 +100,13 @@ To ease the process of getting a compiled version of the library that you can us
 
 ### Basic usage
 
-To make use of this library, the first thing you need to decide is which is going to be the solving method that you've planned to use when solving Math expressions. After that, you have to set that method making use of the `JCalc.with(...)` function and, immediately after that, you have to invoke the `.solve(...)` method passing two parameters to it. The first parameter you must pass is a String containing the Math expression that you want to get solved while the second parameter is a boolean value used to specify when to automatically attempt to balance the parentheses in the given Math expression. When called, that method will return another String with the result of solving the given Math expression. If the given expression is empty or contains only whitespaces, `null` will be returned instead of any result. Besides that, when using the Reverse Polish Notation algorithm as the solving method, the value of the second parameter will be completely ignored.
+To make a good use of this library, you simply have to call the method `JCalc.solve(...)` providing it with a String containing the Math expression that you want to get solved and a boolean value used to specify when to automatically attempt to balance the parentheses in the given Math expression. When called, that method will return another String with the result of solving the given Math expression; but if the given expression is empty or contains only whitespaces, `null` will be returned instead of any result. In addition to all that, if the Math expression contains any whitespace, they'll be automatically removed.
 
-Here's a clear code example for you to get an idea of how to work with the library and to allow you to know which one is the method that must be called to get the work done:
+Here's a clear code example for you to get an idea of how to work with the library and to allow you to know which is the method that must be called to get the work done:
 
 ```java
 String expression = "3 + 4 * 2 / (1 - 5)^2^3";
-String result = JCalc.with(SolvingMethod.ShuntingYardAlgorithm).solve(expression, true);
+String result = JCalc.solveMathExpression(expression, true);
 System.out.print(result); // Prints "3.000122070313"
 ```
 
@@ -124,7 +120,7 @@ try {
     String result = JCalc.with(SolvingMethod.ShuntingYardAlgorithm).solve(expression, true);
 }
 catch (UnbalancedParenthesesException exception) {
-    // This exception occurs when the Shunting Yard algorithm was selected as the solving method, parentheses were not placed correctly and `false` is provided as second parameter
+    // This exception occurs when the parentheses were not placed correctly and `false` is provided as second parameter
 }
 catch (NotNumericResultException exception) {
     // This exception occurs when a not numeric (NaN) value is obtained
@@ -134,6 +130,9 @@ catch (InfiniteResultException exception) {
 }
 catch (SyntaxErrorException exception) {
     // This exception occurs when an error is detected in the writing of the Math expression
+}
+catch (NumericalDomainErrorException exception) {
+    // This exception occurs when trying to obtain the factorial of a number when it's negative or not an integer
 }
 catch (Exception exception) {
     // This is recommended in case that an unexpected exception arises
