@@ -6,9 +6,4 @@ public class InfiniteResultException extends RuntimeException
     {
         super(message);
     }
-    
-    public InfiniteResultException()
-    {
-        super();
-    }
 }

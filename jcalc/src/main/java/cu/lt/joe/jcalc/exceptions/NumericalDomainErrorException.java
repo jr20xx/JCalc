@@ -6,9 +6,4 @@ public class NumericalDomainErrorException extends RuntimeException
     {
         super(message);
     }
-
-    public NumericalDomainErrorException()
-    {
-        super();
-    }
 }

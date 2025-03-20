@@ -6,9 +6,4 @@ public class NotNumericResultException extends RuntimeException
     {
         super(message);
     }
-
-    public NotNumericResultException()
-    {
-        super();
-    }
 }

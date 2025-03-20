@@ -6,9 +6,4 @@ public class SyntaxErrorException extends RuntimeException
     {
         super(message);
     }
-
-    public SyntaxErrorException()
-    {
-        super();
-    }
 }
