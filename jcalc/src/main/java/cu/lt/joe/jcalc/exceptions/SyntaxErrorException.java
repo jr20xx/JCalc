@@ -2,9 +2,9 @@ package cu.lt.joe.jcalc.exceptions;
 
 public class SyntaxErrorException extends RuntimeException
 {
-    public SyntaxErrorException(String text)
+    public SyntaxErrorException(String message)
     {
-        super(text);
+        super(message);
     }
 
     public SyntaxErrorException()

@@ -2,9 +2,9 @@ package cu.lt.joe.jcalc.exceptions;
 
 public class InfiniteResultException extends RuntimeException
 {
-    public InfiniteResultException(String text)
+    public InfiniteResultException(String message)
     {
-        super(text);
+        super(message);
     }
     
     public InfiniteResultException()
