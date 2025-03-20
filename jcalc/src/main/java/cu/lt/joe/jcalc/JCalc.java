@@ -17,8 +17,9 @@ public class JCalc
     /**
      * Takes a Math expression and returns its result. If the expression is empty, {@code null} will
      * be returned. Besides parentheses, valid Math symbols that can be used in the expression are
-     * <b>+</b>, <b>-</b>, <b>*</b>, <b>&times;</b>, <b>/</b>, <b>&divide;</b> and <b>^</b>. Besides
-     * that, if the expression contains any whitespace, they'll be removed automatically.
+     * <b>+</b>, <b>-</b>, <b>*</b>, <b>&times;</b>, <b>/</b>, <b>&divide;</b>, <b>!</b> and <b>^</b>.
+     * In addition to all that, if the expression contains any whitespace, they'll be removed
+     * automatically.
      *
      * @param mathExpression     a {@link String} containing the Math expression to solve
      * @param balanceParentheses a {@code boolean} parameter to specify whether to automatically attempt
