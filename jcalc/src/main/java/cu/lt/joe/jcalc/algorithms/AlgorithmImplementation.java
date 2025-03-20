@@ -82,9 +82,9 @@ public class AlgorithmImplementation
             case "^":
                 double result = FastMath.pow(firstOperand.doubleValue(), secondOperand.doubleValue());
                 if (Double.isNaN(result))
-                    throw new NotNumericResultException();
+                    throw new NotNumericResultException("Not numeric result obtained when trying to solve " + formatResult(firstOperand) + "^" + formatResult(secondOperand));
                 else if (Double.isInfinite(result))
-                    throw new InfiniteResultException();
+                    throw new InfiniteResultException("Infinite result obtained when trying to solve " + formatResult(firstOperand) + "^" + formatResult(secondOperand));
                 return BigDecimal.valueOf(result);
             default:
                 return BigDecimal.ZERO;
