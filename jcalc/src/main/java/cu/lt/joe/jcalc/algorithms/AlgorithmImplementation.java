@@ -27,7 +27,7 @@ public class AlgorithmImplementation
      */
     protected static boolean isOperator(String possibleOperator)
     {
-        return possibleOperator.equals("+") || possibleOperator.equals("-") || possibleOperator.equals("*") || possibleOperator.equals("/") || possibleOperator.equals("^") || possibleOperator.equals("×") || possibleOperator.equals("÷");
+        return possibleOperator.equals("u-") || possibleOperator.equals("+") || possibleOperator.equals("-") || possibleOperator.equals("*") || possibleOperator.equals("/") || possibleOperator.equals("^") || possibleOperator.equals("×") || possibleOperator.equals("÷");
     }
 
     /**
@@ -104,6 +104,8 @@ public class AlgorithmImplementation
     {
         switch (operator)
         {
+            case "u-":
+                return operand.negate();
             case "!":
                 if (operand.compareTo(BigDecimal.ZERO) < 0)
                     throw new NumericalDomainErrorException("Factorial is not defined for negative numbers");
