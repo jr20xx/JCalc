@@ -1,6 +1,5 @@
 package cu.lt.joe.jcalc;
 
-import cu.lt.joe.jcalc.algorithms.ReversePolishNotationAlgImpl;
 import cu.lt.joe.jcalc.algorithms.ShuntingYardAlgImpl;
 import cu.lt.joe.jcalc.exceptions.InfiniteResultException;
 import cu.lt.joe.jcalc.exceptions.NotNumericResultException;
@@ -10,44 +9,16 @@ import cu.lt.joe.jcalc.exceptions.NotNumericResultException;
  * and is the recommended portal to solve Math expressions using this library.
  *
  * @author <a href="https://github.com/jr20xx">jr20xx</a>
- * @see #with(SolvingMethod)
- * @since 1.2.1
+ * @see #solveMathExpression(String, boolean)
+ * @since 2.0.0
  */
 public class JCalc
 {
-    private final SolvingMethod solvingMethod;
-
-    private JCalc(SolvingMethod solvingMethod)
-    {
-        this.solvingMethod = solvingMethod;
-    }
-
     /**
-     * Sets the method to solve the Math expression that will be provided. Available solving
-     * methods are {@link SolvingMethod#ShuntingYardAlgorithm} and {@link SolvingMethod#ReversePolishNotationAlgorithm};
-     * declared in the {@link SolvingMethod} class.
-     *
-     * @param solvingMethod The desired solving method to parse and solve any given Math expression
-     * @return A new instance of the JCalc class with the selected solving method
-     * @author <a href="https://github.com/jr20xx">jr20xx</a>
-     * @see SolvingMethod
-     * @since 1.2.1
-     */
-    public static JCalc with(SolvingMethod solvingMethod)
-    {
-        return new JCalc(solvingMethod);
-    }
-
-    /**
-     * Takes a Math expression and returns its result after applying the selected solving method to it.
-     * No matter which method you select, {@code null} will be returned if the expression is empty. Valid
-     * Math symbols that can be used in the expression are <b>+</b>, <b>-</b>, <b>*</b>, <b>×</b>, <b>/</b>, <b>÷</b> and <b>^</b>.
-     *
-     * <p>
-     * Please, notice that <b>parentheses are only valid with the Shunting Yard algorithm</b> as the
-     * selected method to solve the given expression and so it'll be the {@code balanceParentheses}
-     * parameter. Any parenthesis and the {@code balanceParentheses} parameter will be ignored if
-     * the Shunting Yard algorithm is not in use.
+     * Takes a Math expression and returns its result. If the expression is empty, {@code null} will
+     * be returned. Besides parentheses, valid Math symbols that can be used in the expression are
+     * <b>+</b>, <b>-</b>, <b>*</b>, <b>&times;</b>, <b>/</b>, <b>&divide;</b> and <b>^</b>. Besides
+     * that, if the expression contains any whitespace, they'll be removed automatically.
      *
      * @param mathExpression     a {@link String} containing the Math expression to solve
      * @param balanceParentheses a {@code boolean} parameter to specify whether to automatically attempt
@@ -57,19 +28,10 @@ public class JCalc
      * @throws NotNumericResultException when a not numeric (NaN) value is obtained
      * @throws InfiniteResultException   when an Infinite result is obtained
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
-     * @see #with(SolvingMethod)
-     * @since 1.2.1
+     * @since 2.0.0
      */
-    public String solve(String mathExpression, boolean balanceParentheses)
+    public String solveMathExpression(String mathExpression, boolean balanceParentheses)
     {
-        switch (solvingMethod)
-        {
-            case ShuntingYardAlgorithm:
-                return ShuntingYardAlgImpl.solveMathExpression(mathExpression, balanceParentheses);
-            case ReversePolishNotationAlgorithm:
-                return ReversePolishNotationAlgImpl.solveMathExpression(mathExpression);
-            default:
-                throw new IllegalArgumentException("Invalid solving method set");
-        }
+        return ShuntingYardAlgImpl.solveMathExpression(mathExpression, balanceParentheses);
     }
 }
