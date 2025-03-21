@@ -71,7 +71,11 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                 output.add(currentChar + "");
             }
             else if (Character.isDigit(currentChar) || currentChar == '.' || currentChar == 'e')
+            {
+                if (isFactorialOperator(previousChar + ""))
+                    output.add("*");
                 numberBuilder.append(currentChar);
+            }
             else if (currentChar == ',')
                 numberBuilder.append('.');
             else if ((currentChar == '-' || currentChar == '+') && (i == 0 || previousChar == '(' || isOperator(previousChar + "")))
