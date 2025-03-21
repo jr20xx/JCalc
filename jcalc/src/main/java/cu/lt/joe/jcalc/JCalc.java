@@ -31,7 +31,7 @@ public class JCalc
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
      * @since 2.0.0
      */
-    public String solveMathExpression(String mathExpression, boolean balanceParentheses)
+    public static String solveMathExpression(String mathExpression, boolean balanceParentheses)
     {
         return ShuntingYardAlgImpl.solveMathExpression(mathExpression, balanceParentheses);
     }
