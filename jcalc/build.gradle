@@ -34,7 +34,7 @@ afterEvaluate {
             release(MavenPublication){
                 from components.java
                 groupId = 'com.github.jr20xx'
-                artifactId = 'jcalc'
+                artifactId = 'JCalc'
                 version = System.getenv("VERSION")
             }
         }
