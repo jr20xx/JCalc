@@ -3,6 +3,7 @@ package cu.lt.joe.jcalc.algorithms;
 import org.apache.commons.math3.util.FastMath;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import cu.lt.joe.jcalc.exceptions.InfiniteResultException;
 import cu.lt.joe.jcalc.exceptions.NotNumericResultException;
@@ -122,8 +123,8 @@ public class AlgorithmImplementation
 
     /**
      * Takes a {@link BigDecimal} object, removes any trailing zeros from it, converts it to
-     * Scientific Notation if it's bigger than 1e12 or smaller than 1e-12 and outputs it as
-     * a plain {@link String}.
+     * Scientific Notation if it's bigger than 1e12 or smaller than 1e-12, reduces its scale
+     * to 12 if needed and outputs it as a plain {@link String}.
      *
      * @param bigDecimal the {@link BigDecimal} value to format
      * @return A {@link String} containing the provided {@link BigDecimal} number formatted
@@ -134,6 +135,8 @@ public class AlgorithmImplementation
     {
         if (bigDecimal.abs().compareTo(BigDecimal.valueOf(1e12)) >= 0 || bigDecimal.abs().compareTo(BigDecimal.valueOf(1e-12)) <= 0)
             return new DecimalFormat("0.############E0").format(bigDecimal);
+        if (bigDecimal.scale() > 12)
+            bigDecimal = bigDecimal.setScale(12, RoundingMode.HALF_UP);
         return bigDecimal.stripTrailingZeros().toPlainString();
     }
 }
