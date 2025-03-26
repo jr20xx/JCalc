@@ -134,6 +134,6 @@ public class AlgorithmImplementation
     {
         if (bigDecimal.abs().compareTo(BigDecimal.valueOf(1e12)) >= 0 || bigDecimal.abs().compareTo(BigDecimal.valueOf(1e-12)) <= 0)
             return new DecimalFormat("0.############E0").format(bigDecimal);
-        return bigDecimal.toPlainString();
+        return bigDecimal.stripTrailingZeros().toPlainString();
     }
 }
