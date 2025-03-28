@@ -196,7 +196,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
      * @since 1.2.1
      */
-    public static String solveMathExpression(String mathExpression, boolean balanceParentheses)
+    public static String solveMathExpression(String mathExpression, boolean balanceParentheses, int precision)
     {
         String cleanedMathExpression = cleanMathExpression(mathExpression);
         if (cleanedMathExpression == null) return null;
@@ -240,7 +240,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                 throw new UnbalancedParenthesesException("Parentheses are not well placed");
             performStacking(output, operators.pop());
         }
-        return formatResult(output.pop());
+        return formatResult(output.pop(), precision);
     }
 
     /**

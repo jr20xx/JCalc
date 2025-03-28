@@ -33,6 +33,11 @@ public class JCalc
      */
     public static String solveMathExpression(String mathExpression, boolean balanceParentheses)
     {
-        return ShuntingYardAlgImpl.solveMathExpression(mathExpression, balanceParentheses);
+        return ShuntingYardAlgImpl.solveMathExpression(mathExpression, balanceParentheses, 12);
+    }
+
+    public static String solveMathExpression(String mathExpression, boolean balanceParentheses, int precision)
+    {
+        return ShuntingYardAlgImpl.solveMathExpression(mathExpression, balanceParentheses, precision);
     }
 }

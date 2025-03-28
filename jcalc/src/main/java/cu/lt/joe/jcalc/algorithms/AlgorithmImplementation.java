@@ -83,9 +83,9 @@ public class AlgorithmImplementation
             case "^":
                 double result = FastMath.pow(firstOperand.doubleValue(), secondOperand.doubleValue());
                 if (Double.isNaN(result))
-                    throw new NotNumericResultException("Not numeric result obtained when trying to solve " + formatResult(firstOperand) + "^" + formatResult(secondOperand));
+                    throw new NotNumericResultException("Not numeric result obtained when trying to solve " + firstOperand.toPlainString() + "^" + secondOperand.toPlainString());
                 else if (Double.isInfinite(result))
-                    throw new InfiniteResultException("Infinite result obtained when trying to solve " + formatResult(firstOperand) + "^" + formatResult(secondOperand));
+                    throw new InfiniteResultException("Infinite result obtained when trying to solve " + firstOperand.toPlainString() + "^" + secondOperand.toPlainString());
                 return BigDecimal.valueOf(result);
             default:
                 return BigDecimal.ZERO;
@@ -131,12 +131,18 @@ public class AlgorithmImplementation
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
      * @since 1.2.0
      */
-    protected static String formatResult(BigDecimal bigDecimal)
+    protected static String formatResult(BigDecimal bigDecimal, int precision)
     {
-        if (bigDecimal.abs().compareTo(BigDecimal.valueOf(1e12)) >= 0 || bigDecimal.abs().compareTo(BigDecimal.valueOf(1e-12)) <= 0)
-            return new DecimalFormat("0.############E0").format(bigDecimal);
-        if (bigDecimal.scale() > 12)
-            bigDecimal = bigDecimal.setScale(12, RoundingMode.HALF_UP);
+        if (bigDecimal.abs().compareTo(new BigDecimal("1e" + precision)) >= 0 || bigDecimal.abs().compareTo(new BigDecimal("1e-" + precision)) <= 0)
+        {
+            StringBuilder formatPatternBuilder = new StringBuilder("0.");
+            for (int j = 0; j < precision; j++)
+                formatPatternBuilder.append("#");
+            formatPatternBuilder.append("E0");
+            return new DecimalFormat(formatPatternBuilder.toString()).format(bigDecimal);
+        }
+        if (bigDecimal.scale() > precision)
+            bigDecimal = bigDecimal.setScale(precision, RoundingMode.HALF_UP);
         return bigDecimal.stripTrailingZeros().toPlainString();
     }
 }
