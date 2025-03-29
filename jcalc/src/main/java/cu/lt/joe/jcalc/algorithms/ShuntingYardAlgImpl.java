@@ -191,10 +191,12 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
      *
      * @param mathExpression     a {@link String} with the Math expression to process with the Shunting Yard algorithm
      * @param balanceParentheses a boolean parameter to specify whether to automatically attempt to balance the parentheses in the given Math expression
+     * @param precision          an {@code int} value to set how precise the result must be. See {@link #formatResult(BigDecimal, int)}
+     *                           for more details about this parameter.
      * @return A {@link String} that contains the result of solving the given Math expression
      * @throws UnbalancedParenthesesException when parentheses are not placed correctly and {@code balanceParentheses} parameter is set to false
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
-     * @since 1.2.1
+     * @since 2.0.3
      */
     public static String solveMathExpression(String mathExpression, boolean balanceParentheses, int precision)
     {
