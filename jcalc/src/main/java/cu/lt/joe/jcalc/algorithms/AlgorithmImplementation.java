@@ -122,14 +122,20 @@ public class AlgorithmImplementation
     }
 
     /**
-     * Takes a {@link BigDecimal} object, removes any trailing zeros from it, converts it to
-     * Scientific Notation if it's bigger than 1e12 or smaller than 1e-12, reduces its scale
-     * to 12 if needed and outputs it as a plain {@link String}.
+     * Takes a {@link BigDecimal} object and by making use of the passed {@code int} value,
+     * it's converted to Scientific Notation when it's either bigger than 10<sup>precision</sup>
+     * or smaller than 10<sup>-precision</sup>. When the number doesn't meet the conditions to get
+     * converted to Scientific Notation, it removes any trailing zeros from it and reduces its scale
+     * to the given precision if needed. Finally, it returns the formatted version of the given
+     * number as a plain {@link String}.
      *
      * @param bigDecimal the {@link BigDecimal} value to format
+     * @param precision  an {@code int} value to set how precise the result must be when it
+     *                   comes as a number with many digits. Minimum acceptable value is 3.
+     *                   If you try to use a lower value, it will be automatically set to 3
      * @return A {@link String} containing the provided {@link BigDecimal} number formatted
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
-     * @since 1.2.0
+     * @since 2.0.3
      */
     protected static String formatResult(BigDecimal bigDecimal, int precision)
     {
@@ -141,8 +147,9 @@ public class AlgorithmImplementation
             formatPatternBuilder.append("E0");
             return new DecimalFormat(formatPatternBuilder.toString()).format(bigDecimal);
         }
-        if (bigDecimal.scale() > precision)
-            bigDecimal = bigDecimal.setScale(precision, RoundingMode.HALF_UP);
+        int actualPrecision = Math.max(precision, 3);
+        if (bigDecimal.scale() > actualPrecision)
+            bigDecimal = bigDecimal.setScale(actualPrecision, RoundingMode.HALF_UP);
         return bigDecimal.stripTrailingZeros().toPlainString();
     }
 }
