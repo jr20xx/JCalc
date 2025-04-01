@@ -41,16 +41,16 @@ JCalc comes with support for numbers written using a variant of the [Scientific 
 
 All of the above means that you can use this library to solve statements like, for example:
 
-- ((25\*3-9)/(4+2)+5^3)-(48/8)\*(7+2)+14 (which is equals to 96)
-- 2 \* 3 + 5 \* 2^3 (which is equals to 46)
-- 2 * -(3 + 4! / 2) + 5^2 (which is equals to -5)
-- 3 + 4 * 2 / (1 - 5)^2^3 (which is equals to 3.000122070313)
-- 1000 / (2^5) + (3!)^4 - 500 * (2 + 3) (which is equals to -1172.75)
-- (8^2 + 15 \* 4 - 7) / (3 + 5)\*(12 - 9) + 6^2 - (18 /3) + 11 (which is equals to 84.875)
-- (2^10)! / (2^(5!)) (which is equals to 4.076447993302E2603)
-- ((100 + 200) * (300 - 150)) / (2^(3!)) + (7!)^25 (which is equals to 3.637168415833E92)
-- (-2^3) * (-(3! + 4) / 2) + 5 (which is equals to 45)
-- 2 + -3! * (-4^2) / (5 - 3) (which is equals to 50)
+- **((25\*3-9)/(4+2)+5^3)-(48/8)\*(7+2)+14** (which is equals to **96**)
+- **2 \* 3 + 5 \* 2^3** (which is equals to **46**)
+- **2 * -(3 + 4! / 2) + 5^2** (which is equals to **-5**)
+- **3 + 4 * 2 / (1 - 5)^2^3** (which is equals to **3.000122070313**)
+- **1000 / (2^5) + (3!)^4 - 500 * (2 + 3)** (which is equals to **-1172.75**)
+- **(8^2 + 15 \* 4 - 7) / (3 + 5)\*(12 - 9) + 6^2 - (18 /3) + 11** (which is equals to **84.875**)
+- **(2^10)! / (2^(5!))** (which is equals to **4.076447993302E2603**)
+- **((100 + 200) * (300 - 150)) / (2^(3!)) + (7!)^25** (which is equals to **3.637168415833E92**)
+- **(-2^3) * (-(3! + 4) / 2) + 5** (which is equals to **45**)
+- **2 + -3! * (-4^2) / (5 - 3)** (which is equals to **50**)
 
 All the results previously shown were obtained with JCalc and checked using an online calculator app provided by [Desmos](https://www.desmos.com/about) in [this website](https://www.desmos.com/scientific).
 
@@ -100,7 +100,7 @@ To ease the process of getting a compiled version of the library that you can us
 
 ### Basic usage
 
-To make a good use of this library, you simply have to call the method `JCalc.solve(...)` providing it with a String containing the Math expression that you want to get solved and a boolean value used to specify when to automatically attempt to balance the parentheses in the given Math expression. When called, that method will return another String with the result of solving the given Math expression; but if the given expression is empty or contains only whitespaces, `null` will be returned instead of any result. In addition to all that, if the Math expression contains any whitespace, they'll be automatically removed.
+To make use of this library, you simply have to call the method `JCalc.solveMathExpression(...)` providing it with a String containing the Math expression that you want to get solved and a boolean value used to specify when to automatically attempt to balance the parentheses in the given Math expression. When called, that method will return another String with the result of solving the given Math expression; but if the given expression is empty or contains only whitespaces, `null` will be returned instead of any result. In addition to all that, if the Math expression contains any whitespace, they'll be automatically removed.
 
 Here's a clear code example for you to get an idea of how to work with the library and to allow you to know which is the method that must be called to get the work done:
 
@@ -117,7 +117,7 @@ This library contains a small set of custom exceptions that should be controlled
 ```java
 try {
     String expression = "2 * 3 + 5 * 2^3)";
-    String result = JCalc.with(SolvingMethod.ShuntingYardAlgorithm).solve(expression, true);
+    String result = JCalc.solveMathExpression(expression, true);
 }
 catch (UnbalancedParenthesesException exception) {
     // This exception occurs when the parentheses were not placed correctly and `false` is provided as second parameter
