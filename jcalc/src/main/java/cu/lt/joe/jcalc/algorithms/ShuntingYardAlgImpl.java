@@ -59,55 +59,51 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             char currentChar = mathExpression.charAt(i),
                     previousChar = i > 0 ? mathExpression.charAt(i - 1) : '\u0000',
                     nextChar = i + 1 < mathExpression.length() ? mathExpression.charAt(i + 1) : '\u0000';
-            if (isFactorialOperator(currentChar + ""))
+            if (isPartOfANumber(currentChar))
             {
-                if (numberBuilder.length() > 0)
+                for (; i < mathExpression.length() && isPartOfANumber(currentChar); i++,
+                        currentChar = i < mathExpression.length() ? mathExpression.charAt(i) : '\u0000',
+                        nextChar = i + 1 < mathExpression.length() ? mathExpression.charAt(i + 1) : '\u0000')
                 {
-                    output.add(numberBuilder.toString());
+                    if ((currentChar == '.' || currentChar == ',') && numberBuilder.indexOf(".") != -1)
+                        throw new SyntaxErrorException("A number can only contain a single decimal point");
+                    else if (currentChar == 'e' && !(nextChar == '+' || nextChar == '-' || Character.isDigit(nextChar)))
+                        throw new SyntaxErrorException("Found unexpected character '" + mathExpression.charAt(++i) + "' after E");
+                    else if (currentChar == 'e' && (nextChar == '+' || nextChar == '-' || Character.isDigit(nextChar)))
+                        numberBuilder.append(currentChar).append(mathExpression.charAt(++i));
+                    else
+                        numberBuilder.append(currentChar == ',' ? '.' : currentChar);
+                }
+                String numberStr = numberBuilder.toString();
+                if (isNumber(numberStr))
+                {
+                    if (previousChar == ')' || previousChar == '!') output.add("*");
+                    output.add(numberStr);
                     numberBuilder.setLength(0);
                 }
-                else if (previousChar != ')' && previousChar != '!')
-                    throw new SyntaxErrorException("Found '!' preceded by the invalid character '" + previousChar + "'");
-                output.add(currentChar + "");
+                else
+                    throw new SyntaxErrorException("Found an invalid number \"" + numberStr + "\" while parsing the given expression");
+                i--;
             }
-            else if (Character.isDigit(currentChar) || currentChar == '.' || currentChar == 'e')
+            else if (isFactorialOperator(currentChar + ""))
             {
-                if (isFactorialOperator(previousChar + ""))
-                    output.add("*");
-                numberBuilder.append(currentChar);
+                if (previousChar == ')' || previousChar == '!' || isPartOfANumber(previousChar))
+                    output.add(currentChar + "");
+                else
+                    throw new SyntaxErrorException("Found '!' preceded by the invalid character '" + previousChar + "'");
             }
-            else if (currentChar == ',')
-                numberBuilder.append('.');
             else if ((currentChar == '-' || currentChar == '+') && (i == 0 || previousChar == '(' || isOperator(previousChar + "")))
             {
                 if (Character.isDigit(nextChar) || nextChar == '(')
                 {
-                    if (currentChar == '+')
-                        continue;
+                    if (currentChar == '+') continue;
                     output.add("u-");
                 }
                 else
                     throw new SyntaxErrorException("Identified unary operator '" + currentChar + "' with an invalid character after it: '" + nextChar + "'");
             }
-            else if ((currentChar == '+' || currentChar == '-') && previousChar == 'e')
-            {
-                if (Character.isDigit(nextChar))
-                    numberBuilder.append(currentChar);
-                else
-                    throw new SyntaxErrorException("Identified '" + currentChar + "' as part of a number but there was no number after it");
-            }
             else if (isOperator(currentChar + "") || currentChar == '(' || currentChar == ')')
             {
-                if (numberBuilder.length() > 0)
-                {
-                    if (previousChar == '.')
-                    {
-                        previousChar = '0';
-                        numberBuilder.append(previousChar);
-                    }
-                    output.add(numberBuilder.toString());
-                    numberBuilder.setLength(0);
-                }
                 if (currentChar == '(')
                 {
                     if (Character.isDigit(previousChar) || isFactorialOperator(previousChar + "") || previousChar == ')')
@@ -137,23 +133,14 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                 }
             }
             else
-                throw new SyntaxErrorException("Illegal character `" + currentChar + "` found while parsing the expression");
+                throw new SyntaxErrorException("Illegal character '" + currentChar + "' found while parsing the expression");
         }
-
-        if (numberBuilder.length() > 0)
-            output.add(numberBuilder.toString());
         if (balanceParentheses && containsParentheses)
         {
-            while (openParenthesesCount > 0)
-            {
+            for (; openParenthesesCount > 0; openParenthesesCount--)
                 output.add(")");
-                openParenthesesCount--;
-            }
-            while (openParenthesesCount < 0)
-            {
+            for (; openParenthesesCount < 0; openParenthesesCount++)
                 output.add(0, "(");
-                openParenthesesCount++;
-            }
         }
         return output;
     }

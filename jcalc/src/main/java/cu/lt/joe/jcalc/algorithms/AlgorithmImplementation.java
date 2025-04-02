@@ -57,6 +57,11 @@ public class AlgorithmImplementation
         return number.matches("^[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][+-]?\\d+)?$");
     }
 
+    protected static boolean isPartOfANumber(char possiblePart)
+    {
+        return Character.isDigit(possiblePart) || possiblePart == '.' || possiblePart == ',' || possiblePart == 'e';
+    }
+
     /**
      * Takes two operands and an operator to perform the required operation with those operands given
      * a specific operator.
@@ -110,8 +115,8 @@ public class AlgorithmImplementation
             case "!":
                 if (operand.compareTo(BigDecimal.ZERO) < 0)
                     throw new NumericalDomainErrorException("Factorial is not defined for negative numbers");
-                else if (!operand.remainder(BigDecimal.ONE).equals(BigDecimal.ZERO))
-                    throw new NumericalDomainErrorException("Factorial is not defined for non-integer numbers");
+                else if (!operand.stripTrailingZeros().remainder(BigDecimal.ONE).equals(BigDecimal.ZERO))
+                    throw new NumericalDomainErrorException("Factorial is not defined for non-integer numbers like " + operand.toPlainString());
                 BigDecimal result = BigDecimal.ONE;
                 for (BigDecimal i = BigDecimal.ONE; i.compareTo(operand) <= 0; i = i.add(BigDecimal.ONE))
                     result = result.multiply(i);
