@@ -87,9 +87,9 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
         ArrayDeque<String> operators = new ArrayDeque<>();
         StringBuilder numberBuilder = new StringBuilder();
         balanceParentheses = balanceParentheses && (cleanedMathExpression.contains("(") || cleanedMathExpression.contains(")"));
-        int openParenthesesCount = 0;
+        int openParenthesesCount = 0, actualExpressionLength = cleanedMathExpression.length() - 1;
 
-        for (int i = 0; i < cleanedMathExpression.length(); i++)
+        for (int i = 0; i <= actualExpressionLength; i++)
         {
             char currentChar = cleanedMathExpression.charAt(i), previousChar = i > 0 ? cleanedMathExpression.charAt(i - 1) : '\u0000',
                     nextChar = i + 1 < cleanedMathExpression.length() ? cleanedMathExpression.charAt(i + 1) : '\u0000';
@@ -169,10 +169,13 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             {
                 if (isOperator(previousChar + "") || previousChar == '(')
                     throw new SyntaxErrorException("Unexpected character '" + currentChar + "' found after '" + previousChar + "'");
-                currentChar = currentChar == '×' ? '*' : currentChar == '÷' ? '/' : currentChar;
-                while (!operators.isEmpty() && !operators.peek().equals("(") && getOperatorPrecedence(operators.peek()) >= getOperatorPrecedence(currentChar + "") && currentChar != '^')
-                    performStacking(output, operators.pop());
-                operators.push(currentChar + "");
+                if (i < actualExpressionLength)
+                {
+                    currentChar = currentChar == '×' ? '*' : currentChar == '÷' ? '/' : currentChar;
+                    while (!operators.isEmpty() && !operators.peek().equals("(") && getOperatorPrecedence(operators.peek()) >= getOperatorPrecedence(currentChar + "") && currentChar != '^')
+                        performStacking(output, operators.pop());
+                    operators.push(currentChar + "");
+                }
             }
             else
                 throw new SyntaxErrorException("Illegal character '" + currentChar + "' found while parsing the expression");
