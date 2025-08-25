@@ -18,27 +18,6 @@ import cu.lt.joe.jcalc.exceptions.UnbalancedParenthesesException;
 public class ShuntingYardAlgImpl extends AlgorithmImplementation
 {
     /**
-     * Takes a Math expression and returns a {@link String} containing the Math expression after
-     * applying some common fixes to it. It returns {@code null} if the provided expression is
-     * either {@code null} or empty.
-     *
-     * @param mathExpression the Math expression to clean
-     * @return A {@link String} containing the given Math expression with some fixes
-     * @author <a href="https://github.com/jr20xx">jr20xx</a>
-     * @since 1.2.3
-     */
-    private static String cleanMathExpression(String mathExpression)
-    {
-        if (mathExpression == null || mathExpression.isEmpty())
-            return null;
-        String cleanedMathExpression = mathExpression.matches(".*\\s+.*") ?
-                mathExpression.replaceAll("\\s+", "") : mathExpression;
-        if (cleanedMathExpression.isEmpty())
-            return null;
-        return cleanedMathExpression.toLowerCase();
-    }
-
-    /**
      * Takes a Math operator as a String and returns its precedence.
      *
      * @param operator the operator to get the precedence
@@ -80,106 +59,111 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
      */
     public static String solveMathExpression(String mathExpression, boolean balanceParentheses, int precision)
     {
-        String cleanedMathExpression = cleanMathExpression(mathExpression);
-        if (cleanedMathExpression == null) return null;
+        if (mathExpression == null) return null;
 
         ArrayDeque<BigDecimal> output = new ArrayDeque<>();
         ArrayDeque<String> operators = new ArrayDeque<>();
         StringBuilder numberBuilder = new StringBuilder();
-        balanceParentheses = balanceParentheses && (cleanedMathExpression.contains("(") || cleanedMathExpression.contains(")"));
-        int openParenthesesCount = 0, actualExpressionLength = cleanedMathExpression.length() - 1;
+        balanceParentheses = balanceParentheses && (mathExpression.contains("(") || mathExpression.contains(")"));
+        int openParenthesesCount = 0, actualExpressionLength = mathExpression.length() - 1;
 
         for (int i = 0; i <= actualExpressionLength; i++)
         {
-            char currentChar = cleanedMathExpression.charAt(i), previousChar = i > 0 ? cleanedMathExpression.charAt(i - 1) : '\u0000',
-                    nextChar = i + 1 < cleanedMathExpression.length() ? cleanedMathExpression.charAt(i + 1) : '\u0000';
-            if (isPartOfANumber(currentChar))
+            char currentChar = mathExpression.charAt(i);
+            if (!Character.isWhitespace(currentChar))
             {
-                for (; i < cleanedMathExpression.length() && isPartOfANumber(currentChar); i++,
-                        currentChar = i < cleanedMathExpression.length() ? cleanedMathExpression.charAt(i) : '\u0000',
-                        nextChar = i + 1 < cleanedMathExpression.length() ? cleanedMathExpression.charAt(i + 1) : '\u0000')
+                char previousChar = i > 0 ? mathExpression.charAt(i - 1) : '\u0000',
+                        nextChar = i + 1 < mathExpression.length() ? mathExpression.charAt(i + 1) : '\u0000';
+                if (isPartOfANumber(currentChar))
                 {
-                    if ((currentChar == '.' || currentChar == ',') && numberBuilder.indexOf(".") != -1)
-                        throw new SyntaxErrorException("A number can only contain a single decimal point");
-                    else if (currentChar == 'e' && !(nextChar == '+' || nextChar == '-' || Character.isDigit(nextChar)))
-                        throw new SyntaxErrorException("Found unexpected character '" + cleanedMathExpression.charAt(++i) + "' after E");
-                    else if (currentChar == 'e' && (nextChar == '+' || nextChar == '-' || Character.isDigit(nextChar)))
-                        numberBuilder.append(currentChar).append(cleanedMathExpression.charAt(++i));
-                    else
-                        numberBuilder.append(currentChar == ',' ? '.' : currentChar);
-                }
-                String numberStr = numberBuilder.toString();
-                if (isNumber(numberStr))
-                {
-                    if (previousChar == ')' || previousChar == '!') operators.push("*");
-                    output.push(new BigDecimal(numberStr));
-                    numberBuilder.setLength(0);
-                }
-                else
-                    throw new SyntaxErrorException("Found an invalid number \"" + numberStr + "\" while parsing the given expression");
-                i--;
-            }
-            else if (isFactorialOperator(currentChar + ""))
-            {
-                if (previousChar == ')' || previousChar == '!' || isPartOfANumber(previousChar))
-                {
-                    if (output.isEmpty())
-                        throw new SyntaxErrorException("Factorial operator '!' has no preceding number");
-                    performStacking(output, currentChar + "");
-                }
-                else
-                    throw new SyntaxErrorException("Found '!' preceded by the invalid character '" + previousChar + "'");
-            }
-            else if ((currentChar == '-' || currentChar == '+') && (i == 0 || previousChar == '(' || isOperator(previousChar + "")))
-            {
-                if (Character.isDigit(nextChar) || nextChar == '(')
-                {
-                    if (currentChar == '-') operators.add("u-");
-                }
-                else
-                    throw new SyntaxErrorException("Identified unary operator '" + currentChar + "' with an invalid character after it: '" + nextChar + "'");
-            }
-            else if (currentChar == '(')
-            {
-                if (Character.isDigit(previousChar) || isFactorialOperator(previousChar + "") || previousChar == ')')
-                    operators.push("*");
-                operators.push(currentChar + "");
-                if (balanceParentheses) openParenthesesCount++;
-            }
-            else if (currentChar == ')')
-            {
-                if (isOperator(previousChar + ""))
-                    throw new SyntaxErrorException("Unexpected character ')' found after an operator");
-                else if (previousChar == '(')
-                    output.push(BigDecimal.ONE);
-                if (balanceParentheses || openParenthesesCount > 0)
-                {
-                    while (!operators.isEmpty() && !operators.peek().equals("("))
-                        performStacking(output, operators.pop());
-                    if (operators.isEmpty() && !balanceParentheses)
-                        throw new UnbalancedParenthesesException("Parentheses are not well placed");
-                    if (!operators.isEmpty())
+                    for (; i < mathExpression.length() && isPartOfANumber(currentChar); i++,
+                            currentChar = i < mathExpression.length() ? mathExpression.charAt(i) : '\u0000',
+                            nextChar = i + 1 < mathExpression.length() ? mathExpression.charAt(i + 1) : '\u0000')
                     {
-                        operators.pop();
-                        if (balanceParentheses) openParenthesesCount--;
+                        if ((currentChar == '.' || currentChar == ',') && numberBuilder.indexOf(".") != -1)
+                            throw new SyntaxErrorException("A number can only contain a single decimal point");
+                        else if ((currentChar == 'e' || currentChar == 'E') && !(nextChar == '+' || nextChar == '-' || Character.isDigit(nextChar)))
+                            throw new SyntaxErrorException("Found unexpected character '" + mathExpression.charAt(++i) + "' after E");
+                        else if ((currentChar == 'e' || currentChar == 'E') && (nextChar == '+' || nextChar == '-' || Character.isDigit(nextChar)))
+                            numberBuilder.append(currentChar).append(mathExpression.charAt(++i));
+                        else
+                            numberBuilder.append(currentChar == ',' ? '.' : currentChar);
+                    }
+                    String numberStr = numberBuilder.toString();
+                    if (isNumber(numberStr))
+                    {
+                        if (previousChar == ')' || previousChar == '!') operators.push("*");
+                        output.push(new BigDecimal(numberStr));
+                        numberBuilder.setLength(0);
+                    }
+                    else
+                        throw new SyntaxErrorException("Found an invalid number \"" + numberStr + "\" while parsing the given expression");
+                    i--;
+                }
+                else if (isFactorialOperator(currentChar + ""))
+                {
+                    if (previousChar == ')' || previousChar == '!' || isPartOfANumber(previousChar))
+                    {
+                        if (output.isEmpty())
+                            throw new SyntaxErrorException("Factorial operator '!' has no preceding number");
+                        performStacking(output, currentChar + "");
+                    }
+                    else
+                        throw new SyntaxErrorException("Found '!' preceded by the invalid character '" + previousChar + "'");
+                }
+                else if ((currentChar == '-' || currentChar == '+') && (i == 0 || previousChar == '(' || isOperator(previousChar + "")))
+                {
+                    if (Character.isDigit(nextChar) || nextChar == '(')
+                    {
+                        if (currentChar == '-') operators.add("u-");
+                    }
+                    else
+                        throw new SyntaxErrorException("Identified unary operator '" + currentChar + "' with an invalid character after it: '" + nextChar + "'");
+                }
+                else if (currentChar == '(')
+                {
+                    if (Character.isDigit(previousChar) || isFactorialOperator(previousChar + "") || previousChar == ')')
+                        operators.push("*");
+                    operators.push(currentChar + "");
+                    if (balanceParentheses) openParenthesesCount++;
+                }
+                else if (currentChar == ')')
+                {
+                    if (isOperator(previousChar + ""))
+                        throw new SyntaxErrorException("Unexpected character ')' found after an operator");
+                    else if (previousChar == '(')
+                        output.push(BigDecimal.ONE);
+                    if (balanceParentheses || openParenthesesCount > 0)
+                    {
+                        while (!operators.isEmpty() && !operators.peek().equals("("))
+                            performStacking(output, operators.pop());
+                        if (operators.isEmpty() && !balanceParentheses)
+                            throw new UnbalancedParenthesesException("Parentheses are not well placed");
+                        if (!operators.isEmpty())
+                        {
+                            operators.pop();
+                            if (balanceParentheses) openParenthesesCount--;
+                        }
                     }
                 }
-            }
-            else if (isOperator(currentChar + ""))
-            {
-                if (isOperator(previousChar + "") || previousChar == '(')
-                    throw new SyntaxErrorException("Unexpected character '" + currentChar + "' found after '" + previousChar + "'");
-                if (i < actualExpressionLength)
+                else if (isOperator(currentChar + ""))
                 {
-                    currentChar = currentChar == '×' ? '*' : currentChar == '÷' ? '/' : currentChar;
-                    while (!operators.isEmpty() && !operators.peek().equals("(") && getOperatorPrecedence(operators.peek()) >= getOperatorPrecedence(currentChar + "") && currentChar != '^')
-                        performStacking(output, operators.pop());
-                    operators.push(currentChar + "");
+                    if (isOperator(previousChar + "") || previousChar == '(')
+                        throw new SyntaxErrorException("Unexpected character '" + currentChar + "' found after '" + previousChar + "'");
+                    if (i < actualExpressionLength)
+                    {
+                        currentChar = currentChar == '×' ? '*' : currentChar == '÷' ? '/' : currentChar;
+                        while (!operators.isEmpty() && !operators.peek().equals("(") && getOperatorPrecedence(operators.peek()) >= getOperatorPrecedence(currentChar + "") && currentChar != '^')
+                            performStacking(output, operators.pop());
+                        operators.push(currentChar + "");
+                    }
                 }
+                else
+                    throw new SyntaxErrorException("Illegal character '" + currentChar + "' found while parsing the expression");
             }
-            else
-                throw new SyntaxErrorException("Illegal character '" + currentChar + "' found while parsing the expression");
         }
+
+        if (output.isEmpty()) return null;
 
         if (balanceParentheses && openParenthesesCount > 0)
         {
