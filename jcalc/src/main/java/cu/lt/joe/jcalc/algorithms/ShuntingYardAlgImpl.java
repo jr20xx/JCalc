@@ -223,9 +223,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
      */
     private static void performStacking(ArrayDeque<BigDecimal> stack, String operator)
     {
-        if (operator.equals("u-"))
-            stack.push(makeUnaryOperation(stack.pop(), operator));
-        else if (isFactorialOperator(operator) || isSquareRootOperator(operator))
+        if (isUnaryOperator(operator))
             stack.push(makeUnaryOperation(stack.pop(), operator));
         else
             stack.push(makeOperation(stack.pop(), operator, stack.pop()));
