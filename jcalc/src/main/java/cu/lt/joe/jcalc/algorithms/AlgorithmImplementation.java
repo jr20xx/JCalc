@@ -28,9 +28,15 @@ public class AlgorithmImplementation
      */
     protected static boolean isOperator(String possibleOperator)
     {
-        return possibleOperator.equals("u-") || possibleOperator.equals("+") || possibleOperator.equals("-")
+        return isUnaryOperator(possibleOperator) || possibleOperator.equals("+") || possibleOperator.equals("-")
                 || possibleOperator.equals("*") || possibleOperator.equals("/") || possibleOperator.equals("^")
-                || possibleOperator.equals("×") || possibleOperator.equals("÷") || possibleOperator.equals("√");
+                || possibleOperator.equals("×") || possibleOperator.equals("÷");
+    }
+
+    protected static boolean isUnaryOperator(String possibleUnaryOperator)
+    {
+        return possibleUnaryOperator.equals("u-") || isFactorialOperator(possibleUnaryOperator)
+                || isSquareRootOperator(possibleUnaryOperator);
     }
 
     /**
