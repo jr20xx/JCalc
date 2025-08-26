@@ -115,7 +115,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                 {
                     if (Character.isDigit(nextChar) || nextChar == '(')
                     {
-                        if (currentChar == '-') operators.add("u-");
+                        if (currentChar == '-') operators.push("u-");
                     }
                     else
                         throw new SyntaxErrorException("Identified unary operator '" + currentChar + "' with an invalid character after it: '" + nextChar + "'");
