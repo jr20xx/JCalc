@@ -120,10 +120,15 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             }
             else if (isSquareRootOperator(currentChar + ""))
             {
-                if (Character.isDigit(nextChar) || nextChar == '(' || isSquareRootOperator(nextChar + ""))
-                    operators.push(currentChar + "");
-                else
-                    throw new SyntaxErrorException("Identified unary operator '" + currentChar + "' with an invalid character after it: '" + nextChar + "'");
+                if (i < actualExpressionLength)
+                {
+                    if (previousChar == ')' || isFactorialOperator(previousChar + ""))
+                        operators.push("*");
+                    if (Character.isDigit(nextChar) || nextChar == '(' || isSquareRootOperator(nextChar + ""))
+                        operators.push(currentChar + "");
+                    else
+                        throw new SyntaxErrorException("Identified unary operator '" + currentChar + "' with an invalid character after it: '" + nextChar + "'");
+                }
             }
             else if (isFactorialOperator(currentChar + ""))
             {
@@ -131,6 +136,8 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                 {
                     if (output.isEmpty())
                         throw new SyntaxErrorException("Factorial operator '!' has no preceding number");
+                    while (!operators.isEmpty() && isUnaryOperator(operators.peek()))
+                        performStacking(output, operators.pop());
                     performStacking(output, currentChar + "");
                 }
                 else
