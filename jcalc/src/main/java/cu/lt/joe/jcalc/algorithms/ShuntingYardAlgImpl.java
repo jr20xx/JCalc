@@ -145,7 +145,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             }
             else if ((currentChar == '-' || currentChar == '+') && (i == 0 || previousChar == '(' || isOperator(previousChar + "")))
             {
-                if (Character.isDigit(nextChar) || nextChar == '(')
+                if (Character.isDigit(nextChar) || nextChar == '(' || isSquareRootOperator(nextChar + ""))
                 {
                     if (currentChar == '-') operators.push("u-");
                 }
