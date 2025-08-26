@@ -28,7 +28,9 @@ public class AlgorithmImplementation
      */
     protected static boolean isOperator(String possibleOperator)
     {
-        return possibleOperator.equals("u-") || possibleOperator.equals("+") || possibleOperator.equals("-") || possibleOperator.equals("*") || possibleOperator.equals("/") || possibleOperator.equals("^") || possibleOperator.equals("×") || possibleOperator.equals("÷");
+        return possibleOperator.equals("u-") || possibleOperator.equals("+") || possibleOperator.equals("-")
+                || possibleOperator.equals("*") || possibleOperator.equals("/") || possibleOperator.equals("^")
+                || possibleOperator.equals("×") || possibleOperator.equals("÷") || possibleOperator.equals("√");
     }
 
     /**
@@ -42,6 +44,11 @@ public class AlgorithmImplementation
     protected static boolean isFactorialOperator(String possibleFactorialOperator)
     {
         return possibleFactorialOperator.equals("!");
+    }
+
+    protected static boolean isSquareRootOperator(String possibleSquareRootOperator)
+    {
+        return possibleSquareRootOperator.equals("√");
     }
 
     /**
@@ -112,6 +119,10 @@ public class AlgorithmImplementation
         {
             case "u-":
                 return operand.negate();
+            case "√":
+                if (operand.compareTo(BigDecimal.ZERO) < 0)
+                    throw new NumericalDomainErrorException("Square root is not defined for negative numbers");
+                return makeOperation(new BigDecimal("0.5"), "^", operand);
             case "!":
                 if (operand.compareTo(BigDecimal.ZERO) < 0)
                     throw new NumericalDomainErrorException("Factorial is not defined for negative numbers");
