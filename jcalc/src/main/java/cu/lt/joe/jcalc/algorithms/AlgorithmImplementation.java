@@ -35,8 +35,17 @@ public class AlgorithmImplementation
 
     protected static boolean isUnaryOperator(String possibleUnaryOperator)
     {
-        return possibleUnaryOperator.equals("u-") || isFactorialOperator(possibleUnaryOperator)
-                || isSquareRootOperator(possibleUnaryOperator);
+        switch (possibleUnaryOperator){
+            case "sin":
+            case "cos":
+            case "tan":
+            case "ln":
+            case "log":
+                return true;
+            default:
+                return possibleUnaryOperator.equals("u-") || isFactorialOperator(possibleUnaryOperator)
+                        || isSquareRootOperator(possibleUnaryOperator);
+        }
     }
 
     /**
@@ -129,6 +138,16 @@ public class AlgorithmImplementation
                 if (operand.compareTo(BigDecimal.ZERO) < 0)
                     throw new NumericalDomainErrorException("Square root is not defined for negative numbers");
                 return makeOperation(new BigDecimal("0.5"), "^", operand);
+            case "sin":
+                return BigDecimal.valueOf(FastMath.sin(operand.doubleValue()));
+            case "cos":
+                return BigDecimal.valueOf(FastMath.cos(operand.doubleValue()));
+            case "tan":
+                return BigDecimal.valueOf(FastMath.tan(operand.doubleValue()));
+            case "ln":
+                return BigDecimal.valueOf(FastMath.log(operand.doubleValue()));
+            case "log":
+                return BigDecimal.valueOf(FastMath.log10(operand.doubleValue()));
             case "!":
                 if (operand.compareTo(BigDecimal.ZERO) < 0)
                     throw new NumericalDomainErrorException("Factorial is not defined for negative numbers");

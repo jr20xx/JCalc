@@ -46,11 +46,10 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
      */
     private static int getOperatorPrecedence(String operator)
     {
+        if (isUnaryOperator(operator))
+            return 4;
         switch (operator)
         {
-            case "u-":
-            case "√":
-                return 4;
             case "^":
                 return 3;
             case "*":
@@ -113,10 +112,10 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                     if (previousChar == ')' || previousChar == '!') operators.push("*");
                     output.push(new BigDecimal(numberStr));
                     numberBuilder.setLength(0);
+                    i--;
                 }
                 else
                     throw new SyntaxErrorException("Found an invalid number \"" + numberStr + "\" while parsing the given expression");
-                i--;
             }
             else if (isSquareRootOperator(currentChar + ""))
             {
@@ -161,7 +160,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             }
             else if (currentChar == ')')
             {
-                if (isOperator(previousChar + ""))
+                if (isOperator(previousChar + "") && previousChar != '!')
                     throw new SyntaxErrorException("Unexpected character ')' found after an operator");
                 else if (previousChar == '(')
                     output.push(BigDecimal.ONE);
@@ -174,6 +173,8 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                     operators.pop();
                     if (balanceParentheses) openParenthesesCount--;
                 }
+                if (!operators.isEmpty() && isUnaryOperator(operators.peek()))
+                    performStacking(output, operators.pop());
             }
             else if (isOperator(currentChar + ""))
             {
@@ -186,6 +187,28 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                         performStacking(output, operators.pop());
                     operators.push(currentChar + "");
                 }
+            }
+            else if (Character.isLetter(currentChar))
+            {
+                if (i == 0 || isNumber(previousChar + "") || isOperator(previousChar + "") || previousChar == ')')
+                {
+                    StringBuilder unaryOperatorBuilder = new StringBuilder();
+                    for (; i < mathExpression.length() && Character.isLetter(currentChar); i++,
+                            currentChar = i < mathExpression.length() ? mathExpression.charAt(i) : '\u0000')
+                        unaryOperatorBuilder.append(currentChar);
+                    String assembledUnaryOperator = unaryOperatorBuilder.toString();
+                    if (isUnaryOperator(assembledUnaryOperator))
+                    {
+                        if (isNumber(previousChar + "") || previousChar == '(')
+                            operators.push("*");
+                        operators.push(assembledUnaryOperator);
+                        i--;
+                    }
+                    else
+                        throw new SyntaxErrorException("Found invalid token \"" + assembledUnaryOperator + "\" while parsing the expression");
+                }
+                else
+                    throw new SyntaxErrorException("Found misplaced character '" + currentChar + "' after '" + previousChar + "'");
             }
             else
                 throw new SyntaxErrorException("Illegal character '" + currentChar + "' found while parsing the expression");
