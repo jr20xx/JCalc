@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-    api libs.commons.math3
+    api 'org.apache.commons:commons-math3:3.6.1'
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
