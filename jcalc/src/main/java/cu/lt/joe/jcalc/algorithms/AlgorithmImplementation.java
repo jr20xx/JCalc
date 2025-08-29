@@ -39,6 +39,12 @@ public class AlgorithmImplementation
             case "sin":
             case "cos":
             case "tan":
+            case "asin":
+            case "arcsin":
+            case "acos":
+            case "arccos":
+            case "atan":
+            case "arctan":
             case "ln":
             case "log":
                 return true;
@@ -144,6 +150,15 @@ public class AlgorithmImplementation
                 return BigDecimal.valueOf(FastMath.cos(operand.doubleValue()));
             case "tan":
                 return BigDecimal.valueOf(FastMath.tan(operand.doubleValue()));
+            case "asin":
+            case "arcsin":
+                return BigDecimal.valueOf(FastMath.asin(operand.doubleValue()));
+            case "acos":
+            case "arccos":
+                return BigDecimal.valueOf(FastMath.acos(operand.doubleValue()));
+            case "atan":
+            case "arctan":
+                return BigDecimal.valueOf(FastMath.atan(operand.doubleValue()));
             case "ln":
                 return BigDecimal.valueOf(FastMath.log(operand.doubleValue()));
             case "log":
