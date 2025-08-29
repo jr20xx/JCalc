@@ -12,10 +12,6 @@
     </a>
 </p>
 
-> [!WARNING]
->
-> This repo is under active development yet. Changes can occur without warning, so use it at your own risk
-
 ### Table of Contents
 
 - [Description of the project](#description-of-the-project)
@@ -23,6 +19,7 @@
   - [Building the library locally](#building-the-library-locally)
   - [Getting the library from JitPack](#getting-the-library-from-jitpack)
 - [Usage](#usage)
+  - [Supported operators](#supported-operators)
   - [Basic usage](#basic-usage)
   - [Exceptions handling](#exceptions-handling)
 - [Related project (W.I.P.)](#related-project-wip)
@@ -33,13 +30,7 @@
 
 This repo holds the code of a [Java library](https://en.wikipedia.org/wiki/Java_Class_Library) named JCalc that is especially made for those who, for any reason, want to allow users to input basic Math expressions in Java apps and quickly solve them during runtime (like, for example, when building a basic calculator). In order to make that possible, this library makes use of a custom implementation of the [Shunting Yard algorithm](https://en.wikipedia.org/wiki/Shunting_yard_algorithm) that allows it to quickly parse and solve Math expressions written in the notation commonly used to write Math expressions; also known as [infix notation](https://en.wikipedia.org/wiki/Infix_notation).
 
-JCalc comes with support for numbers written using a variant of the [Scientific notation](https://en.wikipedia.org/wiki/Scientific_notation) named [E notation](https://en.wikipedia.org/wiki/Scientific_notation#E_notation) and, when writing the Math expressions, you can make use of parentheses ("(" and ")"), the plus symbol ("+"), the subtraction symbol ("-"), the multiplication symbol ("*" or "×"), the division symbol ("/" or "÷"), the exponentiation symbol ("^") and the factorial symbol ("!").
-
-> [!WARNING]
->
-> Any other operator or value not previously mentioned is currently not supported and using any of them will cause an exception.
-
-All of the above means that you can use this library to solve statements like, for example:
+You can use this library to solve statements like, for example:
 
 - **((25\*3-9)/(4+2)+5^3)-(48/8)\*(7+2)+14** (which is equals to **96**)
 - **2 \* 3 + 5 \* 2^3** (which is equals to **46**)
@@ -98,6 +89,53 @@ To ease the process of getting a compiled version of the library that you can us
 
 ## Usage
 
+### Supported operators
+
+JCalc comes with support for numbers written using a variant of the [Scientific notation](https://en.wikipedia.org/wiki/Scientific_notation) named [E notation](https://en.wikipedia.org/wiki/Scientific_notation#E_notation). Besides that, you can also make use of parentheses ("(" and ")") and the following table shows the set of symbols or tokens currently supported. You can use any of those operators when writing the Math expressions and any other operator or value not included in the table is currently not supported. If you use any symbol not included in the table, an exception will be thrown.
+
+<table>
+    <tr>
+        <th colspan="2">Basic operators</th> <th colspan="2">Advanced operators</th>
+    </tr>
+    <tr>
+        <td>Addition</td> <td>+</td>
+        <td>Sine</td> <td>"sin"</td>
+    </tr>
+    <tr>
+        <td>Subtraction</td> <td>-</td>
+        <td>Cosine</td> <td>"cos"</td>
+    </tr>
+    <tr>
+        <td>Multiplication</td> <td>* or ×</td>
+        <td>Tangent</td> <td>"tan"</td>
+    </tr>
+    <tr>
+        <td>Division</td> <td>/ or ÷</td>
+        <td>Arcsine</td> <td>"asin" or "arcsin"</td>
+    </tr>
+    <tr>
+        <td>Exponentiation</td> <td>^</td>
+        <td>Arccosine</td> <td>"acos" or "arccos"</td>
+    </tr>
+    <tr>
+        <td>Square root</td> <td>√</td>
+        <td>Arctangent</td> <td>"atan" or "arctan"</td>
+    </tr>
+    <tr>
+        <td>Factorial</td> <td>!</td>
+        <td>Natural logarithm</td> <td>"ln"</td>
+    </tr>
+    <tr>
+        <td></td> <td></td>
+        <td>Base 10 logarithm</td> <td>"log"</td>
+    </tr>
+</table>
+
+> [!WARNING]
+>
+>- The support for the advanced operators is still under development.
+>- Trigonometric functions are made to work with radians.
+
 ### Basic usage
 
 To make use of this library, you simply have to call the method `JCalc.solveMathExpression(...)` providing it with a String containing the Math expression that you want to get solved and a boolean value used to specify when to automatically attempt to balance the parentheses in the given Math expression. When called, that method will return another String with the result of solving the given Math expression; but if the given expression is empty or contains only whitespaces, `null` will be returned instead of any result. In addition to all that, if the Math expression contains any whitespace, they'll be automatically removed.
@@ -149,6 +187,6 @@ The code included in this library includes [Javadocs](https://en.wikipedia.org/w
 
 ## Contribution
 
-We value a lot any kind of contribution and we encourage you to submit pull requests and to provide tutorials or other relevant content that might help to improve this library or extend its functionalities.
+We value a lot any kind of contribution and we encourage you to submit pull requests and provide tutorials or other relevant content that might help to improve this library or extend its functionalities.
 
 You can also contribute to this repo by adding a star to it and/or sharing the link if you find it helpful in some way. Any form of help will be highly appreciated.
