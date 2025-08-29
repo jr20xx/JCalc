@@ -35,7 +35,8 @@ public class AlgorithmImplementation
 
     protected static boolean isUnaryOperator(String possibleUnaryOperator)
     {
-        switch (possibleUnaryOperator){
+        switch (possibleUnaryOperator)
+        {
             case "sin":
             case "cos":
             case "tan":
@@ -114,12 +115,7 @@ public class AlgorithmImplementation
             case "/":
                 return firstOperand.divide(secondOperand, MathContext.DECIMAL64);
             case "^":
-                double result = FastMath.pow(firstOperand.doubleValue(), secondOperand.doubleValue());
-                if (Double.isNaN(result))
-                    throw new NotNumericResultException("Not numeric result obtained when trying to solve " + firstOperand.toPlainString() + "^" + secondOperand.toPlainString());
-                else if (Double.isInfinite(result))
-                    throw new InfiniteResultException("Infinite result obtained when trying to solve " + firstOperand.toPlainString() + "^" + secondOperand.toPlainString());
-                return BigDecimal.valueOf(result);
+                return useFastMathAndSolve(firstOperand, operator, secondOperand);
             default:
                 return BigDecimal.ZERO;
         }
@@ -145,24 +141,17 @@ public class AlgorithmImplementation
                     throw new NumericalDomainErrorException("Square root is not defined for negative numbers");
                 return makeOperation(new BigDecimal("0.5"), "^", operand);
             case "sin":
-                return BigDecimal.valueOf(FastMath.sin(operand.doubleValue()));
             case "cos":
-                return BigDecimal.valueOf(FastMath.cos(operand.doubleValue()));
             case "tan":
-                return BigDecimal.valueOf(FastMath.tan(operand.doubleValue()));
             case "asin":
             case "arcsin":
-                return BigDecimal.valueOf(FastMath.asin(operand.doubleValue()));
             case "acos":
             case "arccos":
-                return BigDecimal.valueOf(FastMath.acos(operand.doubleValue()));
             case "atan":
             case "arctan":
-                return BigDecimal.valueOf(FastMath.atan(operand.doubleValue()));
             case "ln":
-                return BigDecimal.valueOf(FastMath.log(operand.doubleValue()));
             case "log":
-                return BigDecimal.valueOf(FastMath.log10(operand.doubleValue()));
+                return useFastMathAndSolve(operand, operator, null);
             case "!":
                 if (operand.compareTo(BigDecimal.ZERO) < 0)
                     throw new NumericalDomainErrorException("Factorial is not defined for negative numbers");
@@ -207,5 +196,50 @@ public class AlgorithmImplementation
         if (bigDecimal.scale() > actualPrecision)
             bigDecimal = bigDecimal.setScale(actualPrecision, RoundingMode.HALF_UP);
         return bigDecimal.stripTrailingZeros().toPlainString();
+    }
+
+    private static BigDecimal useFastMathAndSolve(BigDecimal firstOperand, String operator, BigDecimal secondOperand)
+    {
+        double result = 0;
+        switch (operator)
+        {
+            case "^":
+                result = FastMath.pow(firstOperand.doubleValue(), secondOperand.doubleValue());
+                break;
+            case "sin":
+                result = FastMath.sin(firstOperand.doubleValue());
+                break;
+            case "cos":
+                result = FastMath.cos(firstOperand.doubleValue());
+                break;
+            case "tan":
+                result = FastMath.tan(firstOperand.doubleValue());
+                break;
+            case "asin":
+            case "arcsin":
+                result = FastMath.asin(firstOperand.doubleValue());
+                break;
+            case "acos":
+            case "arccos":
+                result = FastMath.acos(firstOperand.doubleValue());
+                break;
+            case "atan":
+            case "arctan":
+                result = FastMath.atan(firstOperand.doubleValue());
+                break;
+            case "ln":
+                result = FastMath.log(firstOperand.doubleValue());
+                break;
+            case "log":
+                result = FastMath.log10(firstOperand.doubleValue());
+                break;
+        }
+        String operationData = secondOperand != null ? firstOperand.toPlainString() + "^" + secondOperand.toPlainString()
+                : operator + "(" + firstOperand.toPlainString() + ")";
+        if (Double.isNaN(result))
+            throw new NotNumericResultException("Not numeric result obtained when trying to solve " + operationData);
+        else if (Double.isInfinite(result))
+            throw new InfiniteResultException("Infinite result obtained when trying to solve " + operationData);
+        return BigDecimal.valueOf(result);
     }
 }
