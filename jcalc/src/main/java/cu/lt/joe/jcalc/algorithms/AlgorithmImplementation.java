@@ -194,7 +194,7 @@ public class AlgorithmImplementation
             formatPatternBuilder.append("E0");
             return new DecimalFormat(formatPatternBuilder.toString()).format(bigDecimal);
         }
-        int actualPrecision = Math.max(precision, 3);
+        int actualPrecision = FastMath.max(precision, 3);
         if (bigDecimal.scale() > actualPrecision)
             bigDecimal = bigDecimal.setScale(actualPrecision, RoundingMode.HALF_UP);
         return bigDecimal.stripTrailingZeros().toPlainString();
