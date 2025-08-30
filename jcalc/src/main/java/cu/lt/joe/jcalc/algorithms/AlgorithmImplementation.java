@@ -184,6 +184,8 @@ public class AlgorithmImplementation
      */
     protected static String formatResult(BigDecimal bigDecimal, int precision)
     {
+        if (bigDecimal.equals(BigDecimal.ZERO))
+            return "0";
         if (bigDecimal.abs().compareTo(new BigDecimal("1e" + precision)) >= 0 || bigDecimal.abs().compareTo(new BigDecimal("1e-" + precision)) <= 0)
         {
             StringBuilder formatPatternBuilder = new StringBuilder("0.");
