@@ -88,7 +88,7 @@ public class AlgorithmImplementation
 
     protected static boolean isPartOfANumber(char possiblePart)
     {
-        return Character.isDigit(possiblePart) || possiblePart == '.' || possiblePart == ',' || possiblePart == 'e';
+        return Character.isDigit(possiblePart) || possiblePart == '.' || possiblePart == ',' || possiblePart == 'E';
     }
 
     /**

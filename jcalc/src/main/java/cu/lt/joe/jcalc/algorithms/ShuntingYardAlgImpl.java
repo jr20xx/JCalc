@@ -33,7 +33,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
         String cleanedMathExpression = mathExpression.matches(".*\\s+.*") ?
                 mathExpression.replaceAll("\\s+", "") : mathExpression;
         if (cleanedMathExpression.isEmpty()) return null;
-        return cleanedMathExpression.toLowerCase();
+        return cleanedMathExpression;
     }
 
     /**
@@ -99,9 +99,9 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                 {
                     if ((currentChar == '.' || currentChar == ',') && numberBuilder.indexOf(".") != -1)
                         throw new SyntaxErrorException("A number can only contain a single decimal point");
-                    else if (currentChar == 'e' && !(nextChar == '+' || nextChar == '-' || Character.isDigit(nextChar)))
+                    else if (currentChar == 'E' && !(nextChar == '+' || nextChar == '-' || Character.isDigit(nextChar)))
                         throw new SyntaxErrorException("Found unexpected character '" + mathExpression.charAt(++i) + "' after E");
-                    else if (currentChar == 'e' && (nextChar == '+' || nextChar == '-' || Character.isDigit(nextChar)))
+                    else if (currentChar == 'E' && (nextChar == '+' || nextChar == '-' || Character.isDigit(nextChar)))
                         numberBuilder.append(currentChar).append(mathExpression.charAt(++i));
                     else
                         numberBuilder.append(currentChar == ',' ? '.' : currentChar);
