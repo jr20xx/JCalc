@@ -91,6 +91,11 @@ public class AlgorithmImplementation
         return Character.isDigit(possiblePart) || possiblePart == '.' || possiblePart == ',' || possiblePart == 'E';
     }
 
+    protected static boolean isMathConstant(char possibleConstant)
+    {
+        return possibleConstant == 'e' || possibleConstant == 'π';
+    }
+
     /**
      * Takes two operands and an operator to perform the required operation with those operands given
      * a specific operator.

@@ -91,7 +91,13 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
         {
             char currentChar = mathExpression.charAt(i), previousChar = i > 0 ? mathExpression.charAt(i - 1) : '\u0000',
                     nextChar = i + 1 < mathExpression.length() ? mathExpression.charAt(i + 1) : '\u0000';
-            if (isPartOfANumber(currentChar))
+            if (isMathConstant(currentChar))
+            {
+                if (previousChar == ')' || previousChar == '!' || isPartOfANumber(previousChar) || isMathConstant(previousChar))
+                    operators.push("*");
+                output.push(BigDecimal.valueOf(currentChar == 'e' ? Math.E : Math.PI));
+            }
+            else if (isPartOfANumber(currentChar))
             {
                 for (; i < mathExpression.length() && isPartOfANumber(currentChar); i++,
                         currentChar = i < mathExpression.length() ? mathExpression.charAt(i) : '\u0000',
@@ -109,10 +115,13 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                 String numberStr = numberBuilder.toString();
                 if (isNumber(numberStr))
                 {
-                    if (previousChar == ')' || previousChar == '!') operators.push("*");
+                    if (previousChar == ')' || previousChar == '!' || isMathConstant(previousChar))
+                        operators.push("*");
                     output.push(new BigDecimal(numberStr));
                     numberBuilder.setLength(0);
                     i--;
+                    while (!operators.isEmpty() && isUnaryOperator(operators.peek()))
+                        performStacking(output, operators.pop());
                 }
                 else
                     throw new SyntaxErrorException("Found an invalid number \"" + numberStr + "\" while parsing the given expression");
@@ -121,9 +130,9 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             {
                 if (i < actualExpressionLength)
                 {
-                    if (previousChar == ')' || isFactorialOperator(previousChar + ""))
+                    if (previousChar == ')' || isFactorialOperator(previousChar + "") || isMathConstant(previousChar))
                         operators.push("*");
-                    if (Character.isDigit(nextChar) || nextChar == '(' || isSquareRootOperator(nextChar + ""))
+                    if (Character.isDigit(nextChar) || nextChar == '(' || isMathConstant(nextChar) || isSquareRootOperator(nextChar + ""))
                         operators.push(currentChar + "");
                     else
                         throw new SyntaxErrorException("Identified unary operator '" + currentChar + "' with an invalid character after it: '" + nextChar + "'");
@@ -131,7 +140,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             }
             else if (isFactorialOperator(currentChar + ""))
             {
-                if (previousChar == ')' || previousChar == '!' || isPartOfANumber(previousChar))
+                if (previousChar == ')' || previousChar == '!' || isPartOfANumber(previousChar) || isMathConstant(previousChar))
                 {
                     if (output.isEmpty())
                         throw new SyntaxErrorException("Factorial operator '!' has no preceding number");
@@ -144,7 +153,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             }
             else if ((currentChar == '-' || currentChar == '+') && (i == 0 || previousChar == '(' || isOperator(previousChar + "")))
             {
-                if (Character.isDigit(nextChar) || nextChar == '(' || isSquareRootOperator(nextChar + ""))
+                if (Character.isDigit(nextChar) || nextChar == '(' || isSquareRootOperator(nextChar + "") || isMathConstant(nextChar))
                 {
                     if (currentChar == '-') operators.push("u-");
                 }
@@ -153,7 +162,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             }
             else if (currentChar == '(')
             {
-                if (Character.isDigit(previousChar) || isFactorialOperator(previousChar + "") || previousChar == ')')
+                if (Character.isDigit(previousChar) || isFactorialOperator(previousChar + "") || previousChar == ')' || isMathConstant(previousChar))
                     operators.push("*");
                 operators.push(currentChar + "");
                 if (balanceParentheses) openParenthesesCount++;
