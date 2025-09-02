@@ -91,7 +91,7 @@ To ease the process of getting a compiled version of the library that you can us
 
 ### Supported operators
 
-JCalc comes with support for numbers written using a variant of the [Scientific notation](https://en.wikipedia.org/wiki/Scientific_notation) named [E notation](https://en.wikipedia.org/wiki/Scientific_notation#E_notation). Besides that, you can also make use of parentheses ("(" and ")") and the following table shows the set of symbols or tokens currently supported. You can use any of those operators when writing the Math expressions and any other operator or value not included in the table is currently not supported. If you use any symbol not included in the table, an exception will be thrown.
+JCalc comes with support for numbers written using a variant of the [Scientific notation](https://en.wikipedia.org/wiki/Scientific_notation) named [E notation](https://en.wikipedia.org/wiki/Scientific_notation#E_notation) and it also supports the usage of the Math constants "**e**" and "**π**" directly in the input expressions. Besides that, you can also make use of parentheses ("(" and ")") and the following table details the rest of the symbols or tokens currently supported as operators. You can use any of those operators when writing the Math expressions and any other operator or value not included in the table is currently not supported. If you use any symbol not included in the table, an exception will be thrown.
 
 <table>
     <tr>
@@ -135,6 +135,7 @@ JCalc comes with support for numbers written using a variant of the [Scientific 
 >
 >- The support for the advanced operators is still under development.
 >- Trigonometric functions are made to work with radians.
+>- The library is case sensitive and that means that, for example, "E" and "e" are treated differently based on their casing.
 
 ### Basic usage
 
