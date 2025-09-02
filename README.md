@@ -98,36 +98,36 @@ JCalc comes with support for numbers written using a variant of the [Scientific 
         <th colspan="2">Basic operators</th> <th colspan="2">Advanced operators</th>
     </tr>
     <tr>
-        <td>Addition</td> <td>+</td>
-        <td>Sine</td> <td>"sin"</td>
+        <td>Addition</td> <td><b>+</b></td>
+        <td>Sine</td> <td><b>sin</b></td>
     </tr>
     <tr>
-        <td>Subtraction</td> <td>-</td>
-        <td>Cosine</td> <td>"cos"</td>
+        <td>Subtraction</td> <td><b>-</b></td>
+        <td>Cosine</td> <td><b>cos</b></td>
     </tr>
     <tr>
-        <td>Multiplication</td> <td>* or ×</td>
-        <td>Tangent</td> <td>"tan"</td>
+        <td>Multiplication</td> <td><b>*</b> or <b>×</b></td>
+        <td>Tangent</td> <td><b>tan</b></td>
     </tr>
     <tr>
-        <td>Division</td> <td>/ or ÷</td>
-        <td>Arcsine</td> <td>"asin" or "arcsin"</td>
+        <td>Division</td> <td><b>/</b> or <b>÷</b></td>
+        <td>Arcsine</td> <td><b>asin</b> or <b>arcsin</b></td>
     </tr>
     <tr>
-        <td>Exponentiation</td> <td>^</td>
-        <td>Arccosine</td> <td>"acos" or "arccos"</td>
+        <td>Exponentiation</td> <td><b>^</b></td>
+        <td>Arccosine</td> <td><b>acos</b> or <b>arccos</b></td>
     </tr>
     <tr>
-        <td>Square root</td> <td>√</td>
-        <td>Arctangent</td> <td>"atan" or "arctan"</td>
+        <td>Square root</td> <td><b>√</b></td>
+        <td>Arctangent</td> <td><b>atan</b> or <b>arctan</b></td>
     </tr>
     <tr>
-        <td>Factorial</td> <td>!</td>
-        <td>Natural logarithm</td> <td>"ln"</td>
+        <td>Factorial</td> <td><b>!</b></td>
+        <td>Natural logarithm</td> <td><b>ln</b></td>
     </tr>
     <tr>
         <td></td> <td></td>
-        <td>Base 10 logarithm</td> <td>"log"</td>
+        <td>Base 10 logarithm</td> <td><b>log</b></td>
     </tr>
 </table>
 
