@@ -187,7 +187,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             }
             else if (isOperator(currentChar + ""))
             {
-                if (isOperator(previousChar + "") || previousChar == '(')
+                if ((isOperator(previousChar + "") || previousChar == '(') && previousChar != '!')
                     throw new SyntaxErrorException("Unexpected character '" + currentChar + "' found after '" + previousChar + "'");
                 if (i < actualExpressionLength)
                 {
@@ -199,7 +199,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             }
             else if (Character.isLetter(currentChar))
             {
-                if (i == 0 || isNumber(previousChar + "") || isOperator(previousChar + "") || previousChar == ')')
+                if (i == 0 || isNumber(previousChar + "") || isOperator(previousChar + "") || previousChar == ')' || previousChar == '(')
                 {
                     StringBuilder unaryOperatorBuilder = new StringBuilder();
                     for (; i < mathExpression.length() && Character.isLetter(currentChar); i++,
@@ -208,7 +208,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                     String assembledUnaryOperator = unaryOperatorBuilder.toString();
                     if (isUnaryOperator(assembledUnaryOperator))
                     {
-                        if (isNumber(previousChar + "") || previousChar == '(')
+                        if (isNumber(previousChar + "") || previousChar == ')')
                             operators.push("*");
                         operators.push(assembledUnaryOperator);
                         i--;
