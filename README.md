@@ -8,7 +8,7 @@
         <img src="https://img.shields.io/github/repo-size/jr20xx/JCalc?label=Repository+Size" alt="Repository Size">
     </a>
     <a href="https://jitpack.io/#jr20xx/JCalc">
-        <img src="https://jitpack.io/v/jr20xx/JCalc.svg" alt="License">
+        <img src="https://jitpack.io/v/jr20xx/JCalc.svg" alt="JitPack">
     </a>
 </p>
 
