@@ -91,43 +91,56 @@ To ease the process of getting a compiled version of the library that you can us
 
 ### Supported operators
 
-JCalc comes with support for numbers written using a variant of the [Scientific notation](https://en.wikipedia.org/wiki/Scientific_notation) named [E notation](https://en.wikipedia.org/wiki/Scientific_notation#E_notation) and it also supports the usage of the Math constants "**e**" and "**π**" directly in the input expressions. Besides that, you can also make use of parentheses ("(" and ")") and the following table details the rest of the symbols or tokens currently supported as operators. You can use any of those operators when writing the Math expressions and any other operator or value not included in the table is currently not supported. If you use any symbol not included in the table, an exception will be thrown.
+JCalc comes with support for numbers written using a variant of the [Scientific notation](https://en.wikipedia.org/wiki/Scientific_notation) named [E notation](https://en.wikipedia.org/wiki/Scientific_notation#E_notation) and it also supports the usage of the Math constants "**e**" and "**π**" directly in the input expressions. Besides that, you can also make use of parentheses ("(" and ")").
+
+The following tables summarize the rest of the symbols or tokens currently supported as operators. You can use any of those operators when writing the Math expressions and any other operator or value not included in those tables is currently not supported. If you use any symbol not included in any of the given tables, an exception will be thrown.
 
 <table>
     <tr>
-        <th colspan="2">Basic operators</th> <th colspan="2">Advanced operators</th>
+        <th colspan="4">Basic operators</th>
     </tr>
     <tr>
         <td>Addition</td> <td><b>+</b></td>
-        <td>Sine</td> <td><b>sin</b></td>
-    </tr>
-    <tr>
         <td>Subtraction</td> <td><b>-</b></td>
-        <td>Cosine</td> <td><b>cos</b></td>
     </tr>
     <tr>
         <td>Multiplication</td> <td><b>*</b> or <b>×</b></td>
-        <td>Tangent</td> <td><b>tan</b></td>
-    </tr>
-    <tr>
         <td>Division</td> <td><b>/</b> or <b>÷</b></td>
-        <td>Arcsine</td> <td><b>asin</b> or <b>arcsin</b></td>
     </tr>
     <tr>
         <td>Exponentiation</td> <td><b>^</b></td>
-        <td>Arccosine</td> <td><b>acos</b> or <b>arccos</b></td>
+        <td>Square root</td> <td><b>√</b></td>
     </tr>
     <tr>
-        <td>Square root</td> <td><b>√</b></td>
+        <td>Factorial</td> <td colspan="3"><b>!</b></td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <th colspan="4">Advanced operators</th>
+    </tr>
+    <tr>
+        <td>Sine</td> <td><b>sin</b></td>
+        <td>Cosine</td> <td><b>cos</b></td>
+    </tr>
+    <tr>
+        <td>Tangent</td> <td><b>tan</b></td>
+        <td>Arcsine</td> <td><b>asin</b> or <b>arcsin</b></td>
+    </tr>
+    <tr>
+        <td>Arccosine</td> <td><b>acos</b> or <b>arccos</b></td>
         <td>Arctangent</td> <td><b>atan</b> or <b>arctan</b></td>
     </tr>
     <tr>
-        <td>Factorial</td> <td><b>!</b></td>
+        <td>Cosecant</td> <td><b>csc</b></td>
+        <td>Secant</td> <td><b>sec</b></td>
+    </tr>
+    <tr>
+        <td>Cotangent</td> <td><b>cot</b></td>
         <td>Natural logarithm</td> <td><b>ln</b></td>
     </tr>
     <tr>
-        <td></td> <td></td>
-        <td>Base 10 logarithm</td> <td><b>log</b></td>
+        <td>Base 10 logarithm</td> <td colspan="3"><b>log</b></td>
     </tr>
 </table>
 
