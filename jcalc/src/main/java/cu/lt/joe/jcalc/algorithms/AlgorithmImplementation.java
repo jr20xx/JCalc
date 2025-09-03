@@ -46,6 +46,9 @@ public class AlgorithmImplementation
             case "arccos":
             case "atan":
             case "arctan":
+            case "csc":
+            case "sec":
+            case "cot":
             case "ln":
             case "log":
                 return true;
@@ -154,6 +157,9 @@ public class AlgorithmImplementation
             case "arccos":
             case "atan":
             case "arctan":
+            case "csc":
+            case "sec":
+            case "cot":
             case "ln":
             case "log":
                 return useFastMathAndSolve(operand, operator, null);
@@ -233,6 +239,15 @@ public class AlgorithmImplementation
             case "atan":
             case "arctan":
                 result = FastMath.atan(firstOperand.doubleValue());
+                break;
+            case "csc":
+                result = 1 / FastMath.sin(firstOperand.doubleValue());
+                break;
+            case "sec":
+                result = 1 / FastMath.cos(firstOperand.doubleValue());
+                break;
+            case "cot":
+                result = 1 / FastMath.tan(firstOperand.doubleValue());
                 break;
             case "ln":
                 result = FastMath.log(firstOperand.doubleValue());
