@@ -140,7 +140,8 @@ The following tables summarize the rest of the symbols or tokens currently suppo
         <td>Natural logarithm</td> <td><b>ln</b></td>
     </tr>
     <tr>
-        <td>Base 10 logarithm</td> <td colspan="3"><b>log</b></td>
+        <td>Base 2 logarithm</td> <td><b>log2</b></td>
+        <td>Base 10 logarithm</td> <td><b>log</b></td>
     </tr>
 </table>
 
