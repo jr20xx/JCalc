@@ -206,6 +206,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                             currentChar = i < mathExpression.length() ? mathExpression.charAt(i) : '\u0000')
                         unaryOperatorBuilder.append(currentChar);
                     String assembledUnaryOperator = unaryOperatorBuilder.toString();
+                    unaryOperatorBuilder.setLength(0);
                     if (isUnaryOperator(assembledUnaryOperator))
                     {
                         if (isNumber(previousChar + "") || previousChar == ')')
