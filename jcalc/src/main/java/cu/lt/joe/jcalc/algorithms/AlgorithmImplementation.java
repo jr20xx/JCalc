@@ -51,6 +51,7 @@ public class AlgorithmImplementation
             case "cot":
             case "ln":
             case "log":
+            case "log2":
                 return true;
             default:
                 return possibleUnaryOperator.equals("u-") || isFactorialOperator(possibleUnaryOperator)
@@ -162,6 +163,7 @@ public class AlgorithmImplementation
             case "cot":
             case "ln":
             case "log":
+            case "log2":
                 return useFastMathAndSolve(operand, operator, null);
             case "!":
                 if (operand.compareTo(BigDecimal.ZERO) < 0)
@@ -254,6 +256,9 @@ public class AlgorithmImplementation
                 break;
             case "log":
                 result = FastMath.log10(firstOperand.doubleValue());
+                break;
+            case "log2":
+                result = FastMath.log(2, firstOperand.doubleValue());
                 break;
         }
         String operationData = secondOperand != null ? firstOperand.toPlainString() + "^" + secondOperand.toPlainString()

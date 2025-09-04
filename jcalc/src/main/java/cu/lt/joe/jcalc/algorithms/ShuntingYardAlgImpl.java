@@ -162,7 +162,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             }
             else if (currentChar == '(')
             {
-                if (Character.isDigit(previousChar) || isFactorialOperator(previousChar + "") || previousChar == ')' || isMathConstant(previousChar))
+                if ((operators.peek() != null && !operators.peek().equals("log2")) && (Character.isDigit(previousChar) || isFactorialOperator(previousChar + "") || previousChar == ')' || isMathConstant(previousChar)))
                     operators.push("*");
                 operators.push(currentChar + "");
                 if (balanceParentheses) openParenthesesCount++;
@@ -211,8 +211,13 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                     {
                         if (isNumber(previousChar + "") || previousChar == ')')
                             operators.push("*");
-                        operators.push(assembledUnaryOperator);
-                        i--;
+                        if (currentChar == '2' && assembledUnaryOperator.equals("log"))
+                            operators.push("log2");
+                        else
+                        {
+                            operators.push(assembledUnaryOperator);
+                            i--;
+                        }
                     }
                     else
                         throw new SyntaxErrorException("Found invalid token \"" + assembledUnaryOperator + "\" while parsing the expression");
