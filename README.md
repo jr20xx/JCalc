@@ -145,6 +145,10 @@ The following tables summarize the rest of the symbols or tokens currently suppo
     </tr>
 </table>
 
+> [!TIP]
+>
+> It is strongly recommended to use parentheses in Math expressions to avoid parsing inaccuracies, **especially with the logarithm operator**. That's because, for example, `log28` will be parsed as `log2(8)` if you don't use parentheses before the number **"2"** in **"28"**; so, if what you actually want is to get the base 10 logarithm, you have to use `log(28)` instead.
+
 > [!WARNING]
 >
 >- The support for the advanced operators is still under development.
