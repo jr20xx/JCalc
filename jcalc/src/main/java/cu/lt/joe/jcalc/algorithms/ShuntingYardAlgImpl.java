@@ -46,12 +46,10 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
      */
     private static int getOperatorPrecedence(String operator)
     {
-        if (isUnaryOperator(operator))
-            return 4;
         switch (operator)
         {
             case "^":
-                return 3;
+                return 5;
             case "*":
             case "/":
                 return 2;
@@ -59,7 +57,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             case "-":
                 return 1;
             default:
-                return -1;
+                return isUnaryOperator(operator) ? 4 : -1;
         }
     }
 
