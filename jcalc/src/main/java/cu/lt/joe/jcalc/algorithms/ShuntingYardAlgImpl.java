@@ -144,7 +144,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                     performStacking(output, operators.pop());
                 performStacking(output, currentChar + "");
             }
-            else if ((currentChar == '-' || currentChar == '+') && (i == 0 || previousChar == '(' || isOperator(previousChar + "")))
+            else if ((currentChar == '-' || currentChar == '+') && (i == 0 || previousChar == '(' || (isOperator(previousChar + "") && !isFactorialOperator(previousChar + ""))))
             {
                 if (Character.isLetterOrDigit(nextChar) || nextChar == '(' || isSquareRootOperator(nextChar + "") || isMathConstant(nextChar))
                 {
