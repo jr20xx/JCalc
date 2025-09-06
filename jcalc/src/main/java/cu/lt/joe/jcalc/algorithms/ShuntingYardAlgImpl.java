@@ -138,16 +138,11 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             }
             else if (isFactorialOperator(currentChar + ""))
             {
-                if (previousChar == ')' || previousChar == '!' || isPartOfANumber(previousChar) || isMathConstant(previousChar))
-                {
-                    if (output.isEmpty())
-                        throw new SyntaxErrorException("Factorial operator '!' has no preceding number");
-                    while (!operators.isEmpty() && isUnaryOperator(operators.peek()))
-                        performStacking(output, operators.pop());
-                    performStacking(output, currentChar + "");
-                }
-                else
-                    throw new SyntaxErrorException("Found '!' preceded by the invalid character '" + previousChar + "'");
+                if (output.isEmpty())
+                    throw new SyntaxErrorException("Factorial operator '!' has no preceding number");
+                while (!operators.isEmpty() && isUnaryOperator(operators.peek()))
+                    performStacking(output, operators.pop());
+                performStacking(output, currentChar + "");
             }
             else if ((currentChar == '-' || currentChar == '+') && (i == 0 || previousChar == '(' || isOperator(previousChar + "")))
             {
@@ -160,7 +155,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             }
             else if (currentChar == '(')
             {
-                if ((operators.peek() != null && !operators.peek().equals("log2")) && (Character.isDigit(previousChar) || isFactorialOperator(previousChar + "") || previousChar == ')' || isMathConstant(previousChar)))
+                if (previousChar == ')' || isFactorialOperator(previousChar + "") || isMathConstant(previousChar) || (Character.isDigit(previousChar) && !operators.isEmpty() && !operators.peek().equals("log2")))
                     operators.push("*");
                 operators.push(currentChar + "");
                 if (balanceParentheses) openParenthesesCount++;
