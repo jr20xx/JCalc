@@ -53,6 +53,7 @@ public class AlgorithmImplementation
             case "log":
             case "log2":
             case "sqrt":
+            case "cbrt":
                 return true;
             default:
                 return possibleUnaryOperator.equals("u-") || isFactorialOperator(possibleUnaryOperator)
@@ -166,6 +167,7 @@ public class AlgorithmImplementation
             case "log":
             case "log2":
             case "sqrt":
+            case "cbrt":
                 return useFastMathAndSolve(operand, operator, null);
             case "!":
                 if (operand.compareTo(BigDecimal.ZERO) < 0)
@@ -264,6 +266,9 @@ public class AlgorithmImplementation
                 break;
             case "sqrt":
                 return makeUnaryOperation(firstOperand, "√");
+            case "cbrt":
+                result = FastMath.cbrt(firstOperand.doubleValue());
+                break;
         }
         String operationData = secondOperand != null ? firstOperand.toPlainString() + "^" + secondOperand.toPlainString()
                 : operator + "(" + firstOperand.toPlainString() + ")";
