@@ -118,7 +118,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                     output.push(new BigDecimal(numberStr));
                     numberBuilder.setLength(0);
                     i--;
-                    while (!operators.isEmpty() && isUnaryOperator(operators.peek()))
+                    while (!operators.isEmpty() && (isUnaryOperator(operators.peek()) && !operators.peek().equals("u-")))
                         performStacking(output, operators.pop());
                 }
                 else
@@ -140,7 +140,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             {
                 if (output.isEmpty())
                     throw new SyntaxErrorException("Factorial operator '!' has no preceding number");
-                while (!operators.isEmpty() && isUnaryOperator(operators.peek()))
+                while (!operators.isEmpty() && (isUnaryOperator(operators.peek()) && !operators.peek().equals("u-")))
                     performStacking(output, operators.pop());
                 performStacking(output, currentChar + "");
             }
