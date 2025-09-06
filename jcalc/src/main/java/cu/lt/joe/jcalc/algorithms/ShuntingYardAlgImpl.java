@@ -132,7 +132,10 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                 {
                     if (previousChar == ')' || isFactorialOperator(previousChar + "") || isMathConstant(previousChar))
                         operators.push("*");
-                    operators.push(currentChar + "");
+                    if (Character.isLetterOrDigit(nextChar) || nextChar == '(' || isSquareRootOperator(nextChar + "") || isMathConstant(nextChar))
+                        operators.push(currentChar + "");
+                    else
+                        throw new SyntaxErrorException("Identified unary operator '" + currentChar + "' with an invalid character after it: '" + nextChar + "'");
                 }
             }
             else if (isFactorialOperator(currentChar + ""))
@@ -150,7 +153,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             }
             else if ((currentChar == '-' || currentChar == '+') && (i == 0 || previousChar == '(' || isOperator(previousChar + "")))
             {
-                if (Character.isDigit(nextChar) || nextChar == '(' || isSquareRootOperator(nextChar + "") || isMathConstant(nextChar))
+                if (Character.isLetterOrDigit(nextChar) || nextChar == '(' || isSquareRootOperator(nextChar + "") || isMathConstant(nextChar))
                 {
                     if (currentChar == '-') operators.push("u-");
                 }
