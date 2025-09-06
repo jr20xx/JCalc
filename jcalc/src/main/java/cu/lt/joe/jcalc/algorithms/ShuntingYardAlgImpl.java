@@ -132,10 +132,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                 {
                     if (previousChar == ')' || isFactorialOperator(previousChar + "") || isMathConstant(previousChar))
                         operators.push("*");
-                    if (Character.isDigit(nextChar) || nextChar == '(' || isMathConstant(nextChar) || isSquareRootOperator(nextChar + ""))
-                        operators.push(currentChar + "");
-                    else
-                        throw new SyntaxErrorException("Identified unary operator '" + currentChar + "' with an invalid character after it: '" + nextChar + "'");
+                    operators.push(currentChar + "");
                 }
             }
             else if (isFactorialOperator(currentChar + ""))
