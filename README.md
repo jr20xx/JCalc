@@ -1,6 +1,9 @@
 ## JCalc
 
 <p>
+    <a href="https://github.com/jr20xx/JCalc/actions/workflows/perform_testing.yml">
+        <img src="https://img.shields.io/github/actions/workflow/status/jr20xx/JCalc/perform_testing.yml?branch=main&label=Testing" alt="Testing">
+    </a>
     <a href="https://github.com/jr20xx/JCalc/blob/main/LICENSE">
         <img src="https://img.shields.io/github/license/jr20xx/JCalc?label=License" alt="License">
     </a>
