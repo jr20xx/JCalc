@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 import cu.lt.joe.jcalc.exceptions.InfiniteResultException;
 import cu.lt.joe.jcalc.exceptions.NotNumericResultException;
 import cu.lt.joe.jcalc.exceptions.NumericalDomainErrorException;
@@ -209,7 +211,7 @@ public class AlgorithmImplementation
             for (int j = 0; j < precision; j++)
                 formatPatternBuilder.append("#");
             formatPatternBuilder.append("E0");
-            return new DecimalFormat(formatPatternBuilder.toString()).format(bigDecimal);
+            return new DecimalFormat(formatPatternBuilder.toString(), new DecimalFormatSymbols(Locale.US)).format(bigDecimal);
         }
         int actualPrecision = FastMath.max(precision, 3);
         if (bigDecimal.scale() > actualPrecision)
