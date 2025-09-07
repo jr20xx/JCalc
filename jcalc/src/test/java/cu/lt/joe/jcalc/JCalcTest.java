@@ -25,6 +25,6 @@ public class JCalcTest
     })
     void solveBasicMathExpressions(String expression, String expectedValue)
     {
-        assertEquals(expectedValue, JCalc.solveMathExpression(expression, true));
+        assertEquals(expectedValue, JCalc.solveMathExpression(expression, false));
     }
 }
