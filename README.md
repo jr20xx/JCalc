@@ -109,10 +109,7 @@ The following tables summarize the rest of the symbols or tokens currently suppo
     </tr>
     <tr>
         <td>Exponentiation</td> <td><b>^</b></td>
-        <td>Square root</td> <td><b>√</b></td>
-    </tr>
-    <tr>
-        <td>Factorial</td> <td colspan="3"><b>!</b></td>
+        <td>Factorial</td> <td><b>!</b></td>
     </tr>
 </table>
 <table>
@@ -143,11 +140,15 @@ The following tables summarize the rest of the symbols or tokens currently suppo
         <td>Base 2 logarithm</td> <td><b>log2</b></td>
         <td>Base 10 logarithm</td> <td><b>log</b></td>
     </tr>
+    <tr>
+        <td>Square root</td> <td><b>√</b> or <b>sqrt</b></td>
+        <td>Cube root</td> <td><b>cbrt</b></td>
+    </tr>
 </table>
 
 > [!TIP]
 >
-> It is strongly recommended to use parentheses in Math expressions to avoid parsing inaccuracies, **especially with the logarithm operator**. That's because, for example, `log28` will be parsed as `log2(8)` if you don't use parentheses before the number **"2"** in **"28"**; so, if what you actually want is to get the base 10 logarithm, you have to use `log(28)` instead.
+> It is strongly recommended to use parentheses in Math expressions to avoid parsing inaccuracies or ambiguity. That's because, for example, `log28` will be parsed as `log2(8)` if you don't use parentheses before the number **"2"** in **"28"**; so, if what you actually want is to get the base 10 logarithm, you have to use `log(28)` instead.
 
 > [!WARNING]
 >
