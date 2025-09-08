@@ -2,7 +2,7 @@
     <img src="https://raw.githubusercontent.com/jr20xx/JCalc/main/.github/resources/banner.webp" width="100%" alt="Banner">
 </div>
 
-### Status
+#### Status
 
 <p>
     <a href="https://github.com/jr20xx/JCalc/actions/workflows/perform_testing.yml">
