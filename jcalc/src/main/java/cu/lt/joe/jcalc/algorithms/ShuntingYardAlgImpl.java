@@ -18,25 +18,6 @@ import cu.lt.joe.jcalc.exceptions.UnbalancedParenthesesException;
 public class ShuntingYardAlgImpl extends AlgorithmImplementation
 {
     /**
-     * Takes a Math expression and returns a {@link String} containing the Math expression after
-     * applying some common fixes to it. It returns {@code null} if the provided expression is
-     * either {@code null} or empty.
-     *
-     * @param mathExpression the Math expression to clean
-     * @return A {@link String} containing the given Math expression with some fixes
-     * @author <a href="https://github.com/jr20xx">jr20xx</a>
-     * @since 2.0.6
-     */
-    private static String cleanMathExpression(String mathExpression)
-    {
-        if (mathExpression == null || mathExpression.isEmpty()) return null;
-        String cleanedMathExpression = mathExpression.matches(".*\\s+.*") ?
-                mathExpression.replaceAll("\\s+", "") : mathExpression;
-        if (cleanedMathExpression.isEmpty()) return null;
-        return cleanedMathExpression;
-    }
-
-    /**
      * Takes a Math operator as a String and returns its precedence.
      *
      * @param operator the operator to get the precedence
@@ -76,150 +57,152 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
      */
     public static String solveMathExpression(String mathExpression, boolean balanceParentheses, int precision)
     {
-        mathExpression = cleanMathExpression(mathExpression);
-        if (mathExpression == null) return null;
-
         ArrayDeque<BigDecimal> output = new ArrayDeque<>();
         ArrayDeque<String> operators = new ArrayDeque<>();
         StringBuilder numberBuilder = new StringBuilder();
         balanceParentheses = balanceParentheses && (mathExpression.contains("(") || mathExpression.contains(")"));
         int openParenthesesCount = 0, actualExpressionLength = mathExpression.length() - 1;
 
+        char previouslyFoundChar = '\u0000';
         for (int i = 0; i <= actualExpressionLength; i++)
         {
-            char currentChar = mathExpression.charAt(i), previousChar = i > 0 ? mathExpression.charAt(i - 1) : '\u0000',
-                    nextChar = i + 1 < mathExpression.length() ? mathExpression.charAt(i + 1) : '\u0000';
-            if (isMathConstant(currentChar))
+            char currentChar = mathExpression.charAt(i);
+            if (!Character.isWhitespace(currentChar))
             {
-                if (previousChar == ')' || previousChar == '!' || isPartOfANumber(previousChar) || isMathConstant(previousChar))
-                    operators.push("*");
-                output.push(BigDecimal.valueOf(currentChar == 'e' ? Math.E : Math.PI));
-            }
-            else if (isPartOfANumber(currentChar))
-            {
-                for (; i < mathExpression.length() && isPartOfANumber(currentChar); i++,
-                        currentChar = i < mathExpression.length() ? mathExpression.charAt(i) : '\u0000',
-                        nextChar = i + 1 < mathExpression.length() ? mathExpression.charAt(i + 1) : '\u0000')
+                if (isMathConstant(currentChar))
                 {
-                    if ((currentChar == '.' || currentChar == ',') && numberBuilder.indexOf(".") != -1)
-                        throw new SyntaxErrorException("A number can only contain a single decimal point");
-                    else if (currentChar == 'E' && !(nextChar == '+' || nextChar == '-' || Character.isDigit(nextChar)))
-                        throw new SyntaxErrorException("Found unexpected character '" + mathExpression.charAt(++i) + "' after E");
-                    else if (currentChar == 'E' && (nextChar == '+' || nextChar == '-' || Character.isDigit(nextChar)))
-                        numberBuilder.append(currentChar).append(mathExpression.charAt(++i));
-                    else
-                        numberBuilder.append(currentChar == ',' ? '.' : currentChar);
-                }
-                String numberStr = numberBuilder.toString();
-                if (isNumber(numberStr))
-                {
-                    if (previousChar == ')' || previousChar == '!' || isMathConstant(previousChar))
+                    if (previouslyFoundChar == ')' || previouslyFoundChar == '!' || isPartOfANumber(previouslyFoundChar) || isMathConstant(previouslyFoundChar))
                         operators.push("*");
-                    output.push(new BigDecimal(numberStr));
-                    numberBuilder.setLength(0);
-                    i--;
+                    output.push(BigDecimal.valueOf(currentChar == 'e' ? Math.E : Math.PI));
+                }
+                else if (isPartOfANumber(currentChar))
+                {
+                    for (; i < mathExpression.length(); i++)
+                    {
+                        currentChar = mathExpression.charAt(i);
+                        if (!Character.isWhitespace(currentChar))
+                        {
+                            if (currentChar == '.' || currentChar == ',')
+                                if (numberBuilder.indexOf(".") == -1)
+                                    numberBuilder.append('.');
+                                else
+                                    throw new SyntaxErrorException("A number can contain only a single decimal separator");
+                            else if (previouslyFoundChar == 'E')
+                                if (currentChar == '+' || currentChar == '-' || Character.isDigit(currentChar))
+                                    numberBuilder.append(previouslyFoundChar).append(currentChar);
+                                else
+                                    throw new SyntaxErrorException("Wrong usage of the E notation detected");
+                            else if (Character.isDigit(currentChar))
+                                numberBuilder.append(currentChar);
+                            else if (!isPartOfANumber(currentChar))
+                            {
+                                previouslyFoundChar = mathExpression.charAt(--i);
+                                break;
+                            }
+                            previouslyFoundChar = currentChar;
+                        }
+                    }
+                    String numberStr = numberBuilder.toString();
+                    if (isNumber(numberStr))
+                    {
+                        if (previouslyFoundChar == ')' || previouslyFoundChar == '!' || isMathConstant(previouslyFoundChar))
+                            operators.push("*");
+                        output.push(new BigDecimal(numberStr));
+                        numberBuilder.setLength(0);
+                        while (!operators.isEmpty() && (isUnaryOperator(operators.peek()) && !operators.peek().equals("u-")))
+                            performStacking(output, operators.pop());
+                    }
+                    else
+                        throw new SyntaxErrorException("Found an invalid number \"" + numberStr + "\" while parsing the given expression");
+                    continue;
+                }
+                else if (isSquareRootOperator(currentChar + ""))
+                {
+                    if (previouslyFoundChar == ')' || isFactorialOperator(previouslyFoundChar + "") || isMathConstant(previouslyFoundChar))
+                        operators.push("*");
+                    operators.push(currentChar + "");
+                }
+                else if (isFactorialOperator(currentChar + ""))
+                {
+                    if (output.isEmpty())
+                        throw new SyntaxErrorException("Factorial operator '!' has no preceding number");
                     while (!operators.isEmpty() && (isUnaryOperator(operators.peek()) && !operators.peek().equals("u-")))
                         performStacking(output, operators.pop());
+                    performStacking(output, currentChar + "");
                 }
-                else
-                    throw new SyntaxErrorException("Found an invalid number \"" + numberStr + "\" while parsing the given expression");
-            }
-            else if (isSquareRootOperator(currentChar + ""))
-            {
-                if (i < actualExpressionLength)
-                {
-                    if (previousChar == ')' || isFactorialOperator(previousChar + "") || isMathConstant(previousChar))
-                        operators.push("*");
-                    if (Character.isLetterOrDigit(nextChar) || nextChar == '(' || isSquareRootOperator(nextChar + "") || isMathConstant(nextChar))
-                        operators.push(currentChar + "");
-                    else
-                        throw new SyntaxErrorException("Identified unary operator '" + currentChar + "' with an invalid character after it: '" + nextChar + "'");
-                }
-            }
-            else if (isFactorialOperator(currentChar + ""))
-            {
-                if (output.isEmpty())
-                    throw new SyntaxErrorException("Factorial operator '!' has no preceding number");
-                while (!operators.isEmpty() && (isUnaryOperator(operators.peek()) && !operators.peek().equals("u-")))
-                    performStacking(output, operators.pop());
-                performStacking(output, currentChar + "");
-            }
-            else if ((currentChar == '-' || currentChar == '+') && (i == 0 || previousChar == '(' || (isOperator(previousChar + "") && !isFactorialOperator(previousChar + ""))))
-            {
-                if (Character.isLetterOrDigit(nextChar) || nextChar == '(' || isSquareRootOperator(nextChar + "") || isMathConstant(nextChar))
+                else if ((currentChar == '-' || currentChar == '+') && (i == 0 || previouslyFoundChar == '(' || (isOperator(previouslyFoundChar + "") && !isFactorialOperator(previouslyFoundChar + ""))))
                 {
                     if (currentChar == '-') operators.push("u-");
                 }
-                else
-                    throw new SyntaxErrorException("Identified unary operator '" + currentChar + "' with an invalid character after it: '" + nextChar + "'");
-            }
-            else if (currentChar == '(')
-            {
-                if (previousChar == ')' || isFactorialOperator(previousChar + "") || isMathConstant(previousChar) || (Character.isDigit(previousChar) && !operators.isEmpty() && !operators.peek().equals("log2")))
-                    operators.push("*");
-                operators.push(currentChar + "");
-                if (balanceParentheses) openParenthesesCount++;
-            }
-            else if (currentChar == ')')
-            {
-                if (isOperator(previousChar + "") && previousChar != '!')
-                    throw new SyntaxErrorException("Unexpected character ')' found after an operator");
-                else if (previousChar == '(')
-                    output.push(BigDecimal.ONE);
-                while (!operators.isEmpty() && !operators.peek().equals("("))
-                    performStacking(output, operators.pop());
-                if (operators.isEmpty() && !balanceParentheses)
-                    throw new UnbalancedParenthesesException("Parentheses are not well placed");
-                if (!operators.isEmpty())
+                else if (currentChar == '(')
                 {
-                    operators.pop();
-                    if (balanceParentheses) openParenthesesCount--;
-                }
-                if (!operators.isEmpty() && isUnaryOperator(operators.peek()))
-                    performStacking(output, operators.pop());
-            }
-            else if (isOperator(currentChar + ""))
-            {
-                if ((isOperator(previousChar + "") || previousChar == '(') && previousChar != '!')
-                    throw new SyntaxErrorException("Unexpected character '" + currentChar + "' found after '" + previousChar + "'");
-                if (i < actualExpressionLength)
-                {
-                    currentChar = currentChar == '×' ? '*' : currentChar == '÷' ? '/' : currentChar;
-                    while (!operators.isEmpty() && !operators.peek().equals("(") && getOperatorPrecedence(operators.peek()) >= getOperatorPrecedence(currentChar + "") && currentChar != '^')
-                        performStacking(output, operators.pop());
+                    if (previouslyFoundChar == ')' || isFactorialOperator(previouslyFoundChar + "") || isMathConstant(previouslyFoundChar) || (Character.isDigit(previouslyFoundChar) && !operators.isEmpty() && !operators.peek().equals("log2")))
+                        operators.push("*");
                     operators.push(currentChar + "");
+                    if (balanceParentheses) openParenthesesCount++;
                 }
-            }
-            else if (Character.isLetter(currentChar))
-            {
-                if (i == 0 || isNumber(previousChar + "") || isOperator(previousChar + "") || previousChar == ')' || previousChar == '(')
+                else if (currentChar == ')')
                 {
-                    StringBuilder unaryOperatorBuilder = new StringBuilder();
-                    for (; i < mathExpression.length() && Character.isLetter(currentChar); i++,
-                            currentChar = i < mathExpression.length() ? mathExpression.charAt(i) : '\u0000')
-                        unaryOperatorBuilder.append(currentChar);
-                    String assembledUnaryOperator = unaryOperatorBuilder.toString();
-                    unaryOperatorBuilder.setLength(0);
-                    if (isUnaryOperator(assembledUnaryOperator))
+                    if (isOperator(previouslyFoundChar + "") && previouslyFoundChar != '!')
+                        throw new SyntaxErrorException("Unexpected character ')' found after an operator");
+                    else if (previouslyFoundChar == '(')
+                        output.push(BigDecimal.ONE);
+                    while (!operators.isEmpty() && !operators.peek().equals("("))
+                        performStacking(output, operators.pop());
+                    if (operators.isEmpty() && !balanceParentheses)
+                        throw new UnbalancedParenthesesException("Parentheses are not well placed");
+                    if (!operators.isEmpty())
                     {
-                        if (isNumber(previousChar + "") || previousChar == ')')
-                            operators.push("*");
-                        if (currentChar == '2' && assembledUnaryOperator.equals("log"))
-                            operators.push("log2");
-                        else
+                        operators.pop();
+                        if (balanceParentheses) openParenthesesCount--;
+                    }
+                    if (!operators.isEmpty() && isUnaryOperator(operators.peek()))
+                        performStacking(output, operators.pop());
+                }
+                else if (isOperator(currentChar + ""))
+                {
+                    if ((isOperator(previouslyFoundChar + "") || previouslyFoundChar == '(') && !isFactorialOperator(previouslyFoundChar + ""))
+                        throw new SyntaxErrorException("Unexpected character '" + currentChar + "' found after '" + previouslyFoundChar + "'");
+                    if (i < actualExpressionLength)
+                    {
+                        currentChar = currentChar == '×' ? '*' : currentChar == '÷' ? '/' : currentChar;
+                        while (!operators.isEmpty() && !operators.peek().equals("(") && getOperatorPrecedence(operators.peek()) >= getOperatorPrecedence(currentChar + "") && currentChar != '^')
+                            performStacking(output, operators.pop());
+                        operators.push(currentChar + "");
+                    }
+                }
+                else if (Character.isLetter(currentChar))
+                {
+                    if (i == 0 || isNumber(previouslyFoundChar + "") || isOperator(previouslyFoundChar + "") || previouslyFoundChar == ')' || previouslyFoundChar == '(')
+                    {
+                        StringBuilder unaryOperatorBuilder = new StringBuilder();
+                        for (; i < mathExpression.length() && Character.isLetter(currentChar); i++,
+                                currentChar = i < mathExpression.length() ? mathExpression.charAt(i) : '\u0000')
+                            unaryOperatorBuilder.append(currentChar);
+                        String assembledUnaryOperator = unaryOperatorBuilder.toString();
+                        unaryOperatorBuilder.setLength(0);
+                        if (isUnaryOperator(assembledUnaryOperator))
                         {
-                            operators.push(assembledUnaryOperator);
-                            i--;
+                            if (isNumber(previouslyFoundChar + "") || previouslyFoundChar == ')')
+                                operators.push("*");
+                            if (currentChar == '2' && assembledUnaryOperator.equals("log"))
+                                operators.push("log2");
+                            else
+                            {
+                                operators.push(assembledUnaryOperator);
+                                i--;
+                            }
                         }
+                        else
+                            throw new SyntaxErrorException("Found invalid token \"" + assembledUnaryOperator + "\" while parsing the expression");
                     }
                     else
-                        throw new SyntaxErrorException("Found invalid token \"" + assembledUnaryOperator + "\" while parsing the expression");
+                        throw new SyntaxErrorException("Found misplaced character '" + currentChar + "' after '" + previouslyFoundChar + "'");
                 }
                 else
-                    throw new SyntaxErrorException("Found misplaced character '" + currentChar + "' after '" + previousChar + "'");
+                    throw new SyntaxErrorException("Illegal character '" + currentChar + "' found while parsing the expression");
+                previouslyFoundChar = currentChar;
             }
-            else
-                throw new SyntaxErrorException("Illegal character '" + currentChar + "' found while parsing the expression");
         }
 
         if (output.isEmpty()) return null;
