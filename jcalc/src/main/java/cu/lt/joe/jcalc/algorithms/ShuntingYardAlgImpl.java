@@ -75,47 +75,6 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                         operators.push("*");
                     output.push(BigDecimal.valueOf(currentChar == 'e' ? Math.E : Math.PI));
                 }
-                else if (isPartOfANumber(currentChar))
-                {
-                    for (; i < mathExpression.length(); i++)
-                    {
-                        currentChar = mathExpression.charAt(i);
-                        if (!Character.isWhitespace(currentChar))
-                        {
-                            if (currentChar == '.' || currentChar == ',')
-                                if (numberBuilder.indexOf(".") == -1)
-                                    numberBuilder.append('.');
-                                else
-                                    throw new SyntaxErrorException("A number can contain only a single decimal separator");
-                            else if (previouslyFoundChar == 'E')
-                                if (currentChar == '+' || currentChar == '-' || Character.isDigit(currentChar))
-                                    numberBuilder.append(previouslyFoundChar).append(currentChar);
-                                else
-                                    throw new SyntaxErrorException("Wrong usage of the E notation detected");
-                            else if (Character.isDigit(currentChar))
-                                numberBuilder.append(currentChar);
-                            else if (!isPartOfANumber(currentChar))
-                            {
-                                previouslyFoundChar = mathExpression.charAt(--i);
-                                break;
-                            }
-                            previouslyFoundChar = currentChar;
-                        }
-                    }
-                    String numberStr = numberBuilder.toString();
-                    if (isNumber(numberStr))
-                    {
-                        if (previouslyFoundChar == ')' || previouslyFoundChar == '!' || isMathConstant(previouslyFoundChar))
-                            operators.push("*");
-                        output.push(new BigDecimal(numberStr));
-                        numberBuilder.setLength(0);
-                        while (!operators.isEmpty() && (isUnaryOperator(operators.peek()) && !operators.peek().equals("u-")))
-                            performStacking(output, operators.pop());
-                    }
-                    else
-                        throw new SyntaxErrorException("Found an invalid number \"" + numberStr + "\" while parsing the given expression");
-                    continue;
-                }
                 else if (isSquareRootOperator(currentChar + ""))
                 {
                     if (previouslyFoundChar == ')' || isFactorialOperator(previouslyFoundChar + "") || isMathConstant(previouslyFoundChar))
@@ -198,6 +157,46 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                     }
                     else
                         throw new SyntaxErrorException("Found misplaced character '" + currentChar + "' after '" + previouslyFoundChar + "'");
+                }
+                else if (isPartOfANumber(currentChar))
+                {
+                    for (; i < mathExpression.length(); i++)
+                    {
+                        currentChar = mathExpression.charAt(i);
+                        if (!Character.isWhitespace(currentChar))
+                        {
+                            if (currentChar == '.' || currentChar == ',')
+                                if (numberBuilder.indexOf(".") == -1)
+                                    numberBuilder.append('.');
+                                else
+                                    throw new SyntaxErrorException("A number can contain only a single decimal separator");
+                            else if (previouslyFoundChar == 'E')
+                                if (currentChar == '+' || currentChar == '-' || Character.isDigit(currentChar))
+                                    numberBuilder.append(previouslyFoundChar).append(currentChar);
+                                else
+                                    throw new SyntaxErrorException("Wrong usage of the E notation detected");
+                            else if (Character.isDigit(currentChar))
+                                numberBuilder.append(currentChar);
+                            else if (!isPartOfANumber(currentChar))
+                            {
+                                currentChar = mathExpression.charAt(--i);
+                                break;
+                            }
+                            previouslyFoundChar = currentChar;
+                        }
+                    }
+                    String numberStr = numberBuilder.toString();
+                    if (isNumber(numberStr))
+                    {
+                        if (previouslyFoundChar == ')' || previouslyFoundChar == '!' || isMathConstant(previouslyFoundChar))
+                            operators.push("*");
+                        output.push(new BigDecimal(numberStr));
+                        numberBuilder.setLength(0);
+                        while (!operators.isEmpty() && (isUnaryOperator(operators.peek()) && !operators.peek().equals("u-")))
+                            performStacking(output, operators.pop());
+                    }
+                    else
+                        throw new SyntaxErrorException("Found an invalid number \"" + numberStr + "\" while parsing the given expression");
                 }
                 else
                     throw new SyntaxErrorException("Illegal character '" + currentChar + "' found while parsing the expression");
