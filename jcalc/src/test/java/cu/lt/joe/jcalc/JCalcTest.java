@@ -23,8 +23,18 @@ public class JCalcTest
             "0^0, 1",
             "80 000*0, 0"
     })
-    void solveBasicMathExpressions(String expression, String expectedValue)
+    void solveBasicMathExpressions(String expression, String expectedResult)
     {
-        assertEquals(expectedValue, JCalc.solveMathExpression(expression, false));
+        assertEquals(expectedResult, JCalc.solveMathExpression(expression, false));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "((5.6E3 / (2.4E-1 + 7.8E2)) * ((3.2E1 - 1.5E0)^(2.1E0 + 0.9E0)) + ((4.5E2 * 6.7E-2) / (1.2E1 + 3.4E-1))-((9.8E3 / (2.3E-2 + 5.6E1)) + ((1.1E-3 * 2.2E2) ^ (1.5E0)) + ((1.1E-3 * 2.2E2)^(1.5E0))/((7.7E1+8.8E-1)*(3.3E0-1.1E0)))), 203465.634892361877",
+            "-(8^2 + 15 * 4-7)/ (3+5) * (12 -9) + 6^2 - (18E-5 / 3) + 11 + (2.5E3 * 4.2E-2) / (1.2E1 + 3.4E-1) - (7.8E2 / (2.1E-3 + 5.6E1)) + (9.9E-4 * 1.1E2)^2, -2.282335816243"
+    })
+    void solveMathExpressionsWithENotation(String expression, String expectedResult)
+    {
+        assertEquals(expectedResult, JCalc.solveMathExpression(expression, false));
     }
 }
