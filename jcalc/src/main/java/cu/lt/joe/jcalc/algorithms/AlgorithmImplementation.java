@@ -83,9 +83,9 @@ public class AlgorithmImplementation
         return possibleConstant == 'e' || possibleConstant == 'π';
     }
 
-    protected static boolean isFunctionalOperator(String possibleFunctionalOperator)
+    protected static boolean isTrigonometricOperator(String possibleTrigonometricOperator)
     {
-        switch (possibleFunctionalOperator)
+        switch (possibleTrigonometricOperator)
         {
             case "sin":
             case "cos":
@@ -99,6 +99,15 @@ public class AlgorithmImplementation
             case "csc":
             case "sec":
             case "cot":
+                return true;
+        }
+        return false;
+    }
+
+    protected static boolean isFunctionalOperator(String possibleFunctionalOperator)
+    {
+        switch (possibleFunctionalOperator)
+        {
             case "ln":
             case "log":
             case "log2":
@@ -106,7 +115,7 @@ public class AlgorithmImplementation
             case "cbrt":
                 return true;
         }
-        return false;
+        return isTrigonometricOperator(possibleFunctionalOperator);
     }
 
     /**
