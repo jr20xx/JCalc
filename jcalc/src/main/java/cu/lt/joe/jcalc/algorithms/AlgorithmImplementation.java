@@ -37,30 +37,9 @@ public class AlgorithmImplementation
 
     protected static boolean isUnaryOperator(String possibleUnaryOperator)
     {
-        switch (possibleUnaryOperator)
-        {
-            case "sin":
-            case "cos":
-            case "tan":
-            case "asin":
-            case "arcsin":
-            case "acos":
-            case "arccos":
-            case "atan":
-            case "arctan":
-            case "csc":
-            case "sec":
-            case "cot":
-            case "ln":
-            case "log":
-            case "log2":
-            case "sqrt":
-            case "cbrt":
-                return true;
-            default:
-                return possibleUnaryOperator.equals("u-") || isFactorialOperator(possibleUnaryOperator)
-                        || isSquareRootOperator(possibleUnaryOperator);
-        }
+        return isFunctionalOperator(possibleUnaryOperator) || possibleUnaryOperator.equals("u-")
+                || isFactorialOperator(possibleUnaryOperator) || isSquareRootOperator(possibleUnaryOperator);
+
     }
 
     /**
@@ -104,6 +83,32 @@ public class AlgorithmImplementation
         return possibleConstant == 'e' || possibleConstant == 'π';
     }
 
+    protected static boolean isFunctionalOperator(String possibleFunctionalOperator)
+    {
+        switch (possibleFunctionalOperator)
+        {
+            case "sin":
+            case "cos":
+            case "tan":
+            case "asin":
+            case "arcsin":
+            case "acos":
+            case "arccos":
+            case "atan":
+            case "arctan":
+            case "csc":
+            case "sec":
+            case "cot":
+            case "ln":
+            case "log":
+            case "log2":
+            case "sqrt":
+            case "cbrt":
+                return true;
+        }
+        return false;
+    }
+
     /**
      * Takes two operands and an operator to perform the required operation with those operands given
      * a specific operator.
@@ -145,6 +150,8 @@ public class AlgorithmImplementation
      */
     protected static BigDecimal makeUnaryOperation(BigDecimal operand, String operator)
     {
+        if (isFunctionalOperator(operator))
+            return useFastMathAndSolve(operand, operator, null);
         switch (operator)
         {
             case "u-":
@@ -153,24 +160,6 @@ public class AlgorithmImplementation
                 if (operand.compareTo(BigDecimal.ZERO) < 0)
                     throw new NumericalDomainErrorException("Square root is not defined for negative numbers");
                 return makeOperation(new BigDecimal("0.5"), "^", operand);
-            case "sin":
-            case "cos":
-            case "tan":
-            case "asin":
-            case "arcsin":
-            case "acos":
-            case "arccos":
-            case "atan":
-            case "arctan":
-            case "csc":
-            case "sec":
-            case "cot":
-            case "ln":
-            case "log":
-            case "log2":
-            case "sqrt":
-            case "cbrt":
-                return useFastMathAndSolve(operand, operator, null);
             case "!":
                 if (operand.compareTo(BigDecimal.ZERO) < 0)
                     throw new NumericalDomainErrorException("Factorial is not defined for negative numbers");
