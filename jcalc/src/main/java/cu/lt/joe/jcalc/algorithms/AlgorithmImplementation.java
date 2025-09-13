@@ -142,7 +142,7 @@ public class AlgorithmImplementation
             case "/":
                 return firstOperand.divide(secondOperand, MathContext.DECIMAL64);
             case "^":
-                return useFastMathAndSolve(firstOperand, operator, secondOperand);
+                return useFastMathAndSolve(firstOperand.doubleValue(), operator, secondOperand.doubleValue());
             default:
                 return BigDecimal.ZERO;
         }
@@ -160,7 +160,7 @@ public class AlgorithmImplementation
     protected static BigDecimal makeUnaryOperation(BigDecimal operand, String operator)
     {
         if (isFunctionalOperator(operator))
-            return useFastMathAndSolve(operand, operator, null);
+            return useFastMathAndSolve(operand.doubleValue(), operator, 0);
         switch (operator)
         {
             case "u-":
@@ -216,61 +216,62 @@ public class AlgorithmImplementation
         return bigDecimal.stripTrailingZeros().toPlainString();
     }
 
-    private static BigDecimal useFastMathAndSolve(BigDecimal firstOperand, String operator, BigDecimal secondOperand)
+    private static BigDecimal useFastMathAndSolve(double firstOperand, String operator, double secondOperand)
     {
         double result = 0;
         switch (operator)
         {
             case "^":
-                result = FastMath.pow(firstOperand.doubleValue(), secondOperand.doubleValue());
+                result = FastMath.pow(firstOperand, secondOperand);
                 break;
             case "sin":
-                result = FastMath.sin(firstOperand.doubleValue());
+                result = FastMath.sin(firstOperand);
                 break;
             case "cos":
-                result = FastMath.cos(firstOperand.doubleValue());
+                result = FastMath.cos(firstOperand);
                 break;
             case "tan":
-                result = FastMath.tan(firstOperand.doubleValue());
+                result = FastMath.tan(firstOperand);
                 break;
             case "asin":
             case "arcsin":
-                result = FastMath.asin(firstOperand.doubleValue());
+                result = FastMath.asin(firstOperand);
                 break;
             case "acos":
             case "arccos":
-                result = FastMath.acos(firstOperand.doubleValue());
+                result = FastMath.acos(firstOperand);
                 break;
             case "atan":
             case "arctan":
-                result = FastMath.atan(firstOperand.doubleValue());
+                result = FastMath.atan(firstOperand);
                 break;
             case "csc":
-                result = 1 / FastMath.sin(firstOperand.doubleValue());
+                result = 1 / FastMath.sin(firstOperand);
                 break;
             case "sec":
-                result = 1 / FastMath.cos(firstOperand.doubleValue());
+                result = 1 / FastMath.cos(firstOperand);
                 break;
             case "cot":
-                result = 1 / FastMath.tan(firstOperand.doubleValue());
+                result = 1 / FastMath.tan(firstOperand);
                 break;
             case "ln":
-                result = FastMath.log(firstOperand.doubleValue());
+                result = FastMath.log(firstOperand);
                 break;
             case "log":
-                result = FastMath.log10(firstOperand.doubleValue());
+                result = FastMath.log10(firstOperand);
                 break;
             case "log2":
-                result = FastMath.log(2, firstOperand.doubleValue());
+                result = FastMath.log(2, firstOperand);
                 break;
             case "sqrt":
-                return makeUnaryOperation(firstOperand, "√");
+                result = FastMath.sqrt(firstOperand);
+                break;
             case "cbrt":
-                result = FastMath.cbrt(firstOperand.doubleValue());
+                result = FastMath.cbrt(firstOperand);
                 break;
         }
-        String operationData = secondOperand != null ? firstOperand.toPlainString() + "^" + secondOperand.toPlainString()
-                : operator + "(" + firstOperand.toPlainString() + ")";
+        String operationData = secondOperand != 0 ? firstOperand + "^" + secondOperand
+                : operator + "(" + firstOperand + ")";
         if (Double.isNaN(result))
             throw new NotNumericResultException("Not numeric result obtained when trying to solve " + operationData);
         else if (Double.isInfinite(result))
