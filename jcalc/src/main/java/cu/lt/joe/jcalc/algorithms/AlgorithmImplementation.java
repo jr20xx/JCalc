@@ -213,9 +213,8 @@ public class AlgorithmImplementation
             formatPatternBuilder.append("E0");
             return new DecimalFormat(formatPatternBuilder.toString(), new DecimalFormatSymbols(Locale.US)).format(bigDecimal);
         }
-        int actualPrecision = FastMath.max(precision, 3);
-        if (bigDecimal.scale() > actualPrecision)
-            bigDecimal = bigDecimal.setScale(actualPrecision, RoundingMode.HALF_UP);
+        if (bigDecimal.scale() > precision)
+            bigDecimal = bigDecimal.setScale(precision, RoundingMode.HALF_UP);
         return bigDecimal.stripTrailingZeros().toPlainString();
     }
 
