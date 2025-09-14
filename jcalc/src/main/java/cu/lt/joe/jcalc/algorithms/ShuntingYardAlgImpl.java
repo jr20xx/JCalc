@@ -44,16 +44,22 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
 
     /**
      * Takes a {@link String} containing a Math expression and applies the Shunting Yard algorithm
-     * to it, returning a {@link String} that contains the result of solving that given expression.
+     * to it, returning a {@link String} that contains the result of solving that given expression
+     * or {@code null} when the expression is empty.
      *
-     * @param mathExpression     a {@link String} with the Math expression to process with the Shunting Yard algorithm
-     * @param balanceParentheses a boolean parameter to specify whether to automatically attempt to balance the parentheses in the given Math expression
-     * @param precision          an {@code int} value to set how precise the result must be. See {@link #formatResult(BigDecimal, int)}
-     *                           for more details about this parameter.
-     * @return A {@link String} that contains the result of solving the given Math expression
-     * @throws UnbalancedParenthesesException when parentheses are not placed correctly and {@code balanceParentheses} parameter is set to false
+     * @param mathExpression     a {@link String} with the Math expression to process with the
+     *                           Shunting Yard algorithm
+     * @param balanceParentheses a {@code boolean} parameter to specify whether to automatically attempt
+     *                           to balance the parentheses in the given Math expression
+     * @param precision          an {@code int} value to set how precise the result must be
+     * @param useRadians         a {@code boolean} to set if trigonometric functions will use radians
+     *                           or degrees when calculating a result
+     * @return A {@link String} that contains the result of solving the given Math expression or
+     * {@code null} when the expression is empty
+     * @throws UnbalancedParenthesesException when parentheses are not placed correctly and
+     *                                        {@code balanceParentheses} parameter is set to false
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
-     * @since 2.0.5
+     * @since 3.0.0
      */
     public static String solveMathExpression(String mathExpression, boolean balanceParentheses, int precision, boolean useRadians)
     {
@@ -236,10 +242,12 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
      * results and it doesn't return any value as it performs all the operations directly on the
      * given {@link ArrayDeque}.
      *
-     * @param stack    the {@link ArrayDeque} with the stacked items
-     * @param operator a {@link String} with the found operator
+     * @param stack      the {@link ArrayDeque} with the stacked items
+     * @param operator   a {@link String} with the found operator
+     * @param useRadians a {@code boolean} to set if trigonometric functions will use radians or
+     *                   degrees when calculating a result
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
-     * @since 2.0.0
+     * @since 3.0.0
      */
     private static void performStacking(ArrayDeque<BigDecimal> stack, String operator, boolean useRadians)
     {
