@@ -55,7 +55,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
      * @since 2.0.5
      */
-    public static String solveMathExpression(String mathExpression, boolean balanceParentheses, int precision)
+    public static String solveMathExpression(String mathExpression, boolean balanceParentheses, int precision, boolean useRadians)
     {
         ArrayDeque<BigDecimal> output = new ArrayDeque<>();
         ArrayDeque<String> operators = new ArrayDeque<>();
@@ -86,8 +86,8 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                     if (output.isEmpty())
                         throw new SyntaxErrorException("Factorial operator '!' has no preceding number");
                     while (!operators.isEmpty() && (isUnaryOperator(operators.peek()) && !operators.peek().equals("u-")))
-                        performStacking(output, operators.pop());
-                    performStacking(output, currentChar + "");
+                        performStacking(output, operators.pop(), useRadians);
+                    performStacking(output, currentChar + "", useRadians);
                 }
                 else if ((currentChar == '-' || currentChar == '+') && (i == 0 || previouslyFoundChar == '(' || (isOperator(previouslyFoundChar + "") && !isFactorialOperator(previouslyFoundChar + ""))))
                 {
@@ -107,7 +107,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                     else if (previouslyFoundChar == '(')
                         output.push(BigDecimal.ONE);
                     while (!operators.isEmpty() && !operators.peek().equals("("))
-                        performStacking(output, operators.pop());
+                        performStacking(output, operators.pop(), useRadians);
                     if (operators.isEmpty() && !balanceParentheses)
                         throw new UnbalancedParenthesesException("Parentheses are not well placed");
                     if (!operators.isEmpty())
@@ -116,7 +116,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                         if (balanceParentheses) openParenthesesCount--;
                     }
                     if (!operators.isEmpty() && isUnaryOperator(operators.peek()))
-                        performStacking(output, operators.pop());
+                        performStacking(output, operators.pop(), useRadians);
                 }
                 else if (isOperator(currentChar + ""))
                 {
@@ -126,7 +126,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                     {
                         currentChar = currentChar == '×' ? '*' : currentChar == '÷' ? '/' : currentChar;
                         while (!operators.isEmpty() && !operators.peek().equals("(") && getOperatorPrecedence(operators.peek()) >= getOperatorPrecedence(currentChar + "") && currentChar != '^')
-                            performStacking(output, operators.pop());
+                            performStacking(output, operators.pop(), useRadians);
                         operators.push(currentChar + "");
                     }
                 }
@@ -193,7 +193,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                         output.push(new BigDecimal(numberStr));
                         numberBuilder.setLength(0);
                         while (!operators.isEmpty() && (isUnaryOperator(operators.peek()) && !operators.peek().equals("u-")))
-                            performStacking(output, operators.pop());
+                            performStacking(output, operators.pop(), useRadians);
                     }
                     else
                         throw new SyntaxErrorException("Found an invalid number \"" + numberStr + "\" while parsing the given expression");
@@ -211,7 +211,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             while (openParenthesesCount-- > 0)
             {
                 while (!operators.isEmpty() && !operators.peek().equals("("))
-                    performStacking(output, operators.pop());
+                    performStacking(output, operators.pop(), useRadians);
                 if (operators.isEmpty() || !operators.peek().equals("("))
                     throw new UnbalancedParenthesesException("Failed to balance the parentheses in the given expression");
                 operators.pop();
@@ -224,7 +224,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
             if (operator.equals("(") && !balanceParentheses)
                 throw new UnbalancedParenthesesException("Parentheses are not well placed");
             else
-                performStacking(output, operator);
+                performStacking(output, operator, useRadians);
         }
         return formatResult(output.pop(), precision);
     }
@@ -241,9 +241,11 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
      * @since 2.0.0
      */
-    private static void performStacking(ArrayDeque<BigDecimal> stack, String operator)
+    private static void performStacking(ArrayDeque<BigDecimal> stack, String operator, boolean useRadians)
     {
-        if (isUnaryOperator(operator))
+        if (isTrigonometricOperator(operator))
+            stack.push(performTrigonometricCalculation(stack.pop(), operator, useRadians));
+        else if (isUnaryOperator(operator))
             stack.push(makeUnaryOperation(stack.pop(), operator));
         else
             stack.push(makeOperation(stack.pop(), operator, stack.pop()));

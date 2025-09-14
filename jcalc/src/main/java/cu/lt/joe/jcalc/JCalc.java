@@ -39,6 +39,6 @@ public class JCalc
      */
     public String solveMathExpression(String mathExpression)
     {
-        return ShuntingYardAlgImpl.solveMathExpression(mathExpression, builder.isBalanceParenthesesEnabled(), builder.getPrecision());
+        return ShuntingYardAlgImpl.solveMathExpression(mathExpression, builder.isBalanceParenthesesEnabled(), builder.getPrecision(), builder.isUseRadiansEnabled());
     }
 }

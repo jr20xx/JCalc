@@ -38,7 +38,8 @@ public class AlgorithmImplementation
     protected static boolean isUnaryOperator(String possibleUnaryOperator)
     {
         return isFunctionalOperator(possibleUnaryOperator) || possibleUnaryOperator.equals("u-")
-                || isFactorialOperator(possibleUnaryOperator) || isSquareRootOperator(possibleUnaryOperator);
+                || isFactorialOperator(possibleUnaryOperator) || isSquareRootOperator(possibleUnaryOperator)
+                || isTrigonometricOperator(possibleUnaryOperator);
 
     }
 
@@ -90,15 +91,24 @@ public class AlgorithmImplementation
             case "sin":
             case "cos":
             case "tan":
+            case "csc":
+            case "sec":
+            case "cot":
+                return true;
+        }
+        return isInverseTrigonometricFunctionOperator(possibleTrigonometricOperator);
+    }
+
+    protected static boolean isInverseTrigonometricFunctionOperator(String possibleInverseTrigonometricFunction)
+    {
+        switch (possibleInverseTrigonometricFunction)
+        {
             case "asin":
             case "arcsin":
             case "acos":
             case "arccos":
             case "atan":
             case "arctan":
-            case "csc":
-            case "sec":
-            case "cot":
                 return true;
         }
         return false;
@@ -115,7 +125,7 @@ public class AlgorithmImplementation
             case "cbrt":
                 return true;
         }
-        return isTrigonometricOperator(possibleFunctionalOperator);
+        return false;
     }
 
     /**
@@ -142,7 +152,7 @@ public class AlgorithmImplementation
             case "/":
                 return firstOperand.divide(secondOperand, MathContext.DECIMAL64);
             case "^":
-                return useFastMathAndSolve(firstOperand.doubleValue(), operator, secondOperand.doubleValue());
+                return BigDecimal.valueOf(useFastMathAndSolve(firstOperand.doubleValue(), operator, secondOperand.doubleValue()));
             default:
                 return BigDecimal.ZERO;
         }
@@ -160,7 +170,7 @@ public class AlgorithmImplementation
     protected static BigDecimal makeUnaryOperation(BigDecimal operand, String operator)
     {
         if (isFunctionalOperator(operator))
-            return useFastMathAndSolve(operand.doubleValue(), operator, 0);
+            return BigDecimal.valueOf(useFastMathAndSolve(operand.doubleValue(), operator, 0));
         switch (operator)
         {
             case "u-":
@@ -181,6 +191,16 @@ public class AlgorithmImplementation
             default:
                 return BigDecimal.ZERO;
         }
+    }
+
+    protected static BigDecimal performTrigonometricCalculation(BigDecimal operand, String operator, boolean useRadians)
+    {
+        if (!useRadians)
+            if (isInverseTrigonometricFunctionOperator(operator))
+                return BigDecimal.valueOf(FastMath.toDegrees(useFastMathAndSolve(operand.doubleValue(), operator, 0)));
+            else
+                return BigDecimal.valueOf(useFastMathAndSolve(FastMath.toRadians(operand.doubleValue()), operator, 0));
+        return BigDecimal.valueOf(useFastMathAndSolve(operand.doubleValue(), operator, 0));
     }
 
     /**
@@ -216,7 +236,7 @@ public class AlgorithmImplementation
         return bigDecimal.stripTrailingZeros().toPlainString();
     }
 
-    private static BigDecimal useFastMathAndSolve(double firstOperand, String operator, double secondOperand)
+    private static double useFastMathAndSolve(double firstOperand, String operator, double secondOperand)
     {
         double result = 0;
         switch (operator)
@@ -276,6 +296,6 @@ public class AlgorithmImplementation
             throw new NotNumericResultException("Not numeric result obtained when trying to solve " + operationData);
         else if (Double.isInfinite(result))
             throw new InfiniteResultException("Infinite result obtained when trying to solve " + operationData);
-        return BigDecimal.valueOf(result);
+        return result;
     }
 }
