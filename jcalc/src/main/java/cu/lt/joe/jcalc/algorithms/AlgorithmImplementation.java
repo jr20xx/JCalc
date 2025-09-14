@@ -21,7 +21,7 @@ import cu.lt.joe.jcalc.exceptions.NumericalDomainErrorException;
 public class AlgorithmImplementation
 {
     /**
-     * Checks when a given {@link String} is a valid Math operator
+     * Checks when a given {@link String} is a valid Math operator.
      *
      * @param possibleOperator the {@link String} to check
      * @return {@code true} or {@code false} when the {@link String} is an operator or not
@@ -35,6 +35,14 @@ public class AlgorithmImplementation
                 || possibleOperator.equals("×") || possibleOperator.equals("÷");
     }
 
+    /**
+     * Checks when a given {@link String} is a unary operator.
+     *
+     * @param possibleUnaryOperator the {@link String} to check
+     * @return {@code true} or {@code false} when the {@link String} is a unary operator or not
+     * @author <a href="https://github.com/jr20xx">jr20xx</a>
+     * @since 3.0.0
+     */
     protected static boolean isUnaryOperator(String possibleUnaryOperator)
     {
         return isFunctionalOperator(possibleUnaryOperator) || possibleUnaryOperator.equals("u-")
@@ -44,7 +52,7 @@ public class AlgorithmImplementation
     }
 
     /**
-     * Checks when a given {@link String} is the factorial operator
+     * Checks when a given {@link String} is the factorial operator.
      *
      * @param possibleFactorialOperator the {@link String} to check
      * @return {@code true} or {@code false} when the {@link String} is the factorial operator or not
@@ -56,6 +64,14 @@ public class AlgorithmImplementation
         return possibleFactorialOperator.equals("!");
     }
 
+    /**
+     * Checks when a given {@link String} is the square root operator.
+     *
+     * @param possibleSquareRootOperator the {@link String} to check
+     * @return {@code true} or {@code false} when the {@link String} is the square root operator or not
+     * @author <a href="https://github.com/jr20xx">jr20xx</a>
+     * @since 3.0.0
+     */
     protected static boolean isSquareRootOperator(String possibleSquareRootOperator)
     {
         return possibleSquareRootOperator.equals("√");
@@ -74,16 +90,41 @@ public class AlgorithmImplementation
         return number.matches("^[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][+-]?\\d+)?$");
     }
 
+    /**
+     * Checks when a given {@code char} could be part of a number.
+     *
+     * @param possiblePart the {@code char} to check
+     * @return {@code true} or {@code false} when the {@code char} could be part of a number or not
+     * @author <a href="https://github.com/jr20xx">jr20xx</a>
+     * @since 3.0.0
+     */
     protected static boolean isPartOfANumber(char possiblePart)
     {
         return Character.isDigit(possiblePart) || possiblePart == '.' || possiblePart == ',' || possiblePart == 'E';
     }
 
+    /**
+     * Checks when a given {@code char} could be a Math constant.
+     *
+     * @param possibleConstant the {@code char} to check
+     * @return {@code true} or {@code false} when the {@code char} is a Math constant or not
+     * @author <a href="https://github.com/jr20xx">jr20xx</a>
+     * @since 3.0.0
+     */
     protected static boolean isMathConstant(char possibleConstant)
     {
         return possibleConstant == 'e' || possibleConstant == 'π';
     }
 
+    /**
+     * Checks when a given {@link String} is a trigonometric function. Please note that this covers
+     * inverse trigonometric functions as well.
+     *
+     * @param possibleTrigonometricOperator the {@link String} to check
+     * @return {@code true} or {@code false} when the {@link String} is a trigonometric function or not
+     * @author <a href="https://github.com/jr20xx">jr20xx</a>
+     * @since 3.0.0
+     */
     protected static boolean isTrigonometricOperator(String possibleTrigonometricOperator)
     {
         switch (possibleTrigonometricOperator)
@@ -99,6 +140,15 @@ public class AlgorithmImplementation
         return isInverseTrigonometricFunctionOperator(possibleTrigonometricOperator);
     }
 
+    /**
+     * Checks when a given {@link String} is an inverse trigonometric function. Please note that this
+     * covers only inverse trigonometric functions.
+     *
+     * @param possibleInverseTrigonometricFunction the {@link String} to check
+     * @return {@code true} or {@code false} when the {@link String} is an inverse trigonometric function or not
+     * @author <a href="https://github.com/jr20xx">jr20xx</a>
+     * @since 3.0.0
+     */
     protected static boolean isInverseTrigonometricFunctionOperator(String possibleInverseTrigonometricFunction)
     {
         switch (possibleInverseTrigonometricFunction)
@@ -114,6 +164,14 @@ public class AlgorithmImplementation
         return false;
     }
 
+    /**
+     * Checks when a given {@link String} is a functional operator, excluding all trigonometric functions.
+     *
+     * @param possibleFunctionalOperator the {@link String} to check
+     * @return {@code true} or {@code false} when the {@link String} is a functional operator or not
+     * @author <a href="https://github.com/jr20xx">jr20xx</a>
+     * @since 3.0.0
+     */
     protected static boolean isFunctionalOperator(String possibleFunctionalOperator)
     {
         switch (possibleFunctionalOperator)
@@ -193,6 +251,17 @@ public class AlgorithmImplementation
         }
     }
 
+    /**
+     * Takes an operand, a trigonometric function operator and a boolean value to define when to use
+     * radians or degrees to later perform the required operation over the given operand.
+     *
+     * @param operand    the operand to perform the required operation
+     * @param operator   the trigonometric operator to define the operation that will be performed
+     * @param useRadians a boolean value to define whether to use radians or degrees
+     * @return A {@link BigDecimal} with the result of performing the specified operation
+     * @author <a href="https://github.com/jr20xx">jr20xx</a>
+     * @since 3.0.0
+     */
     protected static BigDecimal performTrigonometricCalculation(BigDecimal operand, String operator, boolean useRadians)
     {
         if (!useRadians)
@@ -236,6 +305,19 @@ public class AlgorithmImplementation
         return bigDecimal.stripTrailingZeros().toPlainString();
     }
 
+    /**
+     * Helper method used to quickly throw any required exception or return the expected result when
+     * having to use the methods provided by {@link FastMath}. The second operand parameter is ignored
+     * when passing a unary operator, so it's better to set it to 0 when performing unary operations.
+     *
+     * @param firstOperand  the first operand to perform the operation
+     * @param operator      the operator to define the operation that will be performed
+     * @param secondOperand the second operand to perform the operation (ignored if the given operator
+     *                      is unary)
+     * @return A {@code double} with the result of performing the specified operation
+     * @author <a href="https://github.com/jr20xx">jr20xx</a>
+     * @since 3.0.0
+     */
     private static double useFastMathAndSolve(double firstOperand, String operator, double secondOperand)
     {
         double result = 0;
@@ -290,7 +372,7 @@ public class AlgorithmImplementation
                 result = FastMath.cbrt(firstOperand);
                 break;
         }
-        String operationData = secondOperand != 0 ? firstOperand + "^" + secondOperand
+        String operationData = (!isUnaryOperator(operator)) ? firstOperand + "^" + secondOperand
                 : operator + "(" + firstOperand + ")";
         if (Double.isNaN(result))
             throw new NotNumericResultException("Not numeric result obtained when trying to solve " + operationData);
