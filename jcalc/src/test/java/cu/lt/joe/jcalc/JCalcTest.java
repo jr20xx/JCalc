@@ -25,7 +25,7 @@ public class JCalcTest
     })
     void solveBasicMathExpressions(String expression, String expectedResult)
     {
-        assertEquals(expectedResult, JCalc.with(new ConfigurationBuilder()).solveMathExpression(expression));
+        assertEquals(expectedResult, JCalc.solveMathExpression(expression, null));
     }
 
     @ParameterizedTest
@@ -35,6 +35,6 @@ public class JCalcTest
     })
     void solveMathExpressionsWithENotation(String expression, String expectedResult)
     {
-        assertEquals(expectedResult, JCalc.with(new ConfigurationBuilder()).solveMathExpression(expression));
+        assertEquals(expectedResult, JCalc.solveMathExpression(expression, null));
     }
 }
