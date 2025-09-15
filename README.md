@@ -27,7 +27,8 @@
   - [Getting the library from JitPack](#getting-the-library-from-jitpack)
 - [Usage](#usage)
   - [Supported operators](#supported-operators)
-  - [Basic usage](#basic-usage)
+  - [Customization process](#customization-process)
+  - [Solving process](#solving-process)
   - [Exceptions handling](#exceptions-handling)
 - [Related project (W.I.P.)](#related-project-wip)
 - [About the docs](#about-the-docs)
@@ -35,13 +36,11 @@
 
 ## Description of the project
 
-This repo holds the code of a [Java library](https://en.wikipedia.org/wiki/Java_Class_Library) named JCalc that is especially made for those who, for any reason, want to allow users to input basic Math expressions in Java apps and quickly solve them during runtime (like, for example, when building a basic calculator). In order to make that possible, this library makes use of a custom implementation of the [Shunting Yard algorithm](https://en.wikipedia.org/wiki/Shunting_yard_algorithm) that allows it to quickly parse and solve Math expressions written in the notation commonly used to write Math expressions; also known as [infix notation](https://en.wikipedia.org/wiki/Infix_notation).
+This repo holds the code of a [Java library](https://en.wikipedia.org/wiki/Java_Class_Library) named JCalc made for parsing Math expressions as strings and quickly solve them. In order to make that possible, this library makes use of a custom implementation of the [Shunting Yard algorithm](https://en.wikipedia.org/wiki/Shunting_yard_algorithm) that allows it to quickly parse and solve Math expressions written in the notation commonly used to write Math expressions; also known as [infix notation](https://en.wikipedia.org/wiki/Infix_notation).
 
-You can use this library to solve statements like, for example:
+You can use this library to solve Math expressions like, for example:
 
 - **((25\*3-9)/(4+2)+5^3)-(48/8)\*(7+2)+14** (which is equals to **96**)
-- **2 \* 3 + 5 \* 2^3** (which is equals to **46**)
-- **2 * -(3 + 4! / 2) + 5^2** (which is equals to **-5**)
 - **3 + 4 * 2 / (1 - 5)^2^3** (which is equals to **3.000122070313**)
 - **1000 / (2^5) + (3!)^4 - 500 * (2 + 3)** (which is equals to **-1172.75**)
 - **(8^2 + 15 \* 4 - 7) / (3 + 5)\*(12 - 9) + 6^2 - (18 /3) + 11** (which is equals to **84.875**)
@@ -50,7 +49,7 @@ You can use this library to solve statements like, for example:
 - **(-2^3) * (-(3! + 4) / 2) + 5** (which is equals to **45**)
 - **2 + -3! * (-4^2) / (5 - 3)** (which is equals to **50**)
 
-All the results previously shown were obtained with JCalc and checked using an online calculator app provided by [Desmos](https://www.desmos.com/about) in [this website](https://www.desmos.com/scientific).
+All the expressions previously shown are just a few examples. The results were obtained with JCalc and checked using an online calculator app provided by [Desmos](https://www.desmos.com/about) in [this website](https://www.desmos.com/scientific).
 
 ## Getting the library
 
@@ -66,7 +65,7 @@ java --version
 >
 > The minimum Java version required to build this library is [Java 8](https://en.m.wikipedia.org/wiki/Java_version_history#Java_8).
 
-If the execution of that command generates any output instead of an error message, then your installation of the JDK should be correct; and after effectively checking the JDK installation, you must create a local copy of this repo in your device. In order to do that, launch a terminal and execute the following command:
+If the execution of that command generates any output instead of an error message, then your installation of the JDK should be correct. After effectively checking the JDK installation, you must create a local copy of this repo in your device and, in order to do that, launch a terminal and execute the following command:
 
 ```bash
 git clone https://github.com/jr20xx/JCalc
@@ -88,7 +87,21 @@ If you decide to build the library without using any IDE, then open the newly cr
 gradlew.bat build
 ```
 
-Once the execution of that command is done, open the `jcalc` directory, then open the `builds` directory and, once you are watching its content, you'll see a folder named `libs`. In that last folder you'll find compiled files of the library, the [Javadocs](https://en.wikipedia.org/wiki/Javadoc) and the source code compressed as single JAR files that you can use as you wish.
+Once the execution of that command is done, open the `jcalc` directory, then open the `builds` directory and, once you are watching its content, you'll see a folder named `libs`. In that last folder you'll find compiled files of the library, the [Javadocs](https://en.wikipedia.org/wiki/Javadoc) and the source code compressed as independent JAR files that you can use as you wish. Here's a representation of the portion of the directories tree mentioned before, in plaintext format:
+
+```txt
+JCalc (parent folder)
+├── jcalc
+│   ├── build
+│   │   ├── libs
+│   │   │   ├── jcalc-X.Y.Z.jar
+│   │   │   ├── jcalc-X.Y.Z-javadoc.jar
+│   │   │   └── jcalc-X.Y.Z-sources.jar
+```
+
+> [!TIP]
+>
+> Please notice that **"X"**, **"Y"** and **"Z"** are used as placeholders in the names of the JAR files. They take the place of the version numbers of the library and are not part of the actual names of the compiled files.
 
 ### Getting the library from JitPack
 
@@ -160,19 +173,53 @@ The following tables summarize the rest of the symbols or tokens currently suppo
 > [!WARNING]
 >
 >- The support for the advanced operators is still under development.
->- Trigonometric functions are made to work with radians.
 >- The library is case sensitive and that means that, for example, "E" and "e" are treated differently based on their casing.
 
-### Basic usage
+### Customization process
 
-To make use of this library, you simply have to call the method `JCalc.solveMathExpression(...)` providing it with a String containing the Math expression that you want to get solved and a boolean value used to specify when to automatically attempt to balance the parentheses in the given Math expression. When called, that method will return another String with the result of solving the given Math expression; but if the given expression is empty or contains only whitespaces, `null` will be returned instead of any result. In addition to all that, if the Math expression contains any whitespace, they'll be automatically removed.
+One of the main ideas behind the creation of JCalc is to allow a certain level of customization in the way it works; and that's precisely why it involves a customization (or configuration) step to perform the solving process of a Math expression. This is done with the help of the `ConfigurationBuilder` class, introduced in the third version of the library. This class has a method to control the precision of the final result obtained when the Math expression is completely solved. In addition to that, there's also a method that allows you to toggle the functionality to make an attempt to balance the parentheses in a given Math expression. Finally, it also contains another method that lets you control whether to use radians or degrees when dealing with trigonometric functions. Here's an example of how to create a new instance of the `ConfigurationBuilder` class and how to set up all the parameters previously mentioned one by one:
 
-Here's a clear code example for you to get an idea of how to work with the library and to allow you to know which is the method that must be called to get the work done:
+```java
+ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+configurationBuilder.setPrecision(10);
+configurationBuilder.setBalanceParentheses(true);
+configurationBuilder.setUseRadians(false);
+```
+
+Alternatively, you can set up all those parameters all at once as it follows:
+
+```java
+ConfigurationBuilder configurationBuilder = new ConfigurationBuilder()
+                                    .setPrecision(10)
+                                    .setBalanceParentheses(true)
+                                    .setUseRadians(false);
+```
+
+If you forget to customize any parameter or just create a new instance of `ConfigurationBuilder` without setting up any parameter, the default values will be used instead. The default value for precision is 12 and the minimum accepted value for that setting is 3; so if you try to set it to a lower number, it will default to 3. Besides all that, the library defaults to radians when dealing with trigonometric functions and, by default, it disables the process to balance the parentheses in a Math expression.
+
+### Solving process
+
+Once the instance of the `ConfigurationBuilder` class that will be used to solve Math expressions is ready to use, you just have to call the `JCalc.solveMathExpression(...)` method passing a String to it containing the Math expression that you want to get solved and the previously created instance of the `ConfigurationBuilder` class. When called, that method will return another String with the result of solving the given Math expression; but if the given expression is either empty, `null` or contains only whitespaces, `null` will be returned as result. In addition to all that, any whitespace in the Math expression will be ignored. It's also important to highlight that if you pass `null` as the `ConfigurationBuilder` parameter, a new `ConfigurationBuilder` will be initialized using the default values described in the last part of the [customization process](#customization-process). To help you to get an idea of how to perform this last step, here's a code example:
 
 ```java
 String expression = "3 + 4 * 2 / (1 - 5)^2^3";
-String result = JCalc.solveMathExpression(expression, true);
-System.out.print(result); // Prints "3.000122070313"
+ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+configurationBuilder.setPrecision(10);
+configurationBuilder.setBalanceParentheses(true);
+configurationBuilder.setUseRadians(false);
+String result = JCalc.solveMathExpression(expression, configurationBuilder);
+System.out.print(result); // Prints "3.0001220703"
+```
+
+Like before, you can simplify things up and get a result using a, perhaps, "quicker" or "shorter" syntax as it follows:
+
+```java
+String expression = "3 + 4 * 2 / (1 - 5)^2^3";
+String result = JCalc.solveMathExpression(expression, new ConfigurationBuilder()
+                                                        .setPrecision(10)
+                                                        .setBalanceParentheses(true)
+                                                        .setUseRadians(false));
+System.out.print(result); // Prints "3.0001220703"
 ```
 
 ### Exceptions handling
@@ -182,7 +229,10 @@ This library contains a small set of custom exceptions that should be controlled
 ```java
 try {
     String expression = "2 * 3 + 5 * 2^3)";
-    String result = JCalc.solveMathExpression(expression, true);
+    String result = JCalc.solveMathExpression(expression, new ConfigurationBuilder()
+                                                            .setPrecision(10)
+                                                            .setBalanceParentheses(true)
+                                                            .setUseRadians(false));
 }
 catch (UnbalancedParenthesesException exception) {
     // This exception occurs when the parentheses were not placed correctly and `false` is provided as second parameter
