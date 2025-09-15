@@ -40,9 +40,8 @@ public class JCalc
      */
     public static String solveMathExpression(String mathExpression, ConfigurationBuilder configurationBuilder)
     {
-        if (configurationBuilder == null)
-            configurationBuilder = new ConfigurationBuilder();
         return mathExpression == null ? null :
-                ShuntingYardAlgImpl.solveMathExpression(mathExpression, configurationBuilder.isBalanceParenthesesEnabled(), configurationBuilder.getPrecision(), configurationBuilder.isUseRadiansEnabled());
+                ShuntingYardAlgImpl.solveMathExpression(mathExpression, configurationBuilder == null ?
+                        new ConfigurationBuilder() : configurationBuilder);
     }
 }

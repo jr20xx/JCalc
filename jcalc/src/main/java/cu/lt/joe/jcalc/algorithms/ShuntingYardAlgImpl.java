@@ -2,6 +2,7 @@ package cu.lt.joe.jcalc.algorithms;
 
 import java.math.BigDecimal;
 import java.util.ArrayDeque;
+import cu.lt.joe.jcalc.ConfigurationBuilder;
 import cu.lt.joe.jcalc.JCalc;
 import cu.lt.joe.jcalc.exceptions.SyntaxErrorException;
 import cu.lt.joe.jcalc.exceptions.UnbalancedParenthesesException;
@@ -43,17 +44,18 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
     }
 
     /**
-     * Takes a {@link String} containing a Math expression and applies the Shunting Yard algorithm
-     * to it, returning a {@link String} that contains the result of solving that given expression
-     * or {@code null} when the expression is empty.
+     * Takes a {@link String} containing a Math expression and a {@link ConfigurationBuilder}
+     * instance to later use the Shunting Yard algorithm to solve the given expression using the
+     * settings in the provided {@link ConfigurationBuilder} to determine what precision to apply to
+     * the final result, whether to attempt to balance parentheses or not, and when to use radians or
+     * degrees to work with trigonometric functions. At the end, returns a {@link String} that
+     * contains the result of solving that given expression or {@code null} when the expression is
+     * empty.
      *
-     * @param mathExpression     a {@link String} with the Math expression to process with the
-     *                           Shunting Yard algorithm
-     * @param balanceParentheses a {@code boolean} parameter to specify whether to automatically attempt
-     *                           to balance the parentheses in the given Math expression
-     * @param precision          an {@code int} value to set how precise the result must be
-     * @param useRadians         a {@code boolean} to set if trigonometric functions will use radians
-     *                           or degrees when calculating a result
+     * @param mathExpression       a {@link String} with the Math expression to process with the
+     *                             Shunting Yard algorithm
+     * @param configurationBuilder a {@link ConfigurationBuilder} instance with the settings to
+     *                             customize how Math expressions are treated
      * @return A {@link String} that contains the result of solving the given Math expression or
      * {@code null} when the expression is empty
      * @throws UnbalancedParenthesesException when parentheses are not placed correctly and
@@ -61,12 +63,11 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
      * @since 3.0.0
      */
-    public static String solveMathExpression(String mathExpression, boolean balanceParentheses, int precision, boolean useRadians)
+    public static String solveMathExpression(String mathExpression, ConfigurationBuilder configurationBuilder)
     {
         ArrayDeque<BigDecimal> output = new ArrayDeque<>();
         ArrayDeque<String> operators = new ArrayDeque<>();
         StringBuilder numberBuilder = new StringBuilder();
-        balanceParentheses = balanceParentheses && (mathExpression.contains("(") || mathExpression.contains(")"));
         int openParenthesesCount = 0, actualExpressionLength = mathExpression.length() - 1;
 
         char previouslyFoundChar = '\u0000';
@@ -92,8 +93,8 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                     if (output.isEmpty())
                         throw new SyntaxErrorException("Factorial operator '!' has no preceding number");
                     while (!operators.isEmpty() && (isUnaryOperator(operators.peek()) && !operators.peek().equals("u-")))
-                        performStacking(output, operators.pop(), useRadians);
-                    performStacking(output, currentChar + "", useRadians);
+                        performStacking(output, operators.pop(), configurationBuilder.isUseRadiansEnabled());
+                    performStacking(output, currentChar + "", configurationBuilder.isUseRadiansEnabled());
                 }
                 else if ((currentChar == '-' || currentChar == '+') && (i == 0 || previouslyFoundChar == '(' || (isOperator(previouslyFoundChar + "") && !isFactorialOperator(previouslyFoundChar + ""))))
                 {
@@ -104,7 +105,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                     if (previouslyFoundChar == ')' || isFactorialOperator(previouslyFoundChar + "") || isMathConstant(previouslyFoundChar) || (Character.isDigit(previouslyFoundChar) && !operators.isEmpty() && !operators.peek().equals("log2")))
                         operators.push("*");
                     operators.push(currentChar + "");
-                    if (balanceParentheses) openParenthesesCount++;
+                    if (configurationBuilder.isBalanceParenthesesEnabled()) openParenthesesCount++;
                 }
                 else if (currentChar == ')')
                 {
@@ -113,16 +114,17 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                     else if (previouslyFoundChar == '(')
                         output.push(BigDecimal.ONE);
                     while (!operators.isEmpty() && !operators.peek().equals("("))
-                        performStacking(output, operators.pop(), useRadians);
-                    if (operators.isEmpty() && !balanceParentheses)
+                        performStacking(output, operators.pop(), configurationBuilder.isUseRadiansEnabled());
+                    if (operators.isEmpty() && !configurationBuilder.isBalanceParenthesesEnabled())
                         throw new UnbalancedParenthesesException("Parentheses are not well placed");
                     if (!operators.isEmpty())
                     {
                         operators.pop();
-                        if (balanceParentheses) openParenthesesCount--;
+                        if (configurationBuilder.isBalanceParenthesesEnabled())
+                            openParenthesesCount--;
                     }
                     if (!operators.isEmpty() && isUnaryOperator(operators.peek()))
-                        performStacking(output, operators.pop(), useRadians);
+                        performStacking(output, operators.pop(), configurationBuilder.isUseRadiansEnabled());
                 }
                 else if (isOperator(currentChar + ""))
                 {
@@ -132,7 +134,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                     {
                         currentChar = currentChar == '×' ? '*' : currentChar == '÷' ? '/' : currentChar;
                         while (!operators.isEmpty() && !operators.peek().equals("(") && getOperatorPrecedence(operators.peek()) >= getOperatorPrecedence(currentChar + "") && currentChar != '^')
-                            performStacking(output, operators.pop(), useRadians);
+                            performStacking(output, operators.pop(), configurationBuilder.isUseRadiansEnabled());
                         operators.push(currentChar + "");
                     }
                 }
@@ -199,7 +201,7 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
                         output.push(new BigDecimal(numberStr));
                         numberBuilder.setLength(0);
                         while (!operators.isEmpty() && (isUnaryOperator(operators.peek()) && !operators.peek().equals("u-")))
-                            performStacking(output, operators.pop(), useRadians);
+                            performStacking(output, operators.pop(), configurationBuilder.isUseRadiansEnabled());
                     }
                     else
                         throw new SyntaxErrorException("Found an invalid number \"" + numberStr + "\" while parsing the given expression");
@@ -212,12 +214,12 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
 
         if (output.isEmpty()) return null;
 
-        if (balanceParentheses && openParenthesesCount > 0)
+        if (configurationBuilder.isBalanceParenthesesEnabled() && openParenthesesCount > 0)
         {
             while (openParenthesesCount-- > 0)
             {
                 while (!operators.isEmpty() && !operators.peek().equals("("))
-                    performStacking(output, operators.pop(), useRadians);
+                    performStacking(output, operators.pop(), configurationBuilder.isUseRadiansEnabled());
                 if (operators.isEmpty() || !operators.peek().equals("("))
                     throw new UnbalancedParenthesesException("Failed to balance the parentheses in the given expression");
                 operators.pop();
@@ -227,12 +229,12 @@ public class ShuntingYardAlgImpl extends AlgorithmImplementation
         while (!operators.isEmpty())
         {
             String operator = operators.pop();
-            if (operator.equals("(") && !balanceParentheses)
+            if (operator.equals("(") && !configurationBuilder.isBalanceParenthesesEnabled())
                 throw new UnbalancedParenthesesException("Parentheses are not well placed");
             else
-                performStacking(output, operator, useRadians);
+                performStacking(output, operator, configurationBuilder.isUseRadiansEnabled());
         }
-        return formatResult(output.pop(), precision);
+        return formatResult(output.pop(), configurationBuilder.getPrecision());
     }
 
     /**
