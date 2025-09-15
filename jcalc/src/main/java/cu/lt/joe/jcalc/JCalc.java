@@ -42,6 +42,7 @@ public class JCalc
     {
         if (configurationBuilder == null)
             configurationBuilder = new ConfigurationBuilder();
-        return ShuntingYardAlgImpl.solveMathExpression(mathExpression, configurationBuilder.isBalanceParenthesesEnabled(), configurationBuilder.getPrecision(), configurationBuilder.isUseRadiansEnabled());
+        return mathExpression == null ? null :
+                ShuntingYardAlgImpl.solveMathExpression(mathExpression, configurationBuilder.isBalanceParenthesesEnabled(), configurationBuilder.getPrecision(), configurationBuilder.isUseRadiansEnabled());
     }
 }
