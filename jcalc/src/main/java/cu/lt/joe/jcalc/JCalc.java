@@ -60,6 +60,8 @@ public class JCalc
      */
     public static String solveMathExpression(String mathExpression, ConfigurationBuilder configurationBuilder)
     {
+        if (configurationBuilder == null)
+            throw new IllegalArgumentException("The ConfigurationBuilder instance can't be null when using the \"solveMathExpression(String, ConfigurationBuilder)\" method");
         return mathExpression == null ? null :
                 ShuntingYardAlgImpl.solveMathExpression(mathExpression, configurationBuilder);
     }
