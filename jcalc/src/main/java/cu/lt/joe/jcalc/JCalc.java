@@ -44,9 +44,8 @@ public class JCalc
      * treated, defining the value of the precision used for the final result obtained after solving
      * a Math expression and, besides that, determining if the parentheses in the Math expression
      * should be automatically balanced and if the trigonometric functions will use radians or degrees
-     * when solving a Math expression. If you forget to setup that instance or pass {@code null} as
-     * second parameter, a {@link ConfigurationBuilder} instance with the default values will be
-     * used instead.
+     * when solving a Math expression. If you pass {@code null} as second parameter, an
+     * {@link IllegalArgumentException} will be thrown.
      *
      * @param mathExpression       a {@link String} containing the Math expression to solve
      * @param configurationBuilder a {@link ConfigurationBuilder} instance with the settings to
@@ -55,8 +54,9 @@ public class JCalc
      * if the given expression is empty
      * @throws NotNumericResultException when a not numeric (NaN) value is obtained
      * @throws InfiniteResultException   when an Infinite result is obtained
+     * @throws IllegalArgumentException  when the {@link ConfigurationBuilder} instance is {@code null}
      * @author <a href="https://github.com/jr20xx">jr20xx</a>
-     * @since 3.0.0
+     * @since 3.0.1
      */
     public static String solveMathExpression(String mathExpression, ConfigurationBuilder configurationBuilder)
     {
