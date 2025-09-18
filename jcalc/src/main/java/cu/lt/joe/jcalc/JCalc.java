@@ -5,14 +5,16 @@ import cu.lt.joe.jcalc.exceptions.InfiniteResultException;
 import cu.lt.joe.jcalc.exceptions.NotNumericResultException;
 
 /**
- * This class is the entry point of this library. It is, indeed, the class intended to solve Math
- * expressions and configure all the parameters required to do so by passing a Math expression and a
- * {@link ConfigurationBuilder} instance with all the parameters set as you wish to the
- * {@link #solveMathExpression(String, ConfigurationBuilder)} method.
+ * This class is intended to solve Math expressions. For general purposes, you just have to use the
+ * method {@link #solveMathExpression(String)}. If you want to also configure some of the parameters
+ * used to do so, then call the alternative method {@link #solveMathExpression(String, ConfigurationBuilder)}
+ * and pass an instance of the {@link ConfigurationBuilder} class, setting the parameters you wish
+ * to use through that instance.
  *
  * @author <a href="https://github.com/jr20xx">jr20xx</a>
+ * @see #solveMathExpression(String)
  * @see #solveMathExpression(String, ConfigurationBuilder)
- * @since 3.0.0
+ * @since 3.0.1
  */
 public class JCalc
 {
