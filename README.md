@@ -32,8 +32,8 @@
   - [Exceptions handling](#exceptions-handling)
 - [Related project (W.I.P.)](#related-project-wip)
 - [About the docs](#about-the-docs)
-- [Contribution](#contribution)
 - [Testing](#testing)
+- [Contribution](#contribution)
 
 ## Description of the project
 
