@@ -100,7 +100,7 @@ JCalc (parent folder)
 │   │   │   └── jcalc-X.Y.Z-sources.jar
 ```
 
-> [!TIP]
+> [!NOTE]
 >
 > Please notice that **"X"**, **"Y"** and **"Z"** are used as placeholders in the names of the JAR files. They take the place of the version numbers of the library and are not part of the actual names of the compiled files.
 
