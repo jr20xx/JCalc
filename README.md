@@ -202,7 +202,7 @@ String result = JCalc.solveMathExpression(expression, configurationBuilder);
 System.out.print(result); // Prints "3.0001220703"
 ```
 
-Alternatively, you can set up all those parameters all at once as it follows:
+Alternatively, you can set up all those parameters at once as it follows:
 
 ```java
 ConfigurationBuilder configurationBuilder = new ConfigurationBuilder().setPrecision(10).setBalanceParentheses(true).setUseRadians(false);
