@@ -34,4 +34,11 @@ public class JCalcTest
     {
         assertEquals(expectedResult, JCalc.solveMathExpression(expression));
     }
+
+    @ParameterizedTest
+    @CsvFileSource(files = "src/test/resources/expressions_with_factorial.csv")
+    void solveMathExpressionsWithFactorial(String expression, String expectedResult)
+    {
+        assertEquals(expectedResult, JCalc.solveMathExpression(expression));
+    }
 }
