@@ -32,6 +32,7 @@
   - [Exceptions handling](#exceptions-handling)
 - [Related project (W.I.P.)](#related-project-wip)
 - [About the docs](#about-the-docs)
+- [Testing](#testing)
 - [Contribution](#contribution)
 
 ## Description of the project
@@ -61,7 +62,7 @@ To build the library locally, the first thing you must do is to make sure that y
 java --version
 ```
 
-> [!TIP]
+> [!NOTE]
 >
 > The minimum Java version required to build this library is [Java 8](https://en.m.wikipedia.org/wiki/Java_version_history#Java_8).
 
@@ -99,7 +100,7 @@ JCalc (parent folder)
 │   │   │   └── jcalc-X.Y.Z-sources.jar
 ```
 
-> [!TIP]
+> [!NOTE]
 >
 > Please notice that **"X"**, **"Y"** and **"Z"** are used as placeholders in the names of the JAR files. They take the place of the version numbers of the library and are not part of the actual names of the compiled files.
 
@@ -201,7 +202,7 @@ String result = JCalc.solveMathExpression(expression, configurationBuilder);
 System.out.print(result); // Prints "3.0001220703"
 ```
 
-Alternatively, you can set up all those parameters all at once as it follows:
+Alternatively, you can set up all those parameters at once as it follows:
 
 ```java
 ConfigurationBuilder configurationBuilder = new ConfigurationBuilder().setPrecision(10).setBalanceParentheses(true).setUseRadians(false);
@@ -248,6 +249,14 @@ catch (Exception exception) {
 ## Related project (W.I.P.)
 
 - [Android Calculator](https://github.com/jr20xx/android-calculator)
+
+## Testing
+
+In order to provide a more reliable mechanism that also ensures that JCalc works as expected, [JUnit](https://junit.org/) tests were implemented. Thanks to [this GitHub workflow](https://github.com/jr20xx/JCalc/actions/workflows/perform_testing.yml), they are run on each commit or pull request to also follow some [Continuous Integration](https://en.wikipedia.org/wiki/Continuous_integration) principles.
+
+So far there are just a few tests cases written and they still don't cover all the functionalities of the library. Feel free to write your own when you clone or fork this repo and then suggest some of your own test cases (the more complicated, the best).
+
+Test cases are located under [`./jcalc/src/test/resources`](https://github.com/jr20xx/JCalc/tree/main/jcalc/src/test/resources) as CSV files you can edit as you please without embedding them in the testing class directly. When you suggest new tests, please follow that principle: use standalone CSV files and later add references to them in the testing class instead of embedding test cases in the code of the testing class.
 
 ## About the docs
 
