@@ -240,7 +240,7 @@ public class AlgorithmImplementation
             case "!":
                 if (operand.compareTo(BigDecimal.ZERO) < 0)
                     throw new NumericalDomainErrorException("Factorial is not defined for negative numbers");
-                else if (!operand.stripTrailingZeros().remainder(BigDecimal.ONE).equals(BigDecimal.ZERO))
+                else if (!operand.remainder(BigDecimal.ONE).stripTrailingZeros().equals(BigDecimal.ZERO))
                     throw new NumericalDomainErrorException("Factorial is not defined for non-integer numbers like " + operand.toPlainString());
                 BigDecimal result = BigDecimal.ONE;
                 for (BigDecimal i = BigDecimal.ONE; i.compareTo(operand) <= 0; i = i.add(BigDecimal.ONE))
